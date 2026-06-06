@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <base href="" id="base-url">
+  <script>document.getElementById('base-url').href = (function () { var p = location.pathname; if (p.endsWith('/')) return location.origin + p; if (/index\.html$/i.test(p)) return location.origin + p.replace(/[^/]+$/, ''); return location.origin + p + '/'; })();</script>
   <title>Birim İstatistik — Sicil Veri</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>

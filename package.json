@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "serve . -l ${PORT:-3000}"
+    "start": "node scripts/start-server.mjs"
   },
   "dependencies": {
     "serve": "^14.2.4"
