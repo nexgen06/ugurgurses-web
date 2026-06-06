@@ -1,0 +1,42 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "islem_kayitlari",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "kayit_tarihi", "order": "ASCENDING" },
+        { "fieldPath": "birim", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "islem_kayitlari",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "kayit_tarihi", "order": "ASCENDING" },
+        { "fieldPath": "kayit_tarihi", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "islem_kayitlari",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "user_id", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "personel_izinleri",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "baslangic", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "audit_log",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "at", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

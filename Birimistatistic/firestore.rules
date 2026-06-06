@@ -1,0 +1,383 @@
+rules_version = '2';
+
+// ============================================================================
+//  Birim İstatistik — Firestore Güvenlik Kuralları
+//  Bu dosyayı Firebase Console → Firestore Database → Rules sekmesine
+//  bir kez yapıştırıp "Yayınla" deyin. Roller uygulamadaki "Yönetim"
+//  ekranından (users/{uid}.role) yönetilir; kurallar bunu sunucuda uygular.
+//
+//  Roller: admin > proje_yetkilisi > editor > viewer
+//   - veri girişi  : admin, proje_yetkilisi, editor
+//   - kesinleştirme : admin, proje_yetkilisi
+//   - kilit açma    : admin + onaylı talep; 1–5 Haziran 2026 admin doğrudan açabilir
+//   - kilit talebi  : editör → proje yetkilisi → admin
+//
+//  Birim izolasyonu (çok kiracı):
+//   - admin: tüm birimler
+//   - diğer roller: users/{uid}.birimler ile eşleşen kayıtlar (sunucu tarafı)
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------------
+    //  Yardımcı fonksiyonlar
+    // ---------------------------------------------------------------------
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function adminUids() {
+      return exists(/databases/$(database)/documents/config/admins)
+        ? get(/databases/$(database)/documents/config/admins).data.get('uids', [])
+        : [];
+    }
+
+    function myRole() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'viewer').lower()
+        : 'viewer';
+    }
+
+    // Birim alanı olan kayıtlar: admin tümünü; diğerleri atanan birim
+    function canReadBirimKaydi() {
+      return signedIn() && (
+        isAdmin()
+        || (
+          resource.data.birim is string
+          && resource.data.birim.size() > 0
+          && hasAssignedBirim(resource.data.birim)
+        )
+      );
+    }
+
+    // İşlem kaydı: editör kendi satırını birim uyuşmasa da okuyabilir (eski/eksik birim alanı)
+    function canReadIslemKaydi() {
+      return canReadBirimKaydi()
+        || (
+          signedIn()
+          && myRole() == 'editor'
+          && resource.data.user_id == request.auth.uid
+        );
+    }
+
+    function isAdmin() {
+      return signedIn() && (request.auth.uid in adminUids() || myRole() == 'admin');
+    }
+
+    // Veri girebilenler: admin, proje_yetkilisi, editor
+    function canEnterData() {
+      return signedIn() && (myRole() in ['admin', 'proje_yetkilisi', 'editor'] || isAdmin());
+    }
+
+    // Gün kesinleştirebilenler: admin, proje_yetkilisi
+    function canFinalize() {
+      return signedIn() && (myRole() in ['admin', 'proje_yetkilisi'] || isAdmin());
+    }
+
+    function lockId(tarih, birim) {
+      return tarih + '__' + birim;
+    }
+
+    function myBirimler() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('birimler', [])
+        : [];
+    }
+
+    function hasAssignedBirim(birim) {
+      return isAdmin() || birim in myBirimler();
+    }
+
+    // Kullanıcı profili: admin, kendi kaydı veya ortak birim ataması
+    function sharesBirimWithUser(otherUid) {
+      return isAdmin()
+        || (signedIn() && request.auth.uid == otherUid)
+        || (
+          signedIn()
+          && exists(/databases/$(database)/documents/users/$(otherUid))
+          && get(/databases/$(database)/documents/users/$(otherUid)).data.get('birimler', []).hasAny(myBirimler())
+        );
+    }
+
+    // O gün/birim kilitli mi? (kesinlesen_gunler/<tarih>__<birim> dokümanı var mı)
+    function isLocked(tarih, birim) {
+      return exists(/databases/$(database)/documents/kesinlesen_gunler/$(lockId(tarih, birim)));
+    }
+
+    function unlockApproved(tarih, birim) {
+      return exists(/databases/$(database)/documents/kilit_acma_talepleri/$(lockId(tarih, birim)))
+        && get(/databases/$(database)/documents/kilit_acma_talepleri/$(lockId(tarih, birim))).data.durum == 'bekliyor_admin';
+    }
+
+    function talepCoreUnchanged() {
+      return request.resource.data.kayit_tarihi == resource.data.kayit_tarihi
+        && request.resource.data.birim == resource.data.birim
+        && request.resource.data.talep_eden_uid == resource.data.talep_eden_uid
+        && request.resource.data.gerekce == resource.data.gerekce
+        && request.resource.data.talep_at == resource.data.talep_at;
+    }
+
+    // ---------------------------------------------------------------------
+    //  Koleksiyon kuralları
+    // ---------------------------------------------------------------------
+
+    // Sayısal işlem kayıtları
+    match /islem_kayitlari/{docId} {
+      allow read: if canReadIslemKaydi();
+
+      // Oluşturma: 1 Haziran 2026+; 1–5 Haziran admin personel adına; 6 Haziran+ kendi kaydı
+      allow create: if canEnterData()
+        && request.resource.data.birim is string
+        && hasAssignedBirim(request.resource.data.birim)
+        && request.resource.data.kayit_tarihi is string
+        && request.resource.data.kayit_tarihi >= '2026-06-01'
+        && request.resource.data.islem_turu is string
+        && request.resource.data.islem_turu.size() > 0
+        && request.resource.data.islem_turu.size() < 100
+        && request.resource.data.user_id is string
+        && request.resource.data.user_id.size() > 0
+        && !isLocked(request.resource.data.kayit_tarihi, request.resource.data.birim)
+        && (
+          (request.resource.data.user_id == request.auth.uid && request.resource.data.kayit_tarihi >= '2026-06-06')
+          || (isAdmin() && request.resource.data.kayit_tarihi >= '2026-06-01')
+        );
+
+      // Güncelleme/silme: yalnızca kendi satırı ve gün kilitli değil; admin tam yetkili
+      allow update: if isAdmin() || (
+        canEnterData()
+        && resource.data.birim is string
+        && hasAssignedBirim(resource.data.birim)
+        && request.resource.data.birim == resource.data.birim
+        && resource.data.kayit_tarihi >= '2026-06-06'
+        && resource.data.user_id == request.auth.uid
+        && request.resource.data.user_id == request.auth.uid
+        && !isLocked(resource.data.kayit_tarihi, resource.data.birim)
+      );
+      allow delete: if isAdmin() || (
+        canEnterData()
+        && resource.data.birim is string
+        && hasAssignedBirim(resource.data.birim)
+        && resource.data.kayit_tarihi >= '2026-06-06'
+        && resource.data.user_id == request.auth.uid
+        && !isLocked(resource.data.kayit_tarihi, resource.data.birim)
+      );
+    }
+
+    // Gün onay zinciri (kurum onayı — günlük; birim onayı ay kapanışında ayrı koleksiyon)
+    match /gun_onaylari/{onayId} {
+      allow read: if canReadBirimKaydi();
+      allow create, update: if (canFinalize() || isAdmin())
+        && request.resource.data.birim is string
+        && hasAssignedBirim(request.resource.data.birim);
+      allow delete: if isAdmin();
+    }
+
+    // Personel izin / rapor (yıllık izin, rapor, diğer)
+    match /personel_izinleri/{izinId} {
+      allow read: if canReadBirimKaydi();
+      allow create, update: if (canFinalize() || isAdmin())
+        && request.resource.data.birim is string
+        && hasAssignedBirim(request.resource.data.birim);
+      allow delete: if (canFinalize() || isAdmin())
+        && resource.data.birim is string
+        && hasAssignedBirim(resource.data.birim);
+    }
+
+    // Ay kapanışı birim onayı (yalnızca ay kapanış sürecinde)
+    match /ay_birim_onaylari/{onayId} {
+      allow read: if canReadBirimKaydi();
+      allow create, update: if (canFinalize() || isAdmin())
+        && request.resource.data.birim is string
+        && hasAssignedBirim(request.resource.data.birim);
+      allow delete: if isAdmin();
+    }
+
+    // Ay kapanışı (muhasebe dönemi — yalnızca admin açar)
+    match /ay_kapanislari/{ayId} {
+      allow read: if signedIn();
+      allow create, update: if isAdmin() || (
+        canFinalize()
+        && request.resource.data.otomatik == true
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Kesinleştirme akış ayarları (kurum onayı zorunlu mu)
+    match /config/akis {
+      allow read:  if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Kesinleşen gün kilitleri (id: <tarih>__<birim>)
+    match /kesinlesen_gunler/{lockId} {
+      allow read: if canReadBirimKaydi();
+      // Kilitleme (manuel veya otomatik): admin / proje_yetkilisi — yalnızca atanan birim
+      allow create, update: if canFinalize()
+        && request.resource.data.birim is string
+        && hasAssignedBirim(request.resource.data.birim);
+      // Kilit açma: admin + onaylı talep; eski tarihli kilitler admin bakımında silinebilir
+      allow delete: if isAdmin() && (
+        unlockApproved(resource.data.kayit_tarihi, resource.data.birim)
+        || (resource.data.kayit_tarihi >= '2026-06-01' && resource.data.kayit_tarihi <= '2026-06-05')
+      );
+    }
+
+    // Kilit açma talepleri (editör → proje yetkilisi → admin)
+    match /kilit_acma_talepleri/{talepId} {
+      allow read: if signedIn() && (
+        isAdmin()
+        || (canFinalize() && resource.data.birim is string && hasAssignedBirim(resource.data.birim))
+        || resource.data.talep_eden_uid == request.auth.uid
+      );
+
+      allow create: if signedIn()
+        && myRole() == 'editor'
+        && request.resource.data.talep_eden_uid == request.auth.uid
+        && request.resource.data.durum == 'bekliyor_py'
+        && request.resource.data.kayit_tarihi is string
+        && request.resource.data.birim is string
+        && request.resource.data.gerekce is string
+        && request.resource.data.gerekce.size() >= 10
+        && request.resource.data.gerekce.size() <= 500
+        && request.resource.data.talep_at is string
+        && hasAssignedBirim(request.resource.data.birim)
+        && isLocked(request.resource.data.kayit_tarihi, request.resource.data.birim)
+        && !exists(/databases/$(database)/documents/kilit_acma_talepleri/$(talepId));
+
+      allow update: if signedIn() && talepCoreUnchanged() && (
+        (
+          canFinalize()
+          && hasAssignedBirim(resource.data.birim)
+          && resource.data.durum == 'bekliyor_py'
+          && request.resource.data.durum == 'bekliyor_admin'
+        )
+        || (
+          canFinalize()
+          && hasAssignedBirim(resource.data.birim)
+          && resource.data.durum == 'bekliyor_py'
+          && request.resource.data.durum == 'reddedildi'
+          && request.resource.data.py_red_nedeni is string
+          && request.resource.data.py_red_nedeni.size() >= 5
+        )
+        || (
+          resource.data.talep_eden_uid == request.auth.uid
+          && resource.data.durum == 'bekliyor_py'
+          && request.resource.data.durum == 'iptal'
+        )
+        || (
+          myRole() == 'editor'
+          && request.resource.data.talep_eden_uid == request.auth.uid
+          && resource.data.durum in ['tamamlandi', 'reddedildi', 'iptal']
+          && request.resource.data.durum == 'bekliyor_py'
+          && request.resource.data.kayit_tarihi == resource.data.kayit_tarihi
+          && request.resource.data.birim == resource.data.birim
+          && request.resource.data.gerekce is string
+          && request.resource.data.gerekce.size() >= 10
+          && isLocked(resource.data.kayit_tarihi, resource.data.birim)
+        )
+        || (
+          isAdmin()
+          && resource.data.durum == 'bekliyor_admin'
+          && (
+            request.resource.data.durum == 'tamamlandi'
+            || (
+              request.resource.data.durum == 'reddedildi'
+              && request.resource.data.admin_red_nedeni is string
+              && request.resource.data.admin_red_nedeni.size() >= 5
+            )
+          )
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // Admin listesi: giriş yapan herkes okur; yazma kapalı (Console'dan)
+    match /config/admins {
+      allow read:  if signedIn();
+      allow write: if false;
+    }
+
+    // Kurumsal duyuru bandı (tek satır metin)
+    match /config/duyuru {
+      allow read:  if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Aylık birim hedefleri (hedef–gerçekleşen)
+    match /config/hedefler {
+      allow read:  if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Birim listesi: giriş yapan herkes okur; yalnızca admin düzenler (Yönetim ekranı)
+    match /config/birimler {
+      allow read:  if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Ortak işlem kategorileri (tüm birimler)
+    match /config/kategoriler_ortak {
+      allow read:  if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Birim özel kategoriler — üst doküman + alt koleksiyon
+    match /config/_kategoriler {
+      allow read:  if signedIn();
+      allow write: if isAdmin();
+    }
+    match /config/_kategoriler/birimler/{birimId} {
+      allow read:  if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Kullanıcı profilleri: admin, kendi kaydı veya ortak birimdeki kullanıcılar
+    match /users/{userId} {
+      allow read: if signedIn() && sharesBirimWithUser(userId);
+
+      allow create: if signedIn() && request.auth.uid == userId;
+
+      // İlk giriş: kullanıcı yalnızca ad/soyad ekler; rol, birim, e-posta değişmez
+      allow update: if isAdmin() || (
+        signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.ad is string
+        && request.resource.data.ad.size() >= 2
+        && request.resource.data.ad.size() <= 80
+        && request.resource.data.soyad is string
+        && request.resource.data.soyad.size() >= 2
+        && request.resource.data.soyad.size() <= 80
+        && request.resource.data.profil_tamamlandi == true
+        && request.resource.data.get('role', 'viewer') == resource.data.get('role', 'viewer')
+        && request.resource.data.get('birimler', []) == resource.data.get('birimler', [])
+        && request.resource.data.get('email', '') == resource.data.get('email', '')
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // Denetim günlüğü (kilit açma / kesinleştirme)
+    match /audit_log/{logId} {
+      allow read: if signedIn() && (
+        isAdmin()
+        || (canFinalize() && resource.data.birim is string && hasAssignedBirim(resource.data.birim))
+      );
+      allow create: if signedIn()
+        && request.resource.data.actor_uid == request.auth.uid
+        && request.resource.data.action is string
+        && request.resource.data.birim is string
+        && request.resource.data.kayit_tarihi is string
+        && request.resource.data.at is string;
+      allow update, delete: if false;
+    }
+
+    // Tanımsız her yol kapalı
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

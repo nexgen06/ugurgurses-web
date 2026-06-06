@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profesyonel Matbaa Şablon Sistemi</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;600;800&family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- File Parsing Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar / Taskbar -->
+        <aside class="taskbar">
+            <div class="taskbar-header">
+                <h2><i class="fa-solid fa-print"></i> MatbaaPro</h2>
+                <p>Dinamik Baskı Yöneticisi</p>
+            </div>
+
+            <div class="taskbar-content">
+
+                <!-- Section: Kapak -->
+                <div class="control-group">
+                    <h3><i class="fa-solid fa-book-cover"></i> Kapak Tasarımı</h3>
+                    <div class="control-item">
+                        <label>Kitap/Belge Başlığı</label>
+                        <input type="text" id="coverTitleInput" placeholder="Örn: 2024 Faaliyet Raporu"
+                            value="Yıllık Faaliyet Raporu">
+                    </div>
+                    <div class="control-item">
+                        <label>Alt Başlık / Kurum Adı</label>
+                        <input type="text" id="coverSubtitleInput" placeholder="Şirket Adı A.Ş."
+                            value="Antigravity Matbaa A.Ş.">
+                    </div>
+                    <div class="control-item">
+                        <label>Basım Yılı</label>
+                        <input type="number" id="coverYearInput" value="2024">
+                    </div>
+                    <div class="control-item">
+                        <label>Logo Yükle</label>
+                        <input type="file" id="logoUpload" accept="image/*">
+                    </div>
+                    <div class="control-item">
+                        <label>Tema Rengi</label>
+                        <input type="color" id="themeColorInput" value="#2c3e50">
+                    </div>
+                </div>
+
+                <!-- Section: Tipografi -->
+                <div class="control-group">
+                    <h3><i class="fa-solid fa-font"></i> Tipografi</h3>
+                    <div class="control-item">
+                        <label>Yazı Tipi (Font)</label>
+                        <select id="fontFamilySelect">
+                            <option value="'Inter', sans-serif">Inter (Modern Sans)</option>
+                            <option value="'Roboto', sans-serif">Roboto (Standart)</option>
+                            <option value="'Open Sans', sans-serif">Open Sans (Okunaklı)</option>
+                            <option value="'Montserrat', sans-serif">Montserrat (Geometrik)</option>
+                            <option value="'Lora', serif">Lora (Klasik Serif)</option>
+                            <option value="'Playfair Display', serif">Playfair (Başlık Serif)</option>
+                        </select>
+                    </div>
+                    <div class="control-item">
+                        <label>Başlık Boyutu (H1-H3)</label>
+                        <input type="range" id="headerSizeSlider" min="0.8" max="2.0" step="0.1" value="1.0">
+                        <small style="color:#888; display:block; margin-top:4px;">Gövde metni başlıkları için
+                            ölçek</small>
+                    </div>
+                </div>
+
+                <!-- Section: Genel Ayarlar -->
+                <div class="control-group">
+                    <h3><i class="fa-solid fa-sliders"></i> Sayfa Düzeni</h3>
+                    <div class="control-item">
+                        <label>Üst Bilgi (Header) Metni</label>
+                        <input type="text" id="headerTextInput" placeholder="Sayfa Üst Bilgisi">
+                    </div>
+                    <div class="control-item">
+                        <label>Alt Bilgi (Footer) Metni</label>
+                        <input type="text" id="footerTextInput" placeholder="Sayfa Alt Bilgisi">
+                    </div>
+                    <div class="control-item checkbox-group">
+                        <input type="checkbox" id="pageNumbersCheck" checked>
+                        <label for="pageNumbersCheck">Sayfa Numaralarını Göster</label>
+                    </div>
+                    <div class="control-item">
+                        <label>Kenar Boşlukları (Padding)</label>
+                        <input type="range" id="marginSlider" min="10" max="50" value="20">
+                    </div>
+                </div>
+
+                <!-- Section: İçerik -->
+                <div class="control-group">
+                    <h3><i class="fa-solid fa-file-import"></i> İçerik Yönetimi</h3>
+
+                    <div class="import-buttons">
+                        <button class="btn-import" onclick="document.getElementById('fileInput').click()">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Dosya Yükle
+                            <br><small>(Word, Excel, PDF, Txt)</small>
+                        </button>
+                        <input type="file" id="fileInput" accept=".txt,.pdf,.doc,.docx,.xls,.xlsx"
+                            style="display: none;">
+                    </div>
+
+                    <div class="control-item checkbox-group">
+                        <input type="checkbox" id="showPreface" checked>
+                        <label for="showPreface">Önsöz Sayfası Ekle</label>
+                    </div>
+                    <div class="control-item checkbox-group">
+                        <input type="checkbox" id="showToc" checked>
+                        <label for="showToc">İçindekiler Tablosu Ekle</label>
+                    </div>
+                </div>
+
+                <div class="control-group action-area">
+                    <button id="printBtn" class="btn-primary"><i class="fa-solid fa-print"></i> Yazdır / PDF
+                        İndir</button>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- Preview Area -->
+        <main class="preview-area">
+            <div class="preview-toolbar">
+                <span><i class="fa-solid fa-eye"></i> Canlı Önizleme (A4)</span>
+            </div>
+
+            <div id="printContainer" class="print-container">
+
+                <!-- Page 1: Cover -->
+                <div class="a4-page cover-page" id="coverPage">
+                    <div class="brand-logo" id="previewLogo">
+                        <i class="fa-solid fa-layer-group"></i> <!-- Default Logo placeholder -->
+                    </div>
+                    <div class="cover-content">
+                        <h1 id="previewTitle">Yıllık Faaliyet Raporu</h1>
+                        <h2 id="previewSubtitle">Antigravity Matbaa A.Ş.</h2>
+                        <div class="cover-footer">
+                            <span id="previewYear">2024</span>
+                        </div>
+                    </div>
+                    <div class="decorative-stripe"></div>
+                </div>
+
+                <!-- Page 2: Preface (Optional) -->
+                <div class="a4-page content-page" id="prefacePage">
+                    <header class="page-header">Önsöz</header>
+                    <div class="page-body editable-content" contenteditable="true">
+                        <h3>Hoşgeldiniz</h3>
+                        <p>Bu şablon, matbaa sektörü için özel olarak tasarlanmıştır. Sol taraftaki panelden tüm
+                            içerikleri yönetebilirsiniz.</p>
+                        <p>Buraya kendi önsöz metninizi yazabilir veya dışarıdan dosya yükleyerek içeriği otomatik
+                            doldurabilirsiniz.</p>
+                    </div>
+                    <footer class="page-footer">
+                        <span class="footer-text">Önsöz</span>
+                        <span class="page-num">I</span>
+                    </footer>
+                </div>
+
+                <!-- Page 3: TOC (Optional) -->
+                <div class="a4-page content-page" id="tocPage">
+                    <header class="page-header">İçindekiler</header>
+                    <div class="page-body">
+                        <ul class="toc-list">
+                            <li><span>1. Giriş</span> <span class="dots">........................................</span>
+                                <span>1</span>
+                            </li>
+                            <li><span>2. Finansal Raporlar</span> <span class="dots">............................</span>
+                                <span>3</span>
+                            </li>
+                            <li><span>3. Gelecek Planları</span> <span
+                                    class="dots">...............................</span> <span>15</span></li>
+                            <li><span>4. Ekler</span> <span
+                                    class="dots">.........................................</span> <span>22</span></li>
+                        </ul>
+                    </div>
+                    <footer class="page-footer">
+                        <span class="footer-text">İçindekiler</span>
+                        <span class="page-num">II</span>
+                    </footer>
+                </div>
+
+                <!-- Page 4: Main Content -->
+                <div class="a4-page content-page" id="mainContentPage">
+                    <header class="page-header">Bölüm 1</header>
+                    <div class="page-body editable-content" contenteditable="true" id="mainBody">
+                        <h3>Ana İçerik Alanı</h3>
+                        <p>Lütfen sol menüden 'Dosya Yükle' seçeneğini kullanarak Word, Excel veya TXT içeriğinizi
+                            buraya aktarın. Alternatif olarak bu alana tıklayıp doğrudan yazmaya başlayabilirsiniz.</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                            laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <footer class="page-footer">
+                        <span class="footer-text">Rapor 2024</span>
+                        <span class="page-num">1</span>
+                    </footer>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

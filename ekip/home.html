@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uğur Gürses - Yaratıcılık & Teknoloji</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-dark: #0a0a0f;
+      --primary-deep: #0f0f1a;
+      --accent-cyan: #00f5ff;
+      --accent-purple: #8b5cf6;
+      --accent-pink: #ec4899;
+      --accent-orange: #f97316;
+      --text-primary: #ffffff;
+      --text-secondary: #a1a1aa;
+      --glass-bg: rgba(15, 15, 26, 0.7);
+      --glass-border: rgba(0, 245, 255, 0.2);
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: var(--primary-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Background Layers */
+    .bg-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-layer-1 {
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 245, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 60%);
+      animation: pulseGlow 8s ease-in-out infinite;
+    }
+
+    .bg-layer-2 {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+      animation: shiftGradient 15s ease infinite;
+    }
+
+    /* Rotating Background Scenes */
+    .bg-scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0;
+      animation: sceneRotate 20s infinite;
+      pointer-events: none;
+    }
+
+    .bg-scene.active {
+      opacity: 1;
+      z-index: 1;
+    }
+
+    @keyframes sceneRotate {
+      0%, 20% { opacity: 0; z-index: 0; }
+      5%, 15% { opacity: 1; z-index: 1; }
+      25%, 100% { opacity: 0; z-index: 0; }
+    }
+
+    /* Smooth scene transitions */
+    .bg-scene {
+      transition: opacity 2s ease-in-out;
+    }
+
+    /* Lighthouse Scene */
+    .scene-lighthouse {
+      background: 
+        linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f1a 100%),
+        radial-gradient(circle at 85% 40%, rgba(0, 245, 255, 0.3) 0%, transparent 40%);
+    }
+
+    .scene-lighthouse::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 80%;
+      width: 60px;
+      height: 200px;
+      background: linear-gradient(180deg, 
+        #4a5568 0%,
+        #2d3748 50%,
+        #1a202c 100%);
+      clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+    }
+
+    .scene-lighthouse::after {
+      content: '';
+      position: absolute;
+      bottom: 180px;
+      left: 75%;
+      width: 80px;
+      height: 40px;
+      background: #2d3748;
+      border-radius: 50% 50% 0 0;
+      box-shadow: 
+        0 -10px 20px rgba(0, 245, 255, 0.6),
+        inset 0 0 20px rgba(0, 245, 255, 0.3);
+      animation: lighthouseBeam 4s linear infinite;
+    }
+
+    @keyframes lighthouseBeam {
+      0%, 100% { 
+        box-shadow: 
+          0 -10px 20px rgba(0, 245, 255, 0.6),
+          inset 0 0 20px rgba(0, 245, 255, 0.3);
+      }
+      50% { 
+        box-shadow: 
+          0 -10px 40px rgba(0, 245, 255, 0.9),
+          inset 0 0 30px rgba(0, 245, 255, 0.5);
+      }
+    }
+
+    /* El Capitan Scene */
+    .scene-elcapitan {
+      background: 
+        linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 30%, #0f0f1a 100%);
+    }
+
+    .scene-elcapitan::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      background: 
+        linear-gradient(180deg, transparent 0%, rgba(139, 92, 246, 0.1) 100%);
+      clip-path: polygon(
+        0% 100%,
+        15% 80%,
+        25% 85%,
+        35% 60%,
+        45% 70%,
+        55% 40%,
+        65% 50%,
+        75% 30%,
+        85% 35%,
+        95% 20%,
+        100% 25%,
+        100% 100%
+      );
+    }
+
+    .scene-elcapitan::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: 
+        linear-gradient(180deg, transparent 0%, rgba(139, 92, 246, 0.15) 100%);
+      clip-path: polygon(
+        0% 100%,
+        20% 90%,
+        30% 95%,
+        40% 75%,
+        50% 80%,
+        60% 55%,
+        70% 60%,
+        80% 45%,
+        90% 50%,
+        100% 40%,
+        100% 100%
+      );
+      opacity: 0.7;
+    }
+
+    /* Everest Climber Scene - Push The Limits */
+    .scene-everest {
+      background: 
+        linear-gradient(180deg, 
+          #1a0a2e 0%,
+          #2d1b3d 20%,
+          #3d2b4d 40%,
+          #4a3a5a 60%,
+          #0f0f1a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Sky gradient - sunrise/sunset effect */
+    .scene-everest::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      background: 
+        linear-gradient(180deg, 
+          #0a0a1a 0%,
+          #1a0a2e 20%,
+          #2d1b3d 40%,
+          #4a2b5a 60%,
+          #6b4a7a 80%,
+          #8b6a9a 100%);
+      opacity: 0.8;
+    }
+
+    /* Distant mountains */
+    .scene-everest .distant-mountains {
+      position: absolute;
+      bottom: 25%;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: 
+        linear-gradient(180deg, transparent 0%, rgba(139, 92, 246, 0.15) 100%);
+      clip-path: polygon(
+        0% 100%,
+        5% 95%,
+        10% 90%,
+        15% 85%,
+        20% 80%,
+        25% 75%,
+        30% 70%,
+        35% 65%,
+        40% 60%,
+        45% 55%,
+        50% 50%,
+        55% 55%,
+        60% 60%,
+        65% 65%,
+        70% 70%,
+        75% 75%,
+        80% 80%,
+        85% 85%,
+        90% 90%,
+        95% 95%,
+        100% 100%
+      );
+      opacity: 0.6;
+    }
+
+    /* Main mountain ridge */
+    .scene-everest .main-mountain {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 70%;
+      background: 
+        linear-gradient(180deg, transparent 0%, rgba(236, 72, 153, 0.2) 100%);
+      clip-path: polygon(
+        0% 100%,
+        10% 95%,
+        20% 90%,
+        30% 85%,
+        40% 75%,
+        50% 65%,
+        60% 50%,
+        70% 35%,
+        75% 30%,
+        80% 25%,
+        85% 20%,
+        90% 15%,
+        95% 12%,
+        100% 10%,
+        100% 100%
+      );
+    }
+
+    /* Snow/ice texture overlay */
+    .scene-everest .snow-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 70%;
+      background: 
+        repeating-linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.05) 0px,
+          transparent 2px,
+          transparent 10px,
+          rgba(255, 255, 255, 0.05) 12px
+        );
+      clip-path: polygon(
+        0% 100%,
+        10% 95%,
+        20% 90%,
+        30% 85%,
+        40% 75%,
+        50% 65%,
+        60% 50%,
+        70% 35%,
+        75% 30%,
+        80% 25%,
+        85% 20%,
+        90% 15%,
+        95% 12%,
+        100% 10%,
+        100% 100%
+      );
+    }
+
+    /* Glowing arrow at summit */
+    .scene-everest .summit-arrow {
+      position: absolute;
+      top: 10%;
+      right: 10%;
+      width: 60px;
+      height: 80px;
+      animation: arrowGlow 3s ease-in-out infinite;
+    }
+
+    .scene-everest .summit-arrow::before {
+      content: '↑';
+      position: absolute;
+      font-size: 60px;
+      color: #fff;
+      text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 40px rgba(255, 200, 100, 0.6),
+        0 0 60px rgba(255, 150, 50, 0.4);
+      animation: arrowPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes arrowGlow {
+      0%, 100% { 
+        transform: translateY(0) scale(1);
+        filter: brightness(1);
+      }
+      50% { 
+        transform: translateY(-5px) scale(1.1);
+        filter: brightness(1.3);
+      }
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { 
+        opacity: 0.9;
+        transform: scale(1);
+      }
+      50% { 
+        opacity: 1;
+        transform: scale(1.15);
+      }
+    }
+
+    /* Climber */
+    .scene-everest::after {
+      content: '🧗';
+      position: absolute;
+      bottom: 30%;
+      right: 15%;
+      font-size: 50px;
+      opacity: 0.8;
+      animation: climberMove 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 15px rgba(255, 100, 50, 0.6));
+      z-index: 10;
+    }
+
+    /* Rope trail */
+    .scene-everest .climber-trail {
+      position: absolute;
+      bottom: 30%;
+      right: 15%;
+      width: 3px;
+      height: 120px;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(200, 200, 200, 0.3) 50%,
+        transparent 100%);
+      animation: trailMove 8s ease-in-out infinite;
+      transform-origin: bottom;
+    }
+
+    /* "PUSH THE LIMITS" Text */
+    .scene-everest .motivational-text {
+      position: absolute;
+      bottom: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.5),
+        0 0 40px rgba(255, 200, 100, 0.3),
+        0 4px 8px rgba(0, 0, 0, 0.5);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      animation: textGlow 4s ease-in-out infinite;
+      z-index: 10;
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 200, 100, 0.8) 50%,
+        rgba(255, 255, 255, 0.9) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% 200%;
+      animation: textGlow 4s ease-in-out infinite, gradientShift 6s ease infinite;
+    }
+
+    @keyframes textGlow {
+      0%, 100% { 
+        opacity: 0.9;
+        filter: brightness(1);
+      }
+      50% { 
+        opacity: 1;
+        filter: brightness(1.2);
+      }
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes climberMove {
+      0%, 100% { 
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.6;
+      }
+      25% { 
+        transform: translateY(-25px) translateX(8px) scale(1.1);
+        opacity: 0.8;
+      }
+      50% { 
+        transform: translateY(-50px) translateX(4px) scale(1.2);
+        opacity: 0.9;
+      }
+      75% { 
+        transform: translateY(-25px) translateX(-4px) scale(1.1);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes trailMove {
+      0%, 100% { 
+        transform: translateY(0) translateX(0);
+        opacity: 0.3;
+      }
+      25% { 
+        transform: translateY(-25px) translateX(8px);
+        opacity: 0.4;
+      }
+      50% { 
+        transform: translateY(-50px) translateX(4px);
+        opacity: 0.5;
+      }
+      75% { 
+        transform: translateY(-25px) translateX(-4px);
+        opacity: 0.4;
+      }
+    }
+
+    /* Astronaut Scene */
+    .scene-astronaut {
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(0, 245, 255, 0.1) 0%, transparent 70%),
+        linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+    }
+
+    .scene-astronaut::before {
+      content: '🌌';
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      font-size: 100px;
+      opacity: 0.4;
+      animation: starTwinkle 3s ease-in-out infinite;
+    }
+
+    .scene-astronaut::after {
+      content: '🚀';
+      position: absolute;
+      bottom: 30%;
+      right: 20%;
+      font-size: 120px;
+      opacity: 0.5;
+      animation: astronautFloat 10s ease-in-out infinite;
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.2); }
+    }
+
+    @keyframes astronautFloat {
+      0%, 100% { 
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0.5;
+      }
+      25% { 
+        transform: translateY(-30px) translateX(20px) rotate(10deg);
+        opacity: 0.7;
+      }
+      50% { 
+        transform: translateY(-50px) translateX(10px) rotate(0deg);
+        opacity: 0.6;
+      }
+      75% { 
+        transform: translateY(-30px) translateX(-10px) rotate(-10deg);
+        opacity: 0.7;
+      }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.1); }
+    }
+
+    @keyframes shiftGradient {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Wave Animation Container */
+    .wave-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      z-index: 1;
+      overflow: hidden;
+      opacity: 0.6;
+    }
+
+    .wave {
+      position: absolute;
+      width: 200%;
+      height: 100%;
+      background-repeat: repeat-x;
+      animation: waveMove 20s linear infinite;
+    }
+
+    .wave-1 {
+      background: linear-gradient(180deg, transparent, rgba(0, 245, 255, 0.1));
+      clip-path: polygon(0 60%, 100% 40%, 100% 100%, 0 100%);
+      animation-duration: 15s;
+    }
+
+    .wave-2 {
+      background: linear-gradient(180deg, transparent, rgba(139, 92, 246, 0.08));
+      clip-path: polygon(0 70%, 100% 50%, 100% 100%, 0 100%);
+      animation-duration: 20s;
+      animation-direction: reverse;
+    }
+
+    .wave-3 {
+      background: linear-gradient(180deg, transparent, rgba(236, 72, 153, 0.06));
+      clip-path: polygon(0 80%, 100% 60%, 100% 100%, 0 100%);
+      animation-duration: 25s;
+    }
+
+    @keyframes waveMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+
+    /* El Capitan Style Mountains */
+    .mountain-range {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 300px;
+      z-index: 1;
+      opacity: 0.4;
+    }
+
+    .mountain {
+      position: absolute;
+      bottom: 0;
+      width: 0;
+      height: 0;
+      border-left: 200px solid transparent;
+      border-right: 200px solid transparent;
+      border-bottom: 250px solid rgba(0, 245, 255, 0.1);
+      animation: mountainRise 3s ease-out;
+    }
+
+    .mountain:nth-child(1) {
+      left: 10%;
+      border-bottom-color: rgba(0, 245, 255, 0.12);
+      animation-delay: 0s;
+    }
+
+    .mountain:nth-child(2) {
+      left: 30%;
+      border-bottom-color: rgba(139, 92, 246, 0.1);
+      border-bottom-width: 200px;
+      animation-delay: 0.3s;
+    }
+
+    .mountain:nth-child(3) {
+      left: 50%;
+      border-bottom-color: rgba(236, 72, 153, 0.08);
+      border-bottom-width: 180px;
+      animation-delay: 0.6s;
+    }
+
+    .mountain:nth-child(4) {
+      left: 70%;
+      border-bottom-color: rgba(0, 245, 255, 0.1);
+      border-bottom-width: 220px;
+      animation-delay: 0.9s;
+    }
+
+    @keyframes mountainRise {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Particle System */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat 20s infinite;
+      box-shadow: 0 0 10px var(--accent-cyan);
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) translateX(100px) scale(1);
+        opacity: 0;
+      }
+    }
+
+    /* Tech Grid Pattern */
+    .tech-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background-image: 
+        linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridMove 20s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    /* Navigation */
+    .nav-container {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 1000;
+      display: flex;
+      gap: 15px;
+    }
+
+    .nav-btn {
+      padding: 12px 24px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav-btn:hover::before {
+      left: 100%;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 245, 255, 0.2);
+    }
+
+    /* Main Container */
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 120px 40px 80px;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      margin-bottom: 150px;
+      position: relative;
+    }
+
+    .hero-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(4rem, 12vw, 8rem);
+      font-weight: 800;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, 
+        var(--accent-cyan) 0%,
+        var(--accent-purple) 35%,
+        var(--accent-pink) 70%,
+        var(--accent-orange) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 300% 300%;
+      animation: gradientFlow 8s ease infinite;
+      letter-spacing: -4px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-name::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        var(--accent-cyan),
+        var(--accent-purple),
+        var(--accent-pink),
+        var(--accent-orange));
+      background-size: 300% 100%;
+      animation: gradientFlow 8s ease infinite;
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+
+    @keyframes gradientFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero-title {
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: var(--text-secondary);
+      margin-bottom: 15px;
+      font-weight: 300;
+      animation: fadeInUp 1s ease 0.3s both;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--accent-cyan);
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      animation: fadeInUp 1s ease 0.6s both;
+    }
+
+    .hero-tags {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+      animation: fadeInUp 1s ease 0.9s both;
+    }
+
+    .tag {
+      padding: 8px 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .tag:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Content Cards */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 40px;
+      margin-top: 100px;
+    }
+
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 50px 40px;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      animation: cardFloat 6s ease-in-out infinite;
+    }
+
+    .card:nth-child(1) { animation-delay: 0s; }
+    .card:nth-child(2) { animation-delay: 1s; }
+    .card:nth-child(3) { animation-delay: 2s; }
+
+    @keyframes cardFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 245, 255, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card:hover {
+      transform: translateY(-20px) scale(1.02);
+      border-color: var(--accent-cyan);
+      box-shadow: 
+        0 20px 60px rgba(0, 245, 255, 0.2),
+        0 0 40px rgba(139, 92, 246, 0.1);
+    }
+
+    .card-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, 
+        rgba(0, 245, 255, 0.2) 0%,
+        rgba(139, 92, 246, 0.2) 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      font-size: 36px;
+      border: 2px solid var(--glass-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-icon::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card p {
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 25px;
+      font-size: 16px;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .card-link::after {
+      content: '→';
+      transition: transform 0.3s ease;
+    }
+
+    .card-link:hover {
+      gap: 15px;
+      color: var(--accent-purple);
+    }
+
+    .card-link:hover::after {
+      transform: translateX(8px) rotate(45deg);
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      animation: bounce 2s infinite;
+    }
+
+    .scroll-indicator::before {
+      content: '';
+      width: 2px;
+      height: 30px;
+      background: linear-gradient(180deg, var(--accent-cyan), transparent);
+      border-radius: 2px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-10px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 100px 20px 60px;
+      }
+
+      .hero {
+        margin-bottom: 100px;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-top: 60px;
+      }
+
+      .card {
+        padding: 40px 30px;
+      }
+
+      .nav-container {
+        top: 20px;
+        right: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+      }
+
+      .lighthouse {
+        display: none;
+      }
+
+      .mountain-range {
+        height: 200px;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--primary-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Layers -->
+  <div class="bg-layer bg-layer-1"></div>
+  <div class="bg-layer bg-layer-2"></div>
+  <div class="tech-grid"></div>
+
+  <!-- Rotating Background Scenes -->
+  <div class="bg-scene scene-lighthouse active" data-scene="lighthouse"></div>
+  <div class="bg-scene scene-elcapitan" data-scene="elcapitan"></div>
+  <div class="bg-scene scene-everest" data-scene="everest">
+    <div class="distant-mountains"></div>
+    <div class="main-mountain"></div>
+    <div class="snow-overlay"></div>
+    <div class="summit-arrow"></div>
+    <div class="climber-trail"></div>
+    <div class="motivational-text">PUSH THE LIMITS</div>
+  </div>
+  <div class="bg-scene scene-astronaut" data-scene="astronaut"></div>
+
+  <!-- Wave Animation -->
+  <div class="wave-container">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+  </div>
+
+
+  <!-- El Capitan Style Mountains -->
+  <div class="mountain-range">
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+    <div class="mountain"></div>
+  </div>
+
+  <!-- Particle System -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Navigation -->
+  <nav class="nav-container">
+    <a href="#home" class="nav-btn">Ana Sayfa</a>
+    <a href="index.html" class="nav-btn">Projeler</a>
+    <a href="#about" class="nav-btn">Hakkımda</a>
+    <a href="#contact" class="nav-btn">İletişim</a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container">
+    <section class="hero" id="home">
+      <h1 class="hero-name">Uğur Gürses</h1>
+      <p class="hero-title">Yaratıcı Yazılım Geliştirici</p>
+      <p class="hero-subtitle">Teknoloji & İnovasyon</p>
+      <div class="hero-tags">
+        <span class="tag">Yaratıcılık</span>
+        <span class="tag">Gizem</span>
+        <span class="tag">Hız</span>
+        <span class="tag">Adaptasyon</span>
+        <span class="tag">Merak</span>
+    </div>
+    </section>
+
+    <div class="content-grid">
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h3>Devam Eden Çalışmalar</h3>
+        <p>Şu anda üzerinde çalıştığım projeler ve geliştirmeler. Hizmet Giriş Formu Simülasyon Ekranı gibi aktif projelerim burada yer alıyor.</p>
+        <a href="index.html" class="card-link">Projeyi Görüntüle</a>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">👨‍💻</div>
+        <h3>Hakkımda</h3>
+        <p>Yazılım geliştirme alanında deneyimli, modern web teknolojileri ile çalışan bir geliştiriciyim. Sürekli öğrenmeye ve yeni teknolojileri keşfetmeye açığım.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📧</div>
+        <h3>İletişim</h3>
+        <p>Projeleriniz veya işbirliği için benimle iletişime geçebilirsiniz. Web sitem üzerinden veya e-posta yoluyla ulaşabilirsiniz.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+  </div>
+
+  <script>
+    // Particle System
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 50;
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 20 + 's';
+      particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+      particle.style.width = particle.style.height = (2 + Math.random() * 3) + 'px';
+      
+      // Random color
+      const colors = ['var(--accent-cyan)', 'var(--accent-purple)', 'var(--accent-pink)'];
+      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.boxShadow = `0 0 10px ${colors[Math.floor(Math.random() * colors.length)]}`;
+      
+      particlesContainer.appendChild(particle);
+    }
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Parallax effect on scroll
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const parallaxElements = document.querySelectorAll('.bg-layer-1, .bg-layer-2');
+      
+      parallaxElements.forEach((el, index) => {
+        const speed = (index + 1) * 0.5;
+        el.style.transform = `translateY(${scrollY * speed}px)`;
+      });
+
+      // Hide scroll indicator after scrolling
+      const scrollIndicator = document.querySelector('.scroll-indicator');
+      if (scrollY > 100) {
+        scrollIndicator.style.opacity = '0';
+      } else {
+        scrollIndicator.style.opacity = '1';
+      }
+
+      lastScroll = scrollY;
+    });
+
+    // Card hover effect enhancement
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-20px) scale(1.02)`;
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
+
+    // Intersection Observer for fade-in animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(card);
+    });
+
+    // Rotating Background Scenes
+    const scenes = document.querySelectorAll('.bg-scene');
+    let currentScene = 0;
+    const sceneDuration = 5000; // 5 seconds per scene
+    const transitionDuration = 2000; // 2 seconds transition
+
+    function rotateScenes() {
+      // Remove active class from all scenes
+      scenes.forEach(scene => {
+        scene.classList.remove('active');
+        scene.style.opacity = '0';
+        scene.style.transition = `opacity ${transitionDuration}ms ease-in-out`;
+      });
+
+      // Add active class to current scene
+      scenes[currentScene].classList.add('active');
+      scenes[currentScene].style.opacity = '1';
+
+      // Move to next scene
+      currentScene = (currentScene + 1) % scenes.length;
+    }
+
+    // Start rotation
+    rotateScenes();
+    setInterval(rotateScenes, sceneDuration);
+
+    // Scene names for debugging
+    const sceneNames = ['Deniz Feneri', 'El Capitan', 'Everest Dağcısı', 'Astronot'];
+    console.log('Arkaplan görselleri döngüye başladı:', sceneNames);
+  </script>
+  <script type="module" src="js/form-options.js"></script>
+  <script type="module" src="js/form-handler.js"></script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap | Uğur Gürses</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&family=Playfair+Display:ital,wght@1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            overflow: hidden;
+            /* Prevent scrolling for the full-screen effect */
+        }
+
+        .login-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 400px;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(15, 28, 37, 0.95);
+            /* Matches --dark with opacity */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            border-top: 3px solid var(--primary);
+        }
+
+        .login-header h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--light);
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--light);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #aaa;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        .error-message.visible { display: block; }
+        .success-message {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            display: block;
+        }
+        /* Şifre sıfırlama modal */
+        .reset-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .reset-modal-overlay.open { display: flex; }
+        .reset-modal-card {
+            background: rgba(15, 28, 37, 0.98);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 28px 24px;
+            max-width: 380px;
+            width: 100%;
+            border-top: 3px solid var(--primary);
+        }
+        .reset-modal-card h3 { color: var(--light); font-size: 1.25rem; margin-bottom: 8px; }
+        .reset-modal-card p { color: #aaa; font-size: 0.85rem; margin-bottom: 20px; }
+        .reset-modal-card .form-group { margin-bottom: 16px; }
+        .reset-modal-card .btn-cancel {
+            background: transparent;
+            color: #aaa;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        .reset-modal-card .btn-cancel:hover { color: var(--light); border-color: rgba(255,255,255,0.3); }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background using existing asset -->
+    <div class="hero-slider">
+        <div class="slide active" style="background-image: url('assets/summit.png');">
+            <div class="overlay"></div>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h2>Giriş Yap</h2>
+                <p>Yönetim paneline erişmek için giriş yapın</p>
+            </div>
+
+            <div id="authError" class="error-message"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">E-posta Adresi</label>
+                    <input type="email" id="email" class="form-input" placeholder="ornek@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                    <div style="margin-top: 8px; text-align: right;">
+                        <button type="button" id="forgotPasswordLink" class="back-link" style="margin-top: 0; font-size: 0.85rem;">Şifremi unuttum</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">Giriş Yap</button>
+            </form>
+
+            <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Ana Sayfaya Dön</a>
+        </div>
+    </div>
+
+    <!-- Şifre sıfırlama modal -->
+    <div id="resetPasswordModal" class="reset-modal-overlay" aria-hidden="true">
+        <div class="reset-modal-card">
+            <h3>Şifre sıfırlama</h3>
+            <p>E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.</p>
+            <div id="resetPasswordMessage" class="error-message" role="alert"></div>
+            <form id="resetPasswordForm">
+                <div class="form-group">
+                    <label for="resetEmail">E-posta</label>
+                    <input type="email" id="resetEmail" class="form-input" placeholder="ornek@email.com" required>
+                </div>
+                <button type="submit" class="btn-login">Sıfırlama bağlantısı gönder</button>
+                <button type="button" class="btn-cancel" id="resetModalClose">İptal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module" src="js/auth.js"></script>
+</body>
+
+</html>

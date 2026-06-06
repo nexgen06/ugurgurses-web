@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="" id="base-url">
+    <script>document.getElementById('base-url').href = (function () { var p = location.pathname; return p.endsWith('/') ? location.origin + p : location.origin + p.replace(/\/[^/]+$/, '/'); })();</script>
+    <title>Uğur Gürses | Portfolyo</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&family=Playfair+Display:ital,wght@1,700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation – animasyonlu navbar + hızlı giriş paneli -->
+    <nav class="navbar" id="navbar" aria-label="Ana menü">
+        <a href="#hero" class="logo">UG</a>
+        <ul class="nav-links">
+            <li class="nav-item"><a href="#hero" class="active">Ana Sayfa</a></li>
+            <li class="nav-item"><a href="#projects">Projeler</a></li>
+            <li class="nav-item"><a href="#approach">Yaklaşım</a></li>
+            <li class="nav-item"><a href="#contact">İletişim</a></li>
+            <li class="nav-item welcome-item" id="welcomeItem" aria-live="polite" hidden>
+                <span class="welcome-pill">
+                    <i class="fa-solid fa-sparkles welcome-icon" aria-hidden="true"></i>
+                    <span class="welcome-label">Hoşgeldin,</span>
+                    <span class="welcome-email" id="welcomeEmail"></span>
+                </span>
+            </li>
+            <li class="nav-item nav-auth-item">
+                <div class="nav-auth-wrap">
+                    <a href="#" id="authLink" class="auth-link" aria-haspopup="true" aria-expanded="false"><span>Giriş
+                            Yap</span></a>
+                    <div id="quickLoginPanel" class="quick-login-panel" role="dialog" aria-label="Hızlı giriş"
+                        aria-hidden="true">
+                        <form id="loginForm" class="quick-login-form">
+                            <input type="email" id="email" class="quick-input" placeholder="E-posta" required
+                                autocomplete="email">
+                            <input type="password" id="password" class="quick-input" placeholder="Şifre" required
+                                autocomplete="current-password">
+                            <div id="authError" class="quick-login-error" aria-live="polite"></div>
+                            <button type="submit" class="btn-quick-login">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                                <span>Giriş</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Hero – resim alanı daha kullanışlı (hızlı linkler + kaydırma) -->
+    <section id="hero" class="hero-single">
+        <div class="hero-bg" style="background-image: url('assets/step.png');"></div>
+        <div class="overlay"></div>
+        <div class="hero-main">
+            <div class="content">
+                <h1 class="hero-title">Her Satırda <br> <span class="highlight">Bir Adım</span></h1>
+                <p class="hero-subtitle">Tıpkı dağcılık gibi, yazılım da sabır, strateji ve tutku gerektirir.
+                    Zirveye giden yolda kod yazıyorum, hobi projeleri geliştiriyorum ve sınırları zorluyorum.</p>
+                <div class="hero-cta">
+                    <a href="#projects" class="btn-hero btn-primary">Projelere Git</a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-utility">
+            <nav class="hero-quick-links">
+                <a href="#projects"><i class="fa-solid fa-folder-open"></i> Projeler</a>
+                <a href="#approach"><i class="fa-solid fa-lightbulb"></i> Yaklaşım</a>
+                <a href="#contact"><i class="fa-solid fa-envelope"></i> İletişim</a>
+            </nav>
+            <a href="#value" class="hero-scroll-hint" aria-label="Aşağı kaydır">
+                <span>Aşağı kaydır</span>
+                <i class="fa-solid fa-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Orta alan – bento / asimetrik tasarım -->
+    <div class="middle-zone">
+        <!-- Değer: split layout -->
+        <section id="value" class="middle-section section-value-bento">
+            <div class="bento-value">
+                <div class="bento-value-text">
+                    <span class="bento-tag">01 — Değer</span>
+                    <h2 class="bento-value-title">Karmaşık problemlere <span class="value-highlight">net çözümler</span>
+                    </h2>
+                    <p class="bento-value-desc">Özel bilgi gerektirmez; kullanımı kolay, herkesin işini büyütmek
+                        isteyenlere hitap eden araçlar geliştiriyorum.</p>
+                    <a href="#projects" class="btn-value">Projelere Göz At</a>
+                </div>
+                <div class="bento-value-visual">
+                    <div class="bento-value-card">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Projeler</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projeler: sayfa ortasında animasyonlu yatay kartlar (tümü görünsün) -->
+        <section id="projects" class="projects-section-horizontal">
+            <div class="projects-horizontal-inner">
+                <div class="projects-horizontal-header">
+                    <span class="bento-tag">02 — Çalışmalar</span>
+                    <h2 class="bento-projects-title">Projelerim</h2>
+                </div>
+                <div class="projects-cards-wrap">
+                    <button type="button" class="projects-nav-btn projects-nav-prev" aria-label="Önceki projeler">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button type="button" class="projects-nav-btn projects-nav-next" aria-label="Sonraki projeler">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <div class="projects-cards-row" id="projectsCardsRow">
+                        <a href="matbaa/index.html" target="_blank" class="project-card-h" data-project-link>
+                            <div class="card-image">
+                                <i class="fa-solid fa-print"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Dinamik Matbaa Şablonu</h3>
+                                <p>HTML/JS tabanlı, sürükle-bırak özellikli profesyonel baskı hazırlama aracı.</p>
+                                <span class="btn-project"><span>İncele</span> <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+
+                        <a href="hizmet_puani/index.html" target="_blank" class="project-card-h" data-project-link>
+                            <div class="card-image">
+                                <i class="fa-solid fa-calculator"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Hizmet Puanı Hesaplama</h3>
+                                <p>İl/ilçe hizmet puanları ve süresi, Tailwind CSS ile modern araç.</p>
+                                <span class="btn-project"><span>İncele</span> <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+
+                        <a href="hizmet_suresi/index.html" target="_blank" class="project-card-h" data-project-link>
+                            <div class="card-image">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Hizmet Süresi Hesaplama</h3>
+                                <p>Kamu, Özel, Bağkur destekli kıdem ve hizmet süresi hesaplama.</p>
+                                <span class="btn-project"><span>İncele</span> <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+
+                        <a href="ekip/index.html" target="_blank" class="project-card-h" data-project-link>
+                            <div class="card-image">
+                                <i class="fa-solid fa-users-gear"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Hizmet Giriş App</h3>
+                                <p>Supabase entegrasyonlu form uygulaması, gerçek zamanlı veri.</p>
+                                <span class="btn-project"><span>İncele</span> <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+
+                        <a href="phone/index.html" target="_blank" class="project-card-h" data-project-link>
+                            <div class="card-image">
+                                <i class="fa-solid fa-address-book"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Telefon Rehberi</h3>
+                                <p>Kurumsal rehber, departman filtreleme, Supabase entegrasyonu.</p>
+                                <span class="btn-project"><span>İncele</span> <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+
+                        <a href="Birimistatistic/dist/index.html" target="_blank" rel="noopener"
+                            class="project-card-h" data-project-link data-app="birimistatistik-v2">
+                            <div class="card-image">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Birim İstatistik</h3>
+                                <p>Firebase Auth + Firestore, günlük evrak girişi, dashboard ve kesinleştirme.</p>
+                                <span class="btn-project"><span>İncele</span> <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+
+                        <a href="sozluk/index.html" target="_blank" class="project-card-h" data-project-link>
+                            <div class="card-image">
+                                <i class="fa-solid fa-book"></i>
+                            </div>
+                            <div class="card-content">
+                                <h3>Sözlük Uygulaması</h3>
+                                <p>React tabanlı, yapay zeka destekli profesyonel sözlük oluşturma aracı.</p>
+                                <span class="btn-project"><span>İncele</span> <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Yaklaşım: bento 3 hücre -->
+        <section id="approach" class="middle-section section-approach-bento">
+            <div class="bento-approach-grid">
+                <div class="bento-approach-cell bento-approach-quote">
+                    <span class="bento-tag">03 — Yaklaşım</span>
+                    <p class="bento-quote-text">Doğru yaklaşım, <strong>kalıcı sonuçlar</strong> getirir.</p>
+                </div>
+                <div class="bento-approach-cell bento-approach-dark">
+                    <p>Kullanıcı ihtiyacına odaklanan sade çözümler; her projede erişilebilir ve sürdürülebilir yazılım.
+                    </p>
+                    <div class="bento-approach-icons">
+                        <i class="fa-solid fa-code"></i>
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        <i class="fa-solid fa-database"></i>
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="bento-approach-cell bento-approach-tech">
+                    <span class="bento-tech-main">HTML · JS · CSS</span>
+                    <span class="bento-tech-sub">Supabase · Firebase · Tailwind</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Son CTA bandı - İletişim hedefi -->
+    <section id="contact" class="cta-band">
+        <div class="cta-band-overlay"></div>
+        <div class="cta-band-content">
+            <h2 class="cta-band-title">Sınırları birlikte keşfedelim</h2>
+            <p class="cta-band-desc">Zihnin, fizik kurallarının işlemediği, yerçekimsiz tek oyun alanındır...</p>
+            <a href="#contact" class="btn-cta-band"></a>
+        </div>
+    </section>
+
+    <!-- Footer (referans: alt hızlı linkler) -->
+    <footer class="footer">
+        <nav class="footer-nav">
+            <a href="#hero">Ana Sayfa</a>
+            <a href="#projects">Projeler</a>
+            <a href="#approach">Yaklaşım</a>
+            <a href="#contact">İletişim</a>
+        </nav>
+        <p class="footer-copy">&copy; 2024 Uğur Gürses. Tüm hakları saklıdır.</p>
+    </footer>
+
+    <!-- Giriş modalı: çıkış sonrası anasayfada ortada açılır -->
+    <div id="loginModal" class="modal modal-centered" aria-hidden="true">
+        <div class="modal-content modal-login-center">
+            <span class="close-modal" aria-label="Kapat">&times;</span>
+            <div class="login-header">
+                <h2>Giriş Yap</h2>
+                <p>Tekrar giriş yapmak için bilgilerinizi girin</p>
+            </div>
+            <div id="authErrorCenter" class="error-message" aria-live="polite"></div>
+            <form id="loginFormCenter" class="login-form-center">
+                <div class="form-group">
+                    <label for="emailCenter">E-posta</label>
+                    <input type="email" id="emailCenter" class="form-input" placeholder="ornek@email.com" required
+                        autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="passwordCenter">Şifre</label>
+                    <input type="password" id="passwordCenter" class="form-input" placeholder="••••••••" required
+                        autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login">Giriş Yap</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

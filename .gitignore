@@ -1,0 +1,8 @@
+node_modules/
+Birimistatistic/node_modules/
+.env
+.env.*
+!.env.example
+ekip/.env
+.DS_Store
+*.zip

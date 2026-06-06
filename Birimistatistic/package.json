@@ -1,0 +1,31 @@
+{
+  "name": "sağlık-personeli-sicil-takip-sistemi",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/write-build-version.mjs && vite build",
+    "build:site": "npm run build",
+    "preview": "vite preview",
+    "start": "npm run build && vite preview",
+    "seed": "node scripts/seed-firestore.mjs",
+    "purge:demo": "node scripts/purge-demo-and-old-data.mjs"
+  },
+  "dependencies": {
+    "firebase": "^12.9.0",
+    "jspdf": "^4.1.0",
+    "jspdf-autotable": "^5.0.7",
+    "lucide-react": "^0.563.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.7.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

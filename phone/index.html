@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telefon Rehberi | Phone</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        /* ===== KURUMSAL TEMA – CSS Custom Properties ===== */
+        :root {
+            --color-primary: #1e40af;
+            --color-primary-hover: #1d4ed8;
+            --color-primary-light: #3b82f6;
+            --color-surface: #ffffff;
+            --color-surface-alt: #f8fafc;
+            --color-background: #f1f5f9;
+            --color-border: #e2e8f0;
+            --color-text: #0f172a;
+            --color-text-muted: #64748b;
+            --color-success: #059669;
+            --color-danger: #dc2626;
+            --color-warning: #d97706;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+            --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+            --font-sans: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            --touch-min: 44px;
+            --transition: 0.2s ease;
+        }
+
+        /* Reset & Base – güncel özellikler */
+        *, *::before, *::after { box-sizing: border-box; }
+        html {
+            -webkit-text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--color-background);
+            color: var(--color-text);
+            font-family: var(--font-sans);
+            font-size: clamp(0.9375rem, 1vw + 0.875rem, 1rem);
+            line-height: 1.5;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: 0.01ms !important; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* Kurumsal panel / cam efektleri (hafif) */
+        .glass {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+        .glass-strong {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Scrollbar – kurumsal */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--color-surface-alt); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Odak – erişilebilirlik (focus-visible) */
+        :focus { outline: none; }
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+        button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        /* Kişi kartı – kurumsal, sade */
+        .contact-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow var(--transition), border-color var(--transition);
+        }
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            inset-inline-start: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--color-primary);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .contact-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--color-primary-light);
+        }
+        .contact-card:hover::before { opacity: 1; }
+
+        /* Mobil menü */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.25s ease;
+            background: var(--color-surface);
+            border-inline-end: 1px solid var(--color-border);
+            box-shadow: var(--shadow-lg);
+        }
+        .mobile-menu.open { transform: translateX(0); }
+
+        /* Yükleme */
+        .spinner {
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Başlık vurgusu (gradient-text sınıfı korunuyor) */
+        .gradient-text {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        /* Birincil buton – kurumsal */
+        .btn-gradient {
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+            box-shadow: var(--shadow-sm);
+            transition: background var(--transition), box-shadow var(--transition);
+        }
+        .btn-gradient:hover {
+            background: var(--color-primary-hover);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-gradient:active { background: #1e3a8a; }
+
+        /* Arama kutusu odak */
+        .search-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+        }
+
+        /* Departman filtresi */
+        .dept-filter {
+            transition: background var(--transition), color var(--transition);
+        }
+        .dept-filter:hover { background: var(--color-surface-alt); }
+        .dept-filter.active, .dept-filter[aria-pressed="true"] {
+            background: var(--color-primary);
+            color: #fff;
+        }
+
+        /* Avatar – sade vurgu */
+        .avatar-glow {
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--transition);
+        }
+        .contact-card:hover .avatar-glow {
+            box-shadow: 0 0 0 2px var(--color-primary-light);
+        }
+
+        /* Animasyonlar (isteğe bağlı) */
+        .float-animation {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Dokunmatik hedefler – minimum yükseklik */
+        .phone-touch-target {
+            min-height: var(--touch-min);
+            min-width: var(--touch-min);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Modal overlay – güncel */
+        .phone-modal-overlay {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Form alanları – tutarlı görünüm */
+        .phone-input, .phone-select {
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: var(--color-surface);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        .phone-input:focus, .phone-select:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+        }
+    </style>
+</head>
+<body class="min-h-screen antialiased">
+    
+    <!-- Navigation (Mobil) -->
+    <nav class="lg:hidden glass-strong sticky top-0 z-50 border-b border-slate-200" aria-label="Ana menü">
+        <div class="flex items-center justify-between p-4 gap-3">
+            <h1 class="text-xl font-bold gradient-text truncate">📞 Telefon Rehberi</h1>
+            <div class="flex items-center gap-2 shrink-0">
+                <button id="mobileAddKurumBtn" type="button" class="phone-touch-target glass rounded-xl text-slate-700" aria-label="Kurum ekle">
+                    <i data-lucide="building-2" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+                <button id="mobileAddContactBtn" type="button" class="phone-touch-target btn-gradient text-white rounded-xl" aria-label="Yeni kişi ekle">
+                    <i data-lucide="user-plus" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+                <button id="mobileMenuBtn" type="button" class="phone-touch-target glass rounded-xl" aria-label="Menüyü aç">
+                    <i data-lucide="menu" class="w-5 h-5 text-slate-700" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 w-72 max-w-[85vw] glass-strong z-50 overflow-y-auto" role="dialog" aria-label="Menü">
+            <div class="p-4 border-b border-slate-200">
+                <div class="flex items-center justify-between gap-3">
+                    <h2 class="text-base font-bold gradient-text">Menü</h2>
+                    <button id="closeMobileMenu" type="button" class="phone-touch-target glass rounded-xl" aria-label="Menüyü kapat">
+                        <i data-lucide="x" class="w-5 h-5 text-slate-700" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobileMenuOverlay" class="hidden fixed inset-0 phone-modal-overlay z-40" aria-hidden="true"></div>
+    </nav>
+    
+    <!-- Main Container -->
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar (Masaüstü) -->
+        <aside class="hidden lg:flex lg:flex-col lg:w-72 glass-strong border-r border-slate-200 shrink-0" aria-label="Filtreler ve kullanıcı">
+            <div class="p-4 border-b border-slate-200">
+                <h1 class="text-lg font-bold gradient-text">📞 Telefon Rehberi</h1>
+                <p class="text-xs text-slate-500 mt-0.5">Kurumsal İletişim</p>
+                <button type="button" id="sidebarAddContactBtn" class="mt-4 w-full min-h-[44px] px-4 py-3 btn-gradient text-white rounded-xl font-semibold flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>Yeni Kişi Ekle</span>
+                </button>
+                <button type="button" id="sidebarAddKurumBtn" class="mt-3 w-full min-h-[44px] px-4 py-3 glass text-slate-700 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm hover:bg-slate-100">
+                    <i data-lucide="building-2" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>Kurum Ekle</span>
+                </button>
+                <p id="sidebarKurumCount" class="text-xs text-slate-500 mt-1.5" aria-live="polite">Kayıtlı kurum: 0</p>
+            </div>
+            
+            <div class="flex-1 min-h-0"></div>
+            
+            <div class="p-4 border-t border-slate-200 shrink-0">
+                <div class="glass rounded-xl p-4 mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="relative shrink-0">
+                            <div class="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center text-white">
+                                <i data-lucide="user" class="w-5 h-5" aria-hidden="true"></i>
+                            </div>
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" aria-hidden="true"></span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p id="userEmail" class="text-sm font-semibold text-slate-900 truncate">Kullanıcı</p>
+                            <p class="text-xs text-slate-500">Çevrimiçi</p>
+                        </div>
+                    </div>
+                    <div id="dbStatus" class="mt-2 pt-2 border-t border-slate-100 text-xs hidden">
+                        <div class="flex items-center gap-2">
+                            <span id="dbStatusIcon" class="w-2 h-2 rounded-full"></span>
+                            <span id="dbStatusText" class="text-slate-600"></span>
+                        </div>
+                    </div>
+                </div>
+                <button id="logoutBtn" type="button" class="w-full min-h-[44px] px-4 py-3 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                    <i data-lucide="log-out" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>Çıkış Yap</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Ana İçerik -->
+        <main class="flex-1 flex flex-col overflow-hidden min-w-0">
+            
+            <header class="glass-strong border-b border-slate-200 p-4 lg:p-5">
+                <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div class="flex-1 relative">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400" aria-hidden="true">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </span>
+                        <input 
+                            type="search" 
+                            id="searchInput" 
+                            placeholder="İsim, departman veya kurum ara..." 
+                            class="search-input phone-input w-full pl-12 pr-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]"
+                            aria-label="Kişi ara"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <button 
+                        id="addContactBtn" 
+                        type="button"
+                        class="btn-gradient flex items-center justify-center gap-2 px-5 py-3 text-white rounded-xl font-semibold min-h-[44px] shrink-0"
+                    >
+                        <i data-lucide="user-plus" class="w-5 h-5" aria-hidden="true"></i>
+                        <span class="hidden sm:inline">Yeni Kişi Ekle</span>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="flex-1 overflow-y-auto p-4 lg:p-6">
+                <div class="max-w-6xl mx-auto">
+                    
+                    <div id="loadingState" class="hidden flex items-center justify-center py-24" aria-live="polite">
+                        <div class="spinner" aria-hidden="true"></div>
+                    </div>
+                    
+                    <section id="emptyState" class="hidden text-center py-16 lg:py-24" aria-label="Sonuç yok">
+                        <div class="glass rounded-2xl p-8 lg:p-12 max-w-md mx-auto">
+                            <i data-lucide="users" class="w-16 h-16 text-slate-300 mx-auto mb-4" aria-hidden="true"></i>
+                            <h2 class="text-xl font-bold text-slate-800 mb-2">Sonuç bulunamadı</h2>
+                            <p class="text-slate-600">Arama kriterlerinize uygun kişi bulunamadı.</p>
+                        </div>
+                    </section>
+                    
+                    <section id="contactsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5" role="list" aria-label="Kişi listesi">
+                        <!-- Kişi kartları buraya yüklenecek -->
+                    </section>
+                    
+                </div>
+            </div>
+            
+        </main>
+    </div>
+    
+    <!-- Kişi Ekle/Düzenle Modal -->
+    <div id="contactModal" class="hidden fixed inset-0 phone-modal-overlay z-[60] flex items-center justify-center p-4" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 lg:p-8 max-h-[90vh] overflow-y-auto border border-slate-200">
+            <div class="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
+                <h2 id="contactModalTitle" class="text-xl font-bold text-slate-900">Yeni Kişi Ekle</h2>
+                <button id="closeContactModal" type="button" class="phone-touch-target glass rounded-xl text-slate-600 hover:bg-slate-100" aria-label="Kapat">
+                    <i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+            </div>
+            
+            <div id="contactError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm" role="alert"></div>
+            <div id="contactSuccess" class="hidden mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-sm" role="status"></div>
+            
+            <form id="contactForm" class="space-y-5">
+                <input type="hidden" id="contactId" value="">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="contactName" class="block text-sm font-semibold text-slate-700 mb-1.5">Ad Soyad <span class="text-red-600">*</span></label>
+                        <input type="text" id="contactName" required class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="Ahmet Yılmaz">
+                    </div>
+                    <div>
+                        <label for="contactTitle" class="block text-sm font-semibold text-slate-700 mb-1.5">Unvan</label>
+                        <input type="text" id="contactTitle" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="Genel Müdür">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="contactDepartment" class="block text-sm font-semibold text-slate-700 mb-1.5">Departman</label>
+                        <select id="contactDepartment" class="phone-select phone-input w-full px-4 py-3 rounded-xl text-slate-900 min-h-[44px]">
+                            <option value="">Seçiniz...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="contactExtension" class="block text-sm font-semibold text-slate-700 mb-1.5">Dahili No</label>
+                        <input type="text" id="contactExtension" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="1001">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="contactKurum" class="block text-sm font-semibold text-slate-700 mb-1.5">Kurum</label>
+                    <input type="text" id="contactKurum" list="contactKurumList" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="Kurum adı girin veya listeden seçin" autocomplete="off">
+                    <datalist id="contactKurumList"></datalist>
+                </div>
+                
+                <div>
+                    <label for="contactEmail" class="block text-sm font-semibold text-slate-700 mb-1.5">E-posta</label>
+                    <input type="email" id="contactEmail" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="ornek@firma.com">
+                </div>
+                
+                <div>
+                    <label for="contactPhone" class="block text-sm font-semibold text-slate-700 mb-1.5">Telefon</label>
+                    <input type="tel" id="contactPhone" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="+90 555 123 4567">
+                </div>
+                
+                <div class="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-slate-200">
+                    <button type="button" id="cancelContactBtn" class="min-h-[44px] px-5 py-3 glass text-slate-700 rounded-xl font-semibold hover:bg-slate-100">
+                        İptal
+                    </button>
+                    <button type="submit" id="saveContactBtn" class="min-h-[44px] px-6 py-3 btn-gradient text-white rounded-xl font-semibold">
+                        Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Kurum Ekle/Düzenle Modal -->
+    <div id="kurumModal" class="hidden fixed inset-0 phone-modal-overlay z-[60] flex items-center justify-center p-4" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="kurumModalTitle">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 lg:p-8 max-h-[90vh] overflow-y-auto border border-slate-200">
+            <div class="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
+                <h2 id="kurumModalTitle" class="text-xl font-bold text-slate-900">Yeni Kurum Ekle</h2>
+                <button id="closeKurumModal" type="button" class="phone-touch-target glass rounded-xl text-slate-600 hover:bg-slate-100" aria-label="Kapat">
+                    <i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div id="kurumError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm" role="alert"></div>
+            <div id="kurumSuccess" class="hidden mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-sm" role="status"></div>
+            <form id="kurumForm" class="space-y-5">
+                <input type="hidden" id="kurumId" value="">
+                <div>
+                    <label for="kurumName" class="block text-sm font-semibold text-slate-700 mb-1.5">Kurum Adı <span class="text-red-600">*</span></label>
+                    <input type="text" id="kurumName" required class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="Örn: ABC Holding">
+                </div>
+                <div>
+                    <label for="kurumCode" class="block text-sm font-semibold text-slate-700 mb-1.5">Kurum Kodu / No</label>
+                    <input type="text" id="kurumCode" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="Örn: KRM-001">
+                </div>
+                <div>
+                    <label for="kurumAddress" class="block text-sm font-semibold text-slate-700 mb-1.5">Adres</label>
+                    <textarea id="kurumAddress" rows="2" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="Kurum adresi"></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="kurumPhone" class="block text-sm font-semibold text-slate-700 mb-1.5">Telefon</label>
+                        <input type="tel" id="kurumPhone" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="+90 212 555 0000">
+                    </div>
+                    <div>
+                        <label for="kurumEmail" class="block text-sm font-semibold text-slate-700 mb-1.5">E-posta</label>
+                        <input type="email" id="kurumEmail" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="info@kurum.com">
+                    </div>
+                </div>
+                <div>
+                    <label for="kurumNote" class="block text-sm font-semibold text-slate-700 mb-1.5">Not</label>
+                    <textarea id="kurumNote" rows="2" class="phone-input w-full px-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]" placeholder="Ek notlar"></textarea>
+                </div>
+                <div class="flex flex-wrap items-center justify-end gap-3 pt-6 border-t border-slate-200">
+                    <button type="button" id="cancelKurumBtn" class="min-h-[44px] px-5 py-3 glass text-slate-700 rounded-xl font-semibold hover:bg-slate-100">İptal</button>
+                    <button type="submit" id="saveKurumBtn" class="min-h-[44px] px-6 py-3 btn-gradient text-white rounded-xl font-semibold">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Silme Onay Modal -->
+    <div id="deleteModal" class="hidden fixed inset-0 phone-modal-overlay z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <div class="glass-strong rounded-2xl shadow-xl max-w-md w-full p-6 lg:p-8 border border-slate-200">
+            <div class="flex items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200">
+                <h2 id="deleteModalTitle" class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500" aria-hidden="true"></i>
+                    Kişiyi Sil
+                </h2>
+                <button id="closeDeleteModal" type="button" class="phone-touch-target glass rounded-xl text-slate-600 hover:bg-slate-100" aria-label="Kapat">
+                    <i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+            </div>
+            <p class="text-slate-700 mb-1">
+                <span id="deleteContactName" class="font-semibold text-slate-900"></span> adlı kişiyi silmek istediğinize emin misiniz?
+            </p>
+            <p class="text-slate-500 text-sm mb-6">Bu işlem geri alınamaz.</p>
+            <div class="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-slate-200">
+                <button type="button" id="cancelDeleteBtn" class="min-h-[44px] px-5 py-3 glass text-slate-700 rounded-xl font-semibold hover:bg-slate-100">İptal</button>
+                <button type="button" id="confirmDeleteBtn" class="min-h-[44px] px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold">Sil</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Registration Modal -->
+    <div id="registerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 lg:p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-slate-900">Kayıt Ol</h2>
+                <button id="closeRegisterModal" class="p-2 hover:bg-slate-100 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5 text-slate-700"></i>
+                </button>
+            </div>
+            
+            <div id="registerError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"></div>
+            <div id="registerSuccess" class="hidden mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm"></div>
+            
+            <form id="registerForm" class="space-y-4">
+                <div>
+                    <label for="regEmail" class="block text-sm font-medium text-slate-700 mb-2">E-posta Adresi</label>
+                    <input 
+                        type="email" 
+                        id="regEmail" 
+                        required 
+                        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        placeholder="ornek@email.com"
+                    >
+                </div>
+                
+                <div>
+                    <label for="regPassword" class="block text-sm font-medium text-slate-700 mb-2">Şifre</label>
+                    <input 
+                        type="password" 
+                        id="regPassword" 
+                        required 
+                        minlength="6"
+                        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        placeholder="En az 6 karakter"
+                    >
+                </div>
+                
+                <div>
+                    <label for="regPasswordConfirm" class="block text-sm font-medium text-slate-700 mb-2">Şifre Tekrar</label>
+                    <input 
+                        type="password" 
+                        id="regPasswordConfirm" 
+                        required 
+                        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        placeholder="Şifrenizi tekrar girin"
+                    >
+                </div>
+                
+                <button 
+                    type="submit" 
+                    id="registerSubmitBtn"
+                    class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                    Kayıt Ol
+                </button>
+            </form>
+            
+            <p class="mt-4 text-sm text-center text-slate-600">
+                Zaten hesabınız var mı? 
+                <a href="../login.html" class="text-indigo-600 hover:text-indigo-700 font-medium">Giriş Yap</a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // ===== SUPABASE CONFIGURATION =====
+        // NOT: Production'da bu değerler environment variable'lardan alınmalıdır
+        const SUPABASE_URL = 'https://zqswcmeajmmrrcecuhwb.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxc3djbWVham1tcnJjZWN1aHdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTMyOTEsImV4cCI6MjA4NTE2OTI5MX0.F5csMnAZMhTo7j1QVNOlXAGQ6bsHb5oK62wnsLjSx9c';
+        
+        // Supabase client oluştur
+        // CDN'den yüklenen supabase-js kütüphanesi global olarak mevcut
+        let supabaseClient = null;
+        try {
+            // Supabase kütüphanesinin yüklendiğini ve URL/KEY'lerin geçerli olduğunu kontrol et
+            if (typeof supabase !== 'undefined' && 
+                SUPABASE_URL && 
+                SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN' &&
+                SUPABASE_URL.startsWith('https://') &&
+                SUPABASE_ANON_KEY && 
+                SUPABASE_ANON_KEY !== 'BURAYA_SUPABASE_ANON_KEYINIZI_YAZIN' &&
+                SUPABASE_ANON_KEY.length > 50) {
+                
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase client başarıyla oluşturuldu');
+                console.log('📍 URL:', SUPABASE_URL);
+            } else {
+                console.warn('⚠️ Supabase yapılandırılmamış - Demo modunda çalışılıyor');
+                if (!SUPABASE_URL || SUPABASE_URL === 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
+                    console.warn('⚠️ SUPABASE_URL yapılandırılmamış');
+                }
+                if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'BURAYA_SUPABASE_ANON_KEYINIZI_YAZIN') {
+                    console.warn('⚠️ SUPABASE_ANON_KEY yapılandırılmamış');
+                }
+                if (typeof supabase === 'undefined') {
+                    console.warn('⚠️ Supabase JS kütüphanesi yüklenmemiş');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Supabase client oluşturulamadı:', error);
+            console.error('Hata detayları:', {
+                message: error.message,
+                stack: error.stack
+            });
+        }
+        
+        // ===== VERİTABANI BAĞLANTI TESTİ =====
+        async function testDatabaseConnection() {
+            console.log('🔍 Veritabanı bağlantısı test ediliyor...');
+            
+            // 1. Supabase client kontrolü
+            if (!supabaseClient) {
+                console.error('❌ Supabase client oluşturulmamış!');
+                
+                // Görsel durum güncelleme (client yok)
+                if (dbStatus && dbStatusIcon && dbStatusText) {
+                    dbStatus.classList.remove('hidden');
+                    dbStatus.classList.add('bg-yellow-50', 'border', 'border-yellow-200');
+                    dbStatusIcon.classList.add('bg-yellow-500');
+                    dbStatusText.textContent = 'Demo Modu (LocalStorage)';
+                    dbStatusText.classList.add('text-yellow-700');
+                }
+                
+                return {
+                    success: false,
+                    error: 'Supabase client oluşturulmamış. API anahtarlarını kontrol edin.'
+                };
+            }
+            
+            console.log('✅ Supabase client mevcut');
+            console.log('📍 URL:', SUPABASE_URL);
+            console.log('🔑 Anon Key:', SUPABASE_ANON_KEY.substring(0, 20) + '...');
+            
+            try {
+                // 2. Basit bir sorgu ile bağlantıyı test et
+                console.log('📡 Veritabanı sorgusu gönderiliyor...');
+                const { data, error, status } = await supabaseClient
+                    .from('contacts')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) {
+                    console.error('❌ Veritabanı hatası:', error);
+                    
+                    // Görsel durum güncelleme (hata)
+                    if (dbStatus && dbStatusIcon && dbStatusText) {
+                        dbStatus.classList.remove('hidden');
+                        dbStatus.classList.add('bg-red-50', 'border', 'border-red-200');
+                        dbStatusIcon.classList.add('bg-red-500');
+                        dbStatusText.textContent = `Bağlantı Hatası: ${error.message.substring(0, 30)}...`;
+                        dbStatusText.classList.add('text-red-700');
+                    }
+                    
+                    return {
+                        success: false,
+                        error: error.message,
+                        code: error.code,
+                        details: error
+                    };
+                }
+                
+                console.log('✅ Veritabanı bağlantısı başarılı!');
+                console.log('📊 Durum kodu:', status);
+                
+                // 3. Tablo varlığını kontrol et
+                const { data: tableData, error: tableError } = await supabaseClient
+                    .from('contacts')
+                    .select('id')
+                    .limit(1);
+                
+                if (tableError) {
+                    if (tableError.code === 'PGRST116') {
+                        console.warn('⚠️ "contacts" tablosu bulunamadı! Tabloyu oluşturmanız gerekiyor.');
+                        
+                        // Görsel durum güncelleme (tablo yok)
+                        if (dbStatus && dbStatusIcon && dbStatusText) {
+                            dbStatus.classList.remove('hidden');
+                            dbStatus.classList.add('bg-orange-50', 'border', 'border-orange-200');
+                            dbStatusIcon.classList.add('bg-orange-500');
+                            dbStatusText.textContent = 'Tablo Bulunamadı';
+                            dbStatusText.classList.add('text-orange-700');
+                        }
+                        
+                        return {
+                            success: false,
+                            error: 'contacts tablosu bulunamadı',
+                            code: tableError.code,
+                            solution: 'SQL Editor\'de contacts tablosunu oluşturun'
+                        };
+                    }
+                    console.error('❌ Tablo kontrolü hatası:', tableError);
+                    return {
+                        success: false,
+                        error: tableError.message,
+                        code: tableError.code
+                    };
+                }
+                
+                console.log('✅ "contacts" tablosu mevcut');
+                
+                // 4. RLS kontrolü
+                const { data: rlsData, error: rlsError } = await supabaseClient
+                    .from('contacts')
+                    .select('*')
+                    .limit(1);
+                
+                if (rlsError) {
+                    if (rlsError.code === '42501' || rlsError.message.includes('row-level security')) {
+                        console.warn('⚠️ RLS politikası hatası! RLS politikalarını kontrol edin.');
+                        
+                        // Görsel durum güncelleme (RLS hatası)
+                        if (dbStatus && dbStatusIcon && dbStatusText) {
+                            dbStatus.classList.remove('hidden');
+                            dbStatus.classList.add('bg-orange-50', 'border', 'border-orange-200');
+                            dbStatusIcon.classList.add('bg-orange-500');
+                            dbStatusText.textContent = 'RLS Politikası Hatası';
+                            dbStatusText.classList.add('text-orange-700');
+                        }
+                        
+                        return {
+                            success: false,
+                            error: 'RLS politikası hatası',
+                            code: rlsError.code,
+                            solution: 'RLS politikalarını SQL Editor\'de oluşturun'
+                        };
+                    }
+                }
+                
+                console.log('✅ RLS politikaları çalışıyor');
+                
+                // 5. Toplam kayıt sayısını al
+                const { count, error: countError } = await supabaseClient
+                    .from('contacts')
+                    .select('*', { count: 'exact', head: true });
+                
+                console.log('📊 Toplam kayıt sayısı:', count || 0);
+                
+                // Görsel durum güncelleme
+                if (dbStatus && dbStatusIcon && dbStatusText) {
+                    dbStatus.classList.remove('hidden');
+                    dbStatus.classList.add('bg-green-50', 'border', 'border-green-200');
+                    dbStatusIcon.classList.add('bg-green-500');
+                    dbStatusText.textContent = `Supabase Bağlı (${count || 0} kayıt)`;
+                    dbStatusText.classList.add('text-green-700');
+                }
+                
+                return {
+                    success: true,
+                    message: 'Veritabanı bağlantısı başarılı!',
+                    tableExists: true,
+                    rlsEnabled: true,
+                    recordCount: count || 0,
+                    url: SUPABASE_URL
+                };
+                
+            } catch (error) {
+                console.error('❌ Beklenmeyen hata:', error);
+                
+                // Görsel durum güncelleme (hata)
+                if (dbStatus && dbStatusIcon && dbStatusText) {
+                    dbStatus.classList.remove('hidden');
+                    dbStatus.classList.add('bg-red-50', 'border', 'border-red-200');
+                    dbStatusIcon.classList.add('bg-red-500');
+                    dbStatusText.textContent = 'Bağlantı Hatası';
+                    dbStatusText.classList.add('text-red-700');
+                }
+                
+                return {
+                    success: false,
+                    error: error.message || 'Bilinmeyen hata',
+                    details: error
+                };
+            }
+        }
+        
+        // Manuel test butonu (geliştirme için)
+        window.testDatabase = testDatabaseConnection;
+        
+        // Sayfa yüklendiğinde otomatik test et
+        window.addEventListener('load', async () => {
+            // 2 saniye bekle (Supabase kütüphanesinin yüklenmesi için)
+            setTimeout(async () => {
+                const result = await testDatabaseConnection();
+                
+                // Sonuçları görsel olarak göster
+                if (result.success) {
+                    console.log('%c✅ VERİTABANI BAĞLANTISI BAŞARILI!', 'color: green; font-weight: bold; font-size: 14px;');
+                    console.log('📊 Kayıt sayısı:', result.recordCount);
+                } else {
+                    console.error('%c❌ VERİTABANI BAĞLANTI HATASI!', 'color: red; font-weight: bold; font-size: 14px;');
+                    console.error('Hata:', result.error);
+                    if (result.solution) {
+                        console.warn('💡 Çözüm:', result.solution);
+                    }
+                }
+            }, 2000);
+        });
+        
+        // ===== VERİ DİZİSİ =====
+        // Başlangıçta boş dizi - veriler Supabase'den veya localStorage'dan yüklenecek
+        const contacts = [];
+        const kurumlar = []; // Kurumlar (Kurum Adı, Kod, Adres, Telefon, E-posta, Not)
+        
+        // ===== STATE MANAGEMENT =====
+        let filteredContacts = [...contacts];
+        let selectedDepartment = 'all';
+        let searchQuery = '';
+        let currentUser = null;
+        let currentUserId = null; // Firebase kullanıcı ID'si
+        let contactToDelete = null;
+        
+        // ===== KULLANICI ID ALMA FONKSİYONU =====
+        async function getCurrentUserId() {
+            // Önce Firebase'den kullanıcı ID'sini al
+            try {
+                const firebaseModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
+                    authDomain: "mulakat-takip-sistemi.firebaseapp.com",
+                    projectId: "mulakat-takip-sistemi",
+                    storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
+                    messagingSenderId: "1050671861081",
+                    appId: "1:1050671861081:web:1e41fc9305731961809048"
+                };
+                
+                const app = firebaseModule.initializeApp(firebaseConfig);
+                const auth = authModule.getAuth(app);
+                
+                return new Promise((resolve) => {
+                    authModule.onAuthStateChanged(auth, (user) => {
+                        if (user && user.uid) {
+                            currentUserId = user.uid;
+                            console.log('✅ Kullanıcı ID alındı:', user.uid);
+                            resolve(user.uid);
+                        } else {
+                            console.warn('⚠️ Kullanıcı ID alınamadı');
+                            resolve(null);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Firebase kullanıcı ID alma hatası:', error);
+                return null;
+            }
+        }
+        
+        // ===== DOM ELEMENTS =====
+        const searchInput = document.getElementById('searchInput');
+        const contactsGrid = document.getElementById('contactsGrid');
+        const departmentFilters = document.getElementById('departmentFilters');
+        const mobileDepartmentFilters = document.getElementById('mobileDepartmentFilters');
+        const emptyState = document.getElementById('emptyState');
+        const loadingState = document.getElementById('loadingState');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const registerModal = document.getElementById('registerModal');
+        const registerForm = document.getElementById('registerForm');
+        const registerError = document.getElementById('registerError');
+        const registerSuccess = document.getElementById('registerSuccess');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userEmail = document.getElementById('userEmail');
+        const dbStatus = document.getElementById('dbStatus');
+        const dbStatusIcon = document.getElementById('dbStatusIcon');
+        const dbStatusText = document.getElementById('dbStatusText');
+        const addContactBtn = document.getElementById('addContactBtn');
+        const mobileAddContactBtn = document.getElementById('mobileAddContactBtn');
+        const contactModal = document.getElementById('contactModal');
+        
+        // Debug: Butonların varlığını kontrol et
+        if (!addContactBtn) {
+            console.error('addContactBtn bulunamadı!');
+        }
+        if (!mobileAddContactBtn) {
+            console.error('mobileAddContactBtn bulunamadı!');
+        }
+        if (!contactModal) {
+            console.error('contactModal bulunamadı!');
+        }
+        const contactForm = document.getElementById('contactForm');
+        const contactModalTitle = document.getElementById('contactModalTitle');
+        const closeContactModal = document.getElementById('closeContactModal');
+        const cancelContactBtn = document.getElementById('cancelContactBtn');
+        const contactError = document.getElementById('contactError');
+        const contactSuccess = document.getElementById('contactSuccess');
+        const deleteModal = document.getElementById('deleteModal');
+        const closeDeleteModal = document.getElementById('closeDeleteModal');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const kurumModal = document.getElementById('kurumModal');
+        const kurumForm = document.getElementById('kurumForm');
+        const kurumModalTitle = document.getElementById('kurumModalTitle');
+        const closeKurumModal = document.getElementById('closeKurumModal');
+        const cancelKurumBtn = document.getElementById('cancelKurumBtn');
+        const kurumError = document.getElementById('kurumError');
+        const kurumSuccess = document.getElementById('kurumSuccess');
+        
+        // ===== INITIALIZE LUCIDE ICONS =====
+        lucide.createIcons();
+        
+        // ===== AUTHENTICATION CHECK =====
+        async function checkAuth() {
+            // Önce Firebase kontrolü yap (login.html'den gelen kullanıcılar için)
+            try {
+                // Firebase kontrolü
+                const firebaseModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
+                    authDomain: "mulakat-takip-sistemi.firebaseapp.com",
+                    projectId: "mulakat-takip-sistemi",
+                    storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
+                    messagingSenderId: "1050671861081",
+                    appId: "1:1050671861081:web:1e41fc9305731961809048"
+                };
+                
+                const app = firebaseModule.initializeApp(firebaseConfig);
+                const auth = authModule.getAuth(app);
+                
+                // Firebase auth state kontrolü
+                return new Promise((resolve) => {
+                    authModule.onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            // Firebase kullanıcısı var
+                            currentUser = user;
+                            currentUserId = user.uid; // Kullanıcı ID'sini kaydet
+                            userEmail.textContent = user.email || 'Kullanıcı';
+                            console.log('✅ Kullanıcı ID kaydedildi:', user.uid);
+                            resolve(true);
+                        } else {
+                            // Firebase kullanıcısı yok, Supabase kontrolü yap
+                            checkSupabaseAuth().then(resolve);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.warn('Firebase kontrolü başarısız, Supabase kontrolü yapılıyor:', error);
+                return checkSupabaseAuth();
+            }
+        }
+        
+        // ===== SUPABASE AUTHENTICATION CHECK =====
+        async function checkSupabaseAuth() {
+            // Eğer Supabase yapılandırılmamışsa, demo modunda çalış
+            if (!supabaseClient || SUPABASE_URL === 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
+                console.warn('Supabase yapılandırılmamış. Demo modunda çalışılıyor.');
+                // LocalStorage'dan kullanıcı kontrolü
+                const savedUser = localStorage.getItem('phone_user');
+                if (savedUser) {
+                    currentUser = JSON.parse(savedUser);
+                    userEmail.textContent = currentUser.email || 'Kullanıcı';
+                    return true;
+                } else {
+                    // İlk kullanımda kayıt modalını göster
+                    setTimeout(() => {
+                        registerModal.classList.remove('hidden');
+                    }, 500);
+                    return false;
+                }
+            }
+            
+            // Firebase Authentication kullanıldığı için Supabase Auth kontrolü yapmıyoruz
+            // RLS politikaları public olarak ayarlanmalı (Firebase auth uygulama tarafında kontrol ediliyor)
+            // Bu durumda her zaman true döndürüyoruz çünkü Firebase auth zaten kontrol edildi
+            console.log('✅ Firebase Authentication aktif - Supabase RLS public modunda çalışıyor');
+            return true;
+            
+            /* 
+            // Eğer Supabase Authentication kullanmak isterseniz, yukarıdaki kodu silip bunu kullanın:
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (error) throw error;
+                
+                if (session) {
+                    currentUser = session.user;
+                    userEmail.textContent = currentUser.email || 'Kullanıcı';
+                    return true;
+                } else {
+                    // Giriş yapılmamış, login.html'e yönlendir
+                    window.location.href = '../login.html?redirect=phone';
+                    return false;
+                }
+            } catch (error) {
+                console.error('Supabase auth kontrolü hatası:', error);
+                // Hata durumunda login.html'e yönlendir
+                window.location.href = '../login.html?redirect=phone';
+                return false;
+            }
+            */
+        }
+        
+        // ===== REGISTRATION FUNCTION =====
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+            
+            // Şifre kontrolü
+            if (password !== passwordConfirm) {
+                registerError.textContent = 'Şifreler eşleşmiyor!';
+                registerError.classList.remove('hidden');
+                registerSuccess.classList.add('hidden');
+                return;
+            }
+            
+            if (password.length < 6) {
+                registerError.textContent = 'Şifre en az 6 karakter olmalıdır!';
+                registerError.classList.remove('hidden');
+                registerSuccess.classList.add('hidden');
+                return;
+            }
+            
+            registerError.classList.add('hidden');
+            registerSuccess.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('registerSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Kayıt yapılıyor...';
+            
+            try {
+                if (supabaseClient) {
+                    // Supabase ile kayıt
+                    const { data, error } = await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            emailRedirectTo: window.location.origin + '/phone/index.html'
+                        }
+                    });
+                    
+                    if (error) throw error;
+                    
+                    registerSuccess.textContent = 'Kayıt başarılı! E-posta adresinize gönderilen doğrulama linkine tıklayın.';
+                    registerSuccess.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        registerModal.classList.add('hidden');
+                        registerForm.reset();
+                    }, 3000);
+                } else {
+                    // Demo modunda localStorage'a kaydet
+                    const userData = {
+                        email: email,
+                        createdAt: new Date().toISOString()
+                    };
+                    localStorage.setItem('phone_user', JSON.stringify(userData));
+                    currentUser = userData;
+                    userEmail.textContent = email;
+                    
+                    registerSuccess.textContent = 'Kayıt başarılı!';
+                    registerSuccess.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        registerModal.classList.add('hidden');
+                        registerForm.reset();
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Kayıt hatası:', error);
+                registerError.textContent = error.message || 'Kayıt sırasında bir hata oluştu.';
+                registerError.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Kayıt Ol';
+            }
+        }
+        
+        // ===== LOGOUT FUNCTION =====
+        async function handleLogout() {
+            // Önce Firebase çıkışı dene
+            try {
+                const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
+                const appModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
+                    authDomain: "mulakat-takip-sistemi.firebaseapp.com",
+                    projectId: "mulakat-takip-sistemi",
+                    storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
+                    messagingSenderId: "1050671861081",
+                    appId: "1:1050671861081:web:1e41fc9305731961809048"
+                };
+                
+                const app = appModule.initializeApp(firebaseConfig);
+                const auth = authModule.getAuth(app);
+                
+                try {
+                    await authModule.signOut(auth);
+                } catch (error) {
+                    console.warn('Firebase çıkış hatası:', error);
+                }
+            } catch (error) {
+                console.warn('Firebase modülü yüklenemedi:', error);
+            }
+            
+            // Supabase çıkışı
+            if (supabaseClient && SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
+                try {
+                    const { error } = await supabaseClient.auth.signOut();
+                    if (error) throw error;
+                } catch (error) {
+                    console.error('Supabase çıkış hatası:', error);
+                }
+            } else {
+                // Demo modunda localStorage'dan sil
+                localStorage.removeItem('phone_user');
+            }
+            
+            window.location.href = '../login.html';
+        }
+        
+        // ===== SABİT DEPARTMAN LİSTESİ =====
+        const DEFAULT_DEPARTMENTS = [
+            'Yönetim',
+            'İnsan Kaynakları',
+            'Teknoloji',
+            'Pazarlama',
+            'Satış',
+            'Muhasebe',
+            'Finans',
+            'Operasyon',
+            'Üretim',
+            'Kalite',
+            'Ar-Ge',
+            'Müşteri Hizmetleri',
+            'Lojistik',
+            'IT',
+            'Güvenlik',
+            'Hukuk',
+            'İdari İşler'
+        ];
+        
+        // ===== GET UNIQUE DEPARTMENTS =====
+        function getDepartments() {
+            // Mevcut kayıtlardan departmanları al
+            const contactDepartments = [...new Set(contacts.map(contact => contact.department))].filter(d => d);
+            
+            // Sabit departman listesi ile birleştir ve sırala
+            const allDepartments = [...new Set([...DEFAULT_DEPARTMENTS, ...contactDepartments])];
+            return allDepartments.sort();
+        }
+        
+        // ===== RENDER DEPARTMENT FILTERS =====
+        function renderDepartmentFilters() {
+            const departments = getDepartments();
+            const filtersHTML = `
+                <button type="button" data-department="all" aria-pressed="${selectedDepartment === 'all'}"
+                    class="dept-filter w-full text-left px-4 py-3 rounded-xl text-sm font-semibold min-h-[44px] ${selectedDepartment === 'all' ? 'btn-gradient text-white' : 'glass text-slate-700 hover:bg-slate-100'}">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${selectedDepartment === 'all' ? 'bg-white/20' : 'bg-slate-200 text-slate-600'}">
+                            <i data-lucide="users" class="w-4 h-4" aria-hidden="true"></i>
+                        </span>
+                        <span>Tümü</span>
+                        <span class="ml-auto px-2 py-0.5 rounded-md text-xs font-semibold ${selectedDepartment === 'all' ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-600'}">${contacts.length}</span>
+                    </div>
+                </button>
+                ${departments.map(dept => {
+                    const count = contacts.filter(c => c.department === dept).length;
+                    const active = selectedDepartment === dept;
+                    const safeDept = escapeHtml(dept);
+                    return `
+                        <button type="button" data-department="${dept.replace(/"/g, '&quot;')}" aria-pressed="${active}"
+                            class="dept-filter w-full text-left px-4 py-3 rounded-xl text-sm font-semibold min-h-[44px] ${active ? 'btn-gradient text-white' : 'glass text-slate-700 hover:bg-slate-100'}">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${active ? 'bg-white/20' : 'bg-slate-200 text-slate-600'}">
+                                        <i data-lucide="building" class="w-4 h-4" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="truncate">${safeDept}</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-md text-xs font-semibold shrink-0 ${active ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-600'}">${count}</span>
+                            </div>
+                        </button>
+                    `;
+                }).join('')}
+            `;
+            
+            if (departmentFilters) departmentFilters.innerHTML = filtersHTML;
+            if (mobileDepartmentFilters) mobileDepartmentFilters.innerHTML = filtersHTML;
+            
+            updateSidebarStats();
+            applySidebarDeptSearch();
+            
+            (departmentFilters ? departmentFilters.parentElement : document).querySelectorAll('.dept-filter').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedDepartment = btn.dataset.department;
+                    renderDepartmentFilters();
+                    filterContacts();
+                    lucide.createIcons();
+                });
+            });
+            lucide.createIcons();
+        }
+        
+        function updateSidebarStats() {
+            const el = document.getElementById('sidebarStatsText');
+            if (!el) return;
+            const total = contacts.length;
+            const filtered = filteredContacts.length;
+            if (selectedDepartment === 'all') {
+                el.textContent = total === 0 ? 'Kişi yok' : `${total} kişi`;
+            } else {
+                el.textContent = `${filtered} / ${total} gösteriliyor`;
+            }
+        }
+        
+        function applySidebarDeptSearch() {
+            const container = document.getElementById('departmentFilters');
+            if (!container) return;
+            const input = document.getElementById('sidebarDeptSearch');
+            const clearBtn = document.getElementById('sidebarDeptSearchClear');
+            const noMatch = document.getElementById('sidebarDeptNoMatch');
+            const q = input ? (input.value || '').trim().toLowerCase() : '';
+            let visibleCount = 0;
+            container.querySelectorAll('.dept-filter').forEach(btn => {
+                const name = (btn.dataset.department || '').toLowerCase();
+                const match = !q || name.includes(q);
+                btn.classList.toggle('hidden', !match);
+                if (match) visibleCount++;
+            });
+            if (clearBtn) clearBtn.classList.toggle('hidden', !q);
+            if (noMatch) noMatch.classList.toggle('hidden', !q || visibleCount > 0);
+        }
+        
+        // ===== GÜVENLİK: XSS Koruması - HTML Escape Fonksiyonu =====
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ===== RENDER CONTACT CARD =====
+        function renderContactCard(contact) {
+            // Güvenlik: Tüm kullanıcı girdilerini escape et
+            const safeName = escapeHtml(contact.name);
+            const safeTitle = escapeHtml(contact.title);
+            const safeDepartment = escapeHtml(contact.department);
+            const safeKurum = contact.kurum ? escapeHtml(contact.kurum) : '';
+            const safePhone = escapeHtml(contact.phone);
+            const safeExtension = escapeHtml(contact.extension);
+            const safeEmail = escapeHtml(contact.email);
+            const safeAvatar = escapeHtml(contact.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=94a3b8&color=fff&size=128`);
+            
+            return `
+                <article class="contact-card rounded-xl p-5 relative group" role="listitem">
+                    <div class="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <button type="button" onclick="editContact(${contact.id})" class="phone-touch-target btn-gradient text-white rounded-lg" title="Düzenle" aria-label="Düzenle">
+                            <i data-lucide="edit-2" class="w-4 h-4" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" onclick="deleteContact(${contact.id})" class="phone-touch-target bg-red-600 hover:bg-red-700 text-white rounded-lg" title="Sil" aria-label="Sil">
+                            <i data-lucide="trash-2" class="w-4 h-4" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="relative shrink-0">
+                            <img src="${safeAvatar}" alt="${safeName}" class="avatar-glow w-16 h-16 rounded-xl object-cover border border-slate-200" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=1e40af&color=fff&size=128'" loading="lazy">
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" aria-hidden="true"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-lg font-bold text-slate-900 truncate mb-0.5">${safeName}</h3>
+                            <p class="text-sm text-slate-600 truncate mb-2">${safeTitle || '—'}</p>
+                            <span class="inline-block px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 rounded-lg">${safeDepartment || '—'}</span>
+                            ${safeKurum ? `<p class="text-xs text-slate-500 mt-2 truncate" title="Kurum">${safeKurum}</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="space-y-2 pt-4 border-t border-slate-200">
+                        <a href="tel:${safePhone}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors min-h-[44px]">
+                            <span class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-blue-600 shrink-0"><i data-lucide="phone" class="w-4 h-4" aria-hidden="true"></i></span>
+                            <span class="text-sm font-medium text-slate-700 truncate">${safePhone || '—'}</span>
+                        </a>
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50/80 min-h-[44px]">
+                            <span class="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center text-slate-600 shrink-0"><i data-lucide="phone-call" class="w-4 h-4" aria-hidden="true"></i></span>
+                            <span class="text-sm font-medium text-slate-700">Dahili: <span class="text-blue-600">${safeExtension || '—'}</span></span>
+                        </div>
+                        <a href="mailto:${safeEmail}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors min-h-[44px] truncate">
+                            <span class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-blue-600 shrink-0"><i data-lucide="mail" class="w-4 h-4" aria-hidden="true"></i></span>
+                            <span class="text-sm font-medium text-slate-700 truncate">${safeEmail || '—'}</span>
+                        </a>
+                    </div>
+                </article>
+            `;
+        }
+        
+        // ===== RENDER CONTACTS =====
+        function renderContacts() {
+            if (filteredContacts.length === 0) {
+                contactsGrid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            contactsGrid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            
+            contactsGrid.innerHTML = filteredContacts.map(contact => renderContactCard(contact)).join('');
+            lucide.createIcons();
+        }
+        
+        // ===== FILTER CONTACTS =====
+        function filterContacts() {
+            filteredContacts = contacts.filter(contact => {
+                // Departman filtresi
+                const departmentMatch = selectedDepartment === 'all' || contact.department === selectedDepartment;
+                
+                // Arama filtresi (isim ve departman içinde)
+                const searchMatch = searchQuery === '' || 
+                    contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    contact.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    contact.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (contact.kurum && contact.kurum.toLowerCase().includes(searchQuery.toLowerCase()));
+                
+                return departmentMatch && searchMatch;
+            });
+            
+            updateSidebarStats();
+            renderContacts();
+        }
+        
+        // ===== SEARCH INPUT EVENT =====
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            filterContacts();
+        });
+        
+        // ===== MOBILE MENU TOGGLE =====
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+            mobileMenuOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeMobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            mobileMenuOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+        
+        mobileMenuOverlay.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            mobileMenuOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+        
+        // ===== REGISTER MODAL EVENTS =====
+        closeRegisterModal.addEventListener('click', () => {
+            registerModal.classList.add('hidden');
+        });
+        
+        registerModal.addEventListener('click', (e) => {
+            if (e.target === registerModal) {
+                registerModal.classList.add('hidden');
+            }
+        });
+        
+        registerForm.addEventListener('submit', handleRegister);
+        
+        // ===== LOGOUT EVENT =====
+        logoutBtn.addEventListener('click', handleLogout);
+        
+        // ===== CONTACT FORM FUNCTIONS =====
+        
+        // Event listener'ları başlat
+        function initContactFormListeners() {
+            // Yeni kişi ekleme modalını aç
+            if (addContactBtn) {
+                addContactBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Add contact button clicked');
+                    openContactModal();
+                });
+            } else {
+                console.error('addContactBtn null!');
+            }
+            
+            if (mobileAddContactBtn) {
+                mobileAddContactBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openContactModal();
+                });
+            }
+            const sidebarAddContactBtn = document.getElementById('sidebarAddContactBtn');
+            if (sidebarAddContactBtn) {
+                sidebarAddContactBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openContactModal();
+                });
+            }
+            const sidebarAddKurumBtn = document.getElementById('sidebarAddKurumBtn');
+            if (sidebarAddKurumBtn) {
+                sidebarAddKurumBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openKurumModal();
+                });
+            }
+            const mobileAddKurumBtn = document.getElementById('mobileAddKurumBtn');
+            if (mobileAddKurumBtn) {
+                mobileAddKurumBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openKurumModal();
+                });
+            }
+        }
+        
+        // Hemen event listener'ları başlat
+        initContactFormListeners();
+        
+        // Modal kapatma
+        closeContactModal.addEventListener('click', closeContactModalFunc);
+        cancelContactBtn.addEventListener('click', closeContactModalFunc);
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) {
+                closeContactModalFunc();
+            }
+        });
+        
+        // Kişi ekleme/düzenleme modalını aç
+        function openContactModal(contact = null) {
+            if (!contactModal) {
+                console.error('Contact modal bulunamadı!');
+                return;
+            }
+            
+            if (contactModalTitle) {
+                contactModalTitle.textContent = contact ? 'Kişiyi Düzenle' : 'Yeni Kişi Ekle';
+            }
+            
+            const contactIdEl = document.getElementById('contactId');
+            const contactNameEl = document.getElementById('contactName');
+            const contactTitleEl = document.getElementById('contactTitle');
+            const contactDepartmentEl = document.getElementById('contactDepartment');
+            const contactExtensionEl = document.getElementById('contactExtension');
+            const contactKurumEl = document.getElementById('contactKurum');
+            const contactEmailEl = document.getElementById('contactEmail');
+            const contactPhoneEl = document.getElementById('contactPhone');
+            
+            if (contactIdEl) contactIdEl.value = contact ? contact.id : '';
+            if (contactNameEl) contactNameEl.value = contact ? contact.name : '';
+            if (contactTitleEl) contactTitleEl.value = contact ? contact.title : '';
+            if (contactDepartmentEl) contactDepartmentEl.value = contact ? contact.department : '';
+            if (contactExtensionEl) contactExtensionEl.value = contact ? contact.extension : '';
+            if (contactKurumEl) contactKurumEl.value = contact ? (contact.kurum || '') : '';
+            if (contactEmailEl) contactEmailEl.value = contact ? contact.email : '';
+            if (contactPhoneEl) contactPhoneEl.value = contact ? contact.phone : '';
+            
+            // Departman seçeneklerini doldur
+            populateDepartmentSelect();
+            // Kurum datalist'ini eklenen kurumlardan doldur
+            populateKurumDatalist(kurumlar.map(k => k.name).filter(Boolean));
+            
+            if (contactError) contactError.classList.add('hidden');
+            if (contactSuccess) contactSuccess.classList.add('hidden');
+            
+            // Modal'ı göster
+            contactModal.classList.remove('hidden');
+            contactModal.style.display = 'flex';
+            
+            // Body scroll'u engelle
+            document.body.style.overflow = 'hidden';
+            
+            // Icons'ları yeniden oluştur
+            setTimeout(() => {
+                lucide.createIcons();
+            }, 100);
+            
+            console.log('Contact modal açıldı');
+        }
+        
+        // Modal kapatma fonksiyonu
+        function closeContactModalFunc() {
+            if (contactModal) {
+                contactModal.classList.add('hidden');
+                contactModal.style.display = 'none';
+            }
+            if (contactForm) contactForm.reset();
+            const contactIdEl = document.getElementById('contactId');
+            if (contactIdEl) contactIdEl.value = '';
+            if (contactError) contactError.classList.add('hidden');
+            if (contactSuccess) contactSuccess.classList.add('hidden');
+            
+            // Body scroll'u geri getir
+            document.body.style.overflow = '';
+        }
+        
+        // Departman select'ini doldur
+        function populateDepartmentSelect() {
+            const select = document.getElementById('contactDepartment');
+            if (!select) {
+                console.error('contactDepartment select elementi bulunamadı!');
+                return;
+            }
+            
+            const departments = getDepartments();
+            const currentValue = select.value;
+            
+            // Select'i temizle ve varsayılan seçeneği ekle
+            select.innerHTML = '<option value="">Seçiniz...</option>';
+            
+            // Departmanları ekle
+            if (departments && departments.length > 0) {
+                departments.forEach(dept => {
+                    if (dept && dept.trim()) {
+                        const option = document.createElement('option');
+                        option.value = dept;
+                        option.textContent = dept;
+                        select.appendChild(option);
+                    }
+                });
+            } else {
+                // Eğer hiç departman yoksa, varsayılanları ekle
+                DEFAULT_DEPARTMENTS.forEach(dept => {
+                    const option = document.createElement('option');
+                    option.value = dept;
+                    option.textContent = dept;
+                    select.appendChild(option);
+                });
+            }
+            
+            // Mevcut değeri geri yükle
+            if (currentValue) {
+                select.value = currentValue;
+            }
+            
+            console.log('Departman select dolduruldu:', departments.length, 'departman');
+        }
+        
+        // Kurum datalist'ini doldur (kurumlar listesinden veya options dizisinden)
+        function populateKurumDatalist(options) {
+            const list = document.getElementById('contactKurumList');
+            if (!list) return;
+            list.innerHTML = '';
+            const values = Array.isArray(options) ? options : kurumlar.map(k => k.name).filter(Boolean);
+            if (values.length > 0) {
+                [...new Set(values)].forEach(val => {
+                    if (val && String(val).trim()) {
+                        const opt = document.createElement('option');
+                        opt.value = String(val).trim();
+                        list.appendChild(opt);
+                    }
+                });
+            }
+        }
+        
+        // ===== KURUM STORAGE =====
+        const KURUMLAR_STORAGE_KEY = 'phone_kurumlar';
+        
+        function loadKurumlarFromStorage() {
+            try {
+                const raw = localStorage.getItem(KURUMLAR_STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed)) {
+                        kurumlar.length = 0;
+                        kurumlar.push(...parsed);
+                    }
+                }
+            } catch (e) {
+                console.warn('Kurumlar yüklenemedi:', e);
+            }
+        }
+        
+        function saveKurumlarToStorage() {
+            try {
+                localStorage.setItem(KURUMLAR_STORAGE_KEY, JSON.stringify(kurumlar));
+            } catch (e) {
+                console.warn('Kurumlar kaydedilemedi:', e);
+            }
+        }
+        
+        function updateSidebarKurumCount() {
+            const el = document.getElementById('sidebarKurumCount');
+            if (el) el.textContent = 'Kayıtlı kurum: ' + kurumlar.length;
+        }
+        
+        // ===== KURUM MODAL =====
+        function openKurumModal(kurum = null) {
+            if (!kurumModal) return;
+            if (kurumModalTitle) kurumModalTitle.textContent = kurum ? 'Kurumu Düzenle' : 'Yeni Kurum Ekle';
+            const kurumIdEl = document.getElementById('kurumId');
+            const kurumNameEl = document.getElementById('kurumName');
+            const kurumCodeEl = document.getElementById('kurumCode');
+            const kurumAddressEl = document.getElementById('kurumAddress');
+            const kurumPhoneEl = document.getElementById('kurumPhone');
+            const kurumEmailEl = document.getElementById('kurumEmail');
+            const kurumNoteEl = document.getElementById('kurumNote');
+            if (kurumIdEl) kurumIdEl.value = kurum ? kurum.id : '';
+            if (kurumNameEl) kurumNameEl.value = kurum ? kurum.name : '';
+            if (kurumCodeEl) kurumCodeEl.value = kurum ? (kurum.code || '') : '';
+            if (kurumAddressEl) kurumAddressEl.value = kurum ? (kurum.address || '') : '';
+            if (kurumPhoneEl) kurumPhoneEl.value = kurum ? (kurum.phone || '') : '';
+            if (kurumEmailEl) kurumEmailEl.value = kurum ? (kurum.email || '') : '';
+            if (kurumNoteEl) kurumNoteEl.value = kurum ? (kurum.note || '') : '';
+            if (kurumError) kurumError.classList.add('hidden');
+            if (kurumSuccess) kurumSuccess.classList.add('hidden');
+            kurumModal.classList.remove('hidden');
+            kurumModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+        
+        function closeKurumModalFunc() {
+            if (kurumModal) {
+                kurumModal.classList.add('hidden');
+                kurumModal.style.display = 'none';
+            }
+            if (kurumForm) kurumForm.reset();
+            const kurumIdEl = document.getElementById('kurumId');
+            if (kurumIdEl) kurumIdEl.value = '';
+            document.body.style.overflow = '';
+        }
+        
+        if (closeKurumModal) closeKurumModal.addEventListener('click', closeKurumModalFunc);
+        if (cancelKurumBtn) cancelKurumBtn.addEventListener('click', closeKurumModalFunc);
+        kurumModal.addEventListener('click', (e) => { if (e.target === kurumModal) closeKurumModalFunc(); });
+        
+        if (kurumForm) {
+            kurumForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('kurumId').value;
+                const name = document.getElementById('kurumName').value.trim();
+                const code = document.getElementById('kurumCode').value.trim();
+                const address = document.getElementById('kurumAddress').value.trim();
+                const phone = document.getElementById('kurumPhone').value.trim();
+                const email = document.getElementById('kurumEmail').value.trim();
+                const note = document.getElementById('kurumNote').value.trim();
+                if (!name) {
+                    if (kurumError) { kurumError.textContent = 'Kurum adı zorunludur.'; kurumError.classList.remove('hidden'); }
+                    return;
+                }
+                const dangerousChars = /[<>'"&]/;
+                if (dangerousChars.test(name) || dangerousChars.test(code) || dangerousChars.test(address) || dangerousChars.test(phone) || dangerousChars.test(email) || dangerousChars.test(note)) {
+                    if (kurumError) { kurumError.textContent = 'Geçersiz karakterler kullanmayın.'; kurumError.classList.remove('hidden'); return; }
+                }
+                if (name.length > 150 || (code && code.length > 50) || (address && address.length > 300) || (phone && phone.length > 30) || (email && email.length > 100) || (note && note.length > 500)) {
+                    if (kurumError) { kurumError.textContent = 'Girdi çok uzun.'; kurumError.classList.remove('hidden'); return; }
+                }
+                if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    if (kurumError) { kurumError.textContent = 'Geçerli bir e-posta girin.'; kurumError.classList.remove('hidden'); return; }
+                }
+                kurumError.classList.add('hidden');
+                kurumSuccess.classList.add('hidden');
+                const saveBtn = document.getElementById('saveKurumBtn');
+                if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Kaydediliyor...'; }
+                try {
+                    if (id) {
+                        const idx = kurumlar.findIndex(k => String(k.id) === String(id));
+                        if (idx !== -1) {
+                            kurumlar[idx] = { ...kurumlar[idx], name, code, address, phone, email, note };
+                        }
+                    } else {
+                        const newId = kurumlar.length ? Math.max(...kurumlar.map(k => k.id || 0)) + 1 : 1;
+                        kurumlar.push({ id: newId, name, code, address, phone, email, note });
+                    }
+                    saveKurumlarToStorage();
+                    updateSidebarKurumCount();
+                    if (kurumSuccess) { kurumSuccess.textContent = id ? 'Kurum güncellendi.' : 'Kurum eklendi.'; kurumSuccess.classList.remove('hidden'); }
+                    setTimeout(() => { closeKurumModalFunc(); }, 1200);
+                } catch (err) {
+                    if (kurumError) { kurumError.textContent = err.message || 'Kayıt hatası.'; kurumError.classList.remove('hidden'); }
+                } finally {
+                    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Kaydet'; }
+                }
+            });
+        }
+        
+        // Kişi kaydetme
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('contactId').value;
+            const name = document.getElementById('contactName').value.trim();
+            const title = document.getElementById('contactTitle').value.trim();
+            const department = document.getElementById('contactDepartment').value;
+            const extension = document.getElementById('contactExtension').value.trim();
+            const kurum = document.getElementById('contactKurum').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+            
+            // ===== GÜVENLİK: Girdi Validasyonu =====
+            
+            // Sadece Ad Soyad zorunlu
+            if (!name) {
+                contactError.textContent = 'Lütfen Ad Soyad alanını doldurun.';
+                contactError.classList.remove('hidden');
+                contactSuccess.classList.add('hidden');
+                return;
+            }
+            
+            // XSS koruması: Tehlikeli karakterler kontrolü
+            const dangerousChars = /[<>'"&]/;
+            if (dangerousChars.test(name) || dangerousChars.test(title) || dangerousChars.test(department) || dangerousChars.test(kurum)) {
+                contactError.textContent = 'Geçersiz karakterler içeriyor. Lütfen özel karakterler kullanmayın.';
+                contactError.classList.remove('hidden');
+                contactSuccess.classList.add('hidden');
+                return;
+            }
+            
+            // Uzunluk kontrolü (DoS koruması) – dolu alanlar için
+            if (name.length > 100 || (title && title.length > 100) || (department && department.length > 50) || (kurum && kurum.length > 100) || (extension && extension.length > 20) || (email && email.length > 100) || (phone && phone.length > 20)) {
+                contactError.textContent = 'Girdiğiniz bilgiler çok uzun. Lütfen kısaltın.';
+                contactError.classList.remove('hidden');
+                contactSuccess.classList.add('hidden');
+                return;
+            }
+            
+            // E-posta validasyonu (doluysa format kontrolü)
+            if (email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    contactError.textContent = 'Geçerli bir e-posta adresi girin.';
+                    contactError.classList.remove('hidden');
+                    contactSuccess.classList.add('hidden');
+                    return;
+                }
+            }
+            
+            // Telefon numarası validasyonu (doluysa format kontrolü)
+            if (phone) {
+                const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
+                if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+                    contactError.textContent = 'Geçerli bir telefon numarası girin.';
+                    contactError.classList.remove('hidden');
+                    contactSuccess.classList.add('hidden');
+                    return;
+                }
+            }
+            
+            // Dahili numara validasyonu (doluysa sadece rakam ve tire)
+            if (extension) {
+                const extensionRegex = /^[0-9\-]+$/;
+                if (!extensionRegex.test(extension)) {
+                    contactError.textContent = 'Dahili numara sadece rakam ve tire içerebilir.';
+                    contactError.classList.remove('hidden');
+                    contactSuccess.classList.add('hidden');
+                    return;
+                }
+            }
+            
+            contactError.classList.add('hidden');
+            contactSuccess.classList.add('hidden');
+            
+            const saveBtn = document.getElementById('saveContactBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Kaydediliyor...';
+            
+            try {
+                const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=4f46e5&color=fff&size=128`;
+                
+                if (id) {
+                    // Düzenleme
+                    const index = contacts.findIndex(c => c.id === parseInt(id));
+                    if (index !== -1) {
+                        contacts[index] = {
+                            ...contacts[index],
+                            name,
+                            title,
+                            department,
+                            extension,
+                            kurum: kurum || null,
+                            email,
+                            phone,
+                            avatar
+                        };
+                        
+                        // Kullanıcı ID'sini al (eğer yoksa)
+                        if (!currentUserId) {
+                            await getCurrentUserId();
+                        }
+                        
+                        // Supabase'e kaydet (eğer yapılandırılmışsa)
+                        if (supabaseClient && SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
+                            const { error } = await supabaseClient
+                                .from('contacts')
+                                .update({
+                                    name,
+                                    title,
+                                    department,
+                                    extension,
+                                    kurum: kurum || null,
+                                    email,
+                                    phone
+                                })
+                                .eq('id', id)
+                                .eq('firebase_user_id', currentUserId); // Sadece kendi kaydını güncelleyebilsin
+                            
+                            if (error) throw error;
+                        } else {
+                            // Demo modunda localStorage'a kaydet
+                            contacts[index].firebase_user_id = currentUserId;
+                            const userContacts = contacts.filter(c => c.firebase_user_id === currentUserId);
+                            localStorage.setItem(`phone_contacts_${currentUserId}`, JSON.stringify(userContacts));
+                        }
+                        
+                        contactSuccess.textContent = 'Kişi başarıyla güncellendi.';
+                    }
+                } else {
+                    // Yeni ekleme
+                    // Kullanıcı ID'sini al (eğer yoksa)
+                    if (!currentUserId) {
+                        await getCurrentUserId();
+                    }
+                    
+                    const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=4f46e5&color=fff&size=128`;
+                    
+                    // Supabase'e kaydet (eğer yapılandırılmışsa)
+                    if (supabaseClient && SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
+                        // ÖNEMLİ: id alanını GÖNDERME - Supabase otomatik oluşturur (BIGSERIAL)
+                        const contactToSave = {
+                            name,
+                            title,
+                            department,
+                            extension,
+                            kurum: kurum || null,
+                            email,
+                            phone,
+                            avatar,
+                            firebase_user_id: currentUserId // Firebase kullanıcı ID'si
+                        };
+                        
+                        const { data: insertedData, error } = await supabaseClient
+                            .from('contacts')
+                            .insert([contactToSave])
+                            .select() // Eklenen kaydı geri döndür (id ile birlikte)
+                            .single();
+                        
+                        if (error) {
+                            console.error('Supabase insert hatası:', error);
+                            throw error;
+                        }
+                        
+                        // Supabase'den dönen kaydı contacts dizisine ekle
+                        if (insertedData) {
+                            contacts.push({
+                                ...insertedData,
+                                avatar: insertedData.avatar || avatar
+                            });
+                            console.log('✅ Kayıt Supabase\'e eklendi, ID:', insertedData.id);
+                        }
+                    } else {
+                        // Demo modunda localStorage'a kaydet (kullanıcıya özel)
+                        // LocalStorage için manuel ID oluştur
+                        const newId = contacts.length > 0 ? Math.max(...contacts.map(c => c.id || 0)) + 1 : 1;
+                        const newContact = {
+                            id: newId,
+                            name,
+                            title,
+                            department,
+                            extension,
+                            kurum: kurum || null,
+                            email,
+                            phone,
+                            avatar,
+                            firebase_user_id: currentUserId
+                        };
+                        
+                        contacts.push(newContact);
+                        
+                        if (currentUserId) {
+                            const userContacts = contacts.filter(c => c.firebase_user_id === currentUserId);
+                            localStorage.setItem(`phone_contacts_${currentUserId}`, JSON.stringify(userContacts));
+                        } else {
+                            // Fallback: Eski yöntem (kullanıcı ID yoksa)
+                            localStorage.setItem('phone_contacts', JSON.stringify(contacts));
+                        }
+                    }
+                    
+                    contactSuccess.textContent = 'Kişi başarıyla eklendi.';
+                }
+                
+                contactSuccess.classList.remove('hidden');
+                
+                // Departman filtrelerini ve kişileri yeniden render et
+                renderDepartmentFilters();
+                filterContacts();
+                
+                setTimeout(() => {
+                    closeContactModalFunc();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Kayıt hatası:', error);
+                contactError.textContent = error.message || 'Kayıt sırasında bir hata oluştu.';
+                contactError.classList.remove('hidden');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Kaydet';
+            }
+        });
+        
+        // Kişi düzenleme (global function)
+        window.editContact = function(id) {
+            const contact = contacts.find(c => c.id === id);
+            if (contact) {
+                openContactModal(contact);
+            }
+        };
+        
+        // Kişi silme (global function)
+        window.deleteContact = function(id) {
+            const contact = contacts.find(c => c.id === id);
+            if (contact) {
+                contactToDelete = contact;
+                document.getElementById('deleteContactName').textContent = contact.name;
+                deleteModal.classList.remove('hidden');
+                lucide.createIcons();
+            }
+        };
+        
+        // Silme modalı kapatma
+        closeDeleteModal.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+            contactToDelete = null;
+        });
+        
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+            contactToDelete = null;
+        });
+        
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                deleteModal.classList.add('hidden');
+                contactToDelete = null;
+            }
+        });
+        
+        // Silme onayı
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (!contactToDelete) return;
+            
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.textContent = 'Siliniyor...';
+            
+            try {
+                const index = contacts.findIndex(c => c.id === contactToDelete.id);
+                if (index !== -1) {
+                    contacts.splice(index, 1);
+                    
+                    // Kullanıcı ID'sini al (eğer yoksa)
+                    if (!currentUserId) {
+                        await getCurrentUserId();
+                    }
+                    
+                    // Supabase'den sil (eğer yapılandırılmışsa)
+                    if (supabaseClient && SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
+                        const { error } = await supabaseClient
+                            .from('contacts')
+                            .delete()
+                            .eq('id', contactToDelete.id)
+                            .eq('firebase_user_id', currentUserId); // Sadece kendi kaydını silebilsin
+                        
+                        if (error) throw error;
+                    } else {
+                        // Demo modunda localStorage'a kaydet
+                        const userContacts = contacts.filter(c => c.firebase_user_id === currentUserId);
+                        localStorage.setItem(`phone_contacts_${currentUserId}`, JSON.stringify(userContacts));
+                    }
+                    
+                    // Departman filtrelerini ve kişileri yeniden render et
+                    renderDepartmentFilters();
+                    filterContacts();
+                    
+                    deleteModal.classList.add('hidden');
+                    contactToDelete = null;
+                }
+            } catch (error) {
+                console.error('Silme hatası:', error);
+                alert('Kişi silinirken bir hata oluştu: ' + (error.message || 'Bilinmeyen hata'));
+            } finally {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.textContent = 'Sil';
+            }
+        });
+        
+        // ===== LOAD CONTACTS FROM STORAGE =====
+        async function loadContactsFromStorage() {
+            // Kullanıcı ID'sini al
+            if (!currentUserId) {
+                await getCurrentUserId();
+            }
+            
+            // Demo modunda localStorage'dan yükle (kullanıcıya özel)
+            if (!supabaseClient || SUPABASE_URL === 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
+                if (currentUserId) {
+                    const savedContacts = localStorage.getItem(`phone_contacts_${currentUserId}`);
+                    if (savedContacts) {
+                        try {
+                            const parsed = JSON.parse(savedContacts);
+                            if (Array.isArray(parsed) && parsed.length > 0) {
+                                // Sadece bu kullanıcıya ait kayıtları yükle
+                                const userContacts = parsed.filter(c => c.firebase_user_id === currentUserId);
+                                contacts.length = 0;
+                                contacts.push(...userContacts);
+                                console.log(`✅ ${userContacts.length} kayıt yüklendi (Kullanıcı: ${currentUserId})`);
+                            }
+                        } catch (error) {
+                            console.error('LocalStorage yükleme hatası:', error);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // ===== INITIALIZE APP =====
+        async function init() {
+            loadingState.classList.remove('hidden');
+            
+            // Event listener'ları başlat
+            initContactFormListeners();
+            
+            // Auth kontrolü (kullanıcı ID'sini almak için)
+            await checkAuth();
+            
+            // Kullanıcı ID'sini al
+            if (!currentUserId) {
+                await getCurrentUserId();
+            }
+            
+            if (!currentUserId) {
+                console.warn('⚠️ Kullanıcı ID alınamadı! Giriş yapmanız gerekiyor.');
+                // Giriş yapılmamışsa login sayfasına yönlendir
+                // window.location.href = '../login.html?redirect=phone';
+            }
+            
+            // Veritabanı bağlantısını test et
+            const dbTestResult = await testDatabaseConnection();
+            if (!dbTestResult.success) {
+                console.warn('⚠️ Veritabanı bağlantısı başarısız, demo modunda devam ediliyor');
+                // Kullanıcıya bilgi ver (opsiyonel)
+                if (dbTestResult.solution) {
+                    console.warn('💡 Çözüm:', dbTestResult.solution);
+                }
+            }
+            
+            // LocalStorage'dan kişileri yükle (kullanıcıya özel)
+            await loadContactsFromStorage();
+            
+            // LocalStorage'dan kurumları yükle
+            loadKurumlarFromStorage();
+            updateSidebarKurumCount();
+            
+            // Supabase'den kişileri yükle (eğer yapılandırılmışsa)
+            if (supabaseClient && SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN' && currentUserId) {
+                try {
+                    // Sadece bu kullanıcıya ait kayıtları yükle
+                    const { data, error } = await supabaseClient
+                        .from('contacts')
+                        .select('*')
+                        .eq('firebase_user_id', currentUserId) // Kullanıcıya özel filtreleme
+                        .order('name');
+                    
+                    if (error) {
+                        console.error('❌ Supabase veri yükleme hatası:', error);
+                        if (error.code === 'PGRST116') {
+                            console.warn('💡 "contacts" tablosu bulunamadı. SQL Editor\'de tabloyu oluşturun.');
+                        } else if (error.code === '42501') {
+                            console.warn('💡 RLS politikası hatası. RLS politikalarını oluşturun.');
+                        }
+                        throw error;
+                    }
+                    
+                    if (data && data.length > 0) {
+                        console.log(`✅ ${data.length} kayıt Supabase'den yüklendi (Kullanıcı: ${currentUserId})`);
+                        contacts.length = 0;
+                        contacts.push(...data.map(item => ({
+                            ...item,
+                            firebase_user_id: item.firebase_user_id || currentUserId, // Eski kayıtlar için varsayılan
+                            avatar: item.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4f46e5&color=fff&size=128`
+                        })));
+                    } else {
+                        console.log(`ℹ️ Supabase'de henüz kayıt yok (Kullanıcı: ${currentUserId})`);
+                    }
+                } catch (error) {
+                    console.error('Supabase yükleme hatası:', error);
+                }
+            } else if (!currentUserId) {
+                console.warn('⚠️ Kullanıcı ID alınamadı, kayıtlar yüklenemiyor');
+            }
+            
+            // Departman filtrelerini oluştur
+            renderDepartmentFilters();
+            
+            // Kişileri render et
+            filterContacts();
+            
+            loadingState.classList.add('hidden');
+        }
+        
+        // Sayfa yüklendiğinde başlat
+        // DOMContentLoaded bekleyerek event listener'ları tekrar başlat
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                init();
+            });
+        } else {
+            // DOM zaten yüklenmiş
+            init();
+        }
+        
+        // Icons'ları yeniden oluştur (dinamik içerik için)
+        setInterval(() => {
+            lucide.createIcons();
+        }, 1000);
+    </script>
+</body>
+</html>
+

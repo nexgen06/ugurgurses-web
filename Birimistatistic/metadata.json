@@ -1,0 +1,5 @@
+{
+  "name": "Birim İstatistik",
+  "description": "Birim bazlı işlem istatistikleri — Firebase Auth ve Firestore ile çalışan sicil veri uygulaması.",
+  "requestFramePermissions": []
+}

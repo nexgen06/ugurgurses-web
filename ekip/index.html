@@ -1,0 +1,4192 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hizmet Giriş Formu Simülasyon Ekranı</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="modal">
+    <div class="modal-header">
+      <div class="header-left">
+        <div class="user-info-container" id="userInfoContainer" style="display: none;">
+          <div class="user-welcome">
+            <span class="user-email" id="userEmail"></span>
+          </div>
+          <div class="user-actions">
+            <button class="back-to-page-btn" type="button" id="backToPageBtn" title="Önceki Sayfa">
+              <i class="fa-solid fa-arrow-left"></i> Önceki Sayfa
+            </button>
+            <button class="logout-btn" type="button" id="logoutBtn" title="Çıkış Yap">
+              <i class="fa-solid fa-sign-out-alt"></i> Çıkış Yap
+            </button>
+          </div>
+        </div>
+        <div class="logo-container" id="logoContainer" style="display: none;">
+          <img src="https://dosyamerkez.saglik.gov.tr/WebFiles/Logolar/logo-default.svg" alt="Sağlık Bakanlığı Logo"
+            class="logo-image" id="logoImage">
+          <div class="logo-text-container">
+            <div class="logo-main-title">SAĞLIK BAKANLIĞI</div>
+            <div class="logo-sub-title">Yönetim Hizmetleri Genel Müdürlüğü</div>
+          </div>
+        </div>
+      </div>
+      <div class="header-center">
+        <div class="logo-form-title">Hizmet Giriş Formu Simülasyon Ekranı</div>
+      </div>
+      <div class="header-right">
+        <div class="header-right-logo" style="display: none;">
+          <img src="https://ekip.saglik.gov.tr/Content/theme/custom/img/ekip_logo.svg" alt="EKIP Logo"
+            class="ekip-logo">
+        </div>
+        <div class="header-actions">
+          <button class="help-btn" type="button" id="helpBtn" aria-label="Yardım"
+            title="Yardım (F1 veya Ctrl+H)"><i class="fa-solid fa-circle-question"></i></button>
+          <button class="theme-toggle" type="button" id="themeToggle" aria-label="Koyu moda geç"
+            title="Tema Değiştir (Ctrl+D)"><i class="fa-solid fa-moon"></i></button>
+          <button class="close-button" aria-label="Pencereyi kapat"><i class="fa-solid fa-times"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="search-bar">
+        <label for="arama">Anahtar Kelime / Cümle</label>
+        <input type="text" id="arama" placeholder="Anahtar kelime veya cümle giriniz">
+      </div>
+      <div class="search-results" id="searchResults">
+        <div class="search-results-header" id="searchResultsHeader"></div>
+        <div class="search-result-list" id="searchResultList"></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="hizmetTuru">Hizmet Türü</label>
+          <select id="hizmetTuru">
+            <option selected>Kurum</option>
+            <option>Askeri Öğrencilik</option>
+            <option>Askerlik</option>
+            <option>Avukatlık Staj Süresi</option>
+            <option>Aylıksız İzin</option>
+            <option>Bağ-Kur</option>
+            <option>Borçlanma</option>
+            <option>Bulg.Göç/KöyHiz</option>
+            <option>Dış Personel Aile Hekimliği</option>
+            <option>Diğer Kamu</option>
+            <option>Emekli Sandığı</option>
+            <option>Fahri Asistanlık</option>
+            <option>Fahri İmamlık</option>
+            <option>Fahri Öğretmenlik</option>
+            <option>Fiili Hizmet Zammı</option>
+            <option>Hizmet Birleştirme</option>
+            <option>Hizmet İçi Eğitim</option>
+            <option>İkinci Görev</option>
+            <option>İsteğe Bağlı Emekli San</option>
+            <option>Kamu İşçi-2595 ve 241/15</option>
+            <option>Kamu SSK</option>
+            <option>Kurum-4924 S.K. Szl.</option>
+            <option>Kurum - Emekliye Esas</option>
+            <option>Polis Öğrencilik</option>
+            <option>Yurtdışı Görevlendirme</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="islemTuru">İşlem Türü</label>
+          <select id="islemTuru">
+            <option>Seçiniz</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="hareketTuru">Hareket Türü</label>
+          <select id="hareketTuru">
+            <option>Seçiniz</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="hareketTipi">Hareket Tipi</label>
+          <select id="hareketTipi">
+            <option>Seçiniz</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="dayanak">Dayanak</label>
+          <select id="dayanak">
+            <option>Seçiniz</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="hareket">Hareket</label>
+          <select id="hareket">
+            <option>Seçiniz</option>
+            <option>Ayrılış</option>
+            <option>Başlayış</option>
+            <option>Etkisiz</option>
+            <option>Hizmet Birleştirme</option>
+            <option>Hizmet Borçlanma</option>
+          </select>
+        </div>
+        <div class="form-group date-icon">
+          <label for="baslangicTarihi">Başlangıç Tarihi</label>
+          <input type="date" id="baslangicTarihi" tabindex="0">
+        </div>
+        <div class="form-group date-icon">
+          <label for="bitisTarihi">Bitiş Tarihi</label>
+          <input type="date" id="bitisTarihi" tabindex="0">
+        </div>
+
+        <div class="form-group">
+          <label for="kararNo">Karar No</label>
+          <input type="text" id="kararNo" placeholder="Metin giriniz" tabindex="0">
+        </div>
+        <div class="form-group date-icon">
+          <label for="kararTarihi">Karar Tarihi</label>
+          <input type="date" id="kararTarihi" tabindex="0">
+        </div>
+        <div class="form-group">
+          <label for="bildirimTarihi">Bildirim Tarihi</label>
+          <input type="date" id="bildirimTarihi" tabindex="0">
+        </div>
+        <div class="form-group">
+          <label for="calismaSekli">Çalışma Şekli</label>
+          <select id="calismaSekli">
+            <option>Seçiniz</option>
+            <option>Asli Görev (Kadro, Sözleşme)</option>
+            <option>Vekalet</option>
+            <option>İkinci Görev</option>
+            <option>Geçici Görev</option>
+            <option>Aile Hekimliği</option>
+            <option>İhtisas</option>
+            <option>Protokol ile Geçici Görev</option>
+            <option>Tedvir</option>
+            <option>Valilik Onayı Görevlendirme (5442)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="istihdamTipi">İstihdam Tipi</label>
+          <select id="istihdamTipi">
+            <option>Seçiniz</option>
+            <option>Memur</option>
+            <option>Sözleşmeli</option>
+            <option>İşçi</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="istihdamSekli">İstihdam Şekli</label>
+          <select id="istihdamSekli">
+            <option>Seçiniz</option>
+            <option>657/4A Memur</option>
+            <option>657/4B Sözleşmeli Personel</option>
+            <option>Sürekli İşçi</option>
+            <option>657/4B Sözleşmeli Personel (696 Sayılı KHK)</option>
+            <option>657/4B Sözleşmeli Personel (663 Sayılı KHK 45/A)</option>
+            <option>657/4B Sözleşmeli Personel (5620 Sayılı Kanun)</option>
+            <option>4924 Sözleşmeli Personel</option>
+            <option>Sözleşmeli Bilişim Personeli</option>
+            <option>Vekil Ebe Hemşire</option>
+            <option>Sözleşmeli Personel (663 Sayılı KHK 42)</option>
+            <option>5258 Sayılı Kamu Görevlisi Olmayan Sözleşmeli Personel</option>
+            <option>Sürekli İşçi (696 Sayılı KHK)</option>
+            <option>Geçici İşçi</option>
+            <option>399 Sözleşmeli</option>
+            <option>703 Sözleşmeli</option>
+            <option>3359 Sayılı Protokolle Çalışan Personel</option>
+            <option>663 Sözleşmeli</option>
+            <option>5258 (657) Aile Hekimi Kamu Görevlisi Olan</option>
+            <option>657 Yurtdışı</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="birim">Birim</label>
+          <input type="text" id="birim" placeholder="Kelime Giriniz">
+        </div>
+        <div class="form-group">
+          <label for="disKurum">Dış Kurum</label>
+          <input type="text" id="disKurum" placeholder="Kelime Giriniz">
+        </div>
+
+        <div class="form-group">
+          <label for="disBirim">Dış Kurum Alt Birim</label>
+          <input type="text" id="disBirim" placeholder="Kelime Giriniz">
+        </div>
+        <div class="form-group">
+          <label for="unvan">Unvan</label>
+          <select id="unvan">
+            <option>Seçiniz</option>
+            <option>Uzman</option>
+            <option>Şef</option>
+            <option>Müdür</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="brans">Branş</label>
+          <select id="brans">
+            <option>Seçiniz</option>
+            <option>İdari</option>
+            <option>Teknik</option>
+            <option>Sağlık</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="belge">Belge Yükle</label>
+          <button class="upload-btn" id="belge"><i class="fa-solid fa-upload"></i> Seçiniz</button>
+        </div>
+
+        <div class="form-group textarea-group" style="grid-column: span 2;">
+          <label for="aciklama">Açıklama</label>
+          <textarea id="aciklama" placeholder="Metin giriniz"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="dhy">DHY Durumu</label>
+          <select id="dhy">
+            <option>Seçiniz</option>
+            <option>DHY 1</option>
+            <option>DHY 2</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="kadroDerecesi">Kadro Derecesi</label>
+          <input type="text" id="kadroDerecesi" placeholder="Metin giriniz">
+        </div>
+      </div>
+
+      <div class="mini-grid">
+        <div class="form-group">
+          <label for="khaDer">KHA Der.</label>
+          <input type="text" id="khaDer">
+        </div>
+        <div class="form-group">
+          <label for="khaKad">KHA Kad.</label>
+          <input type="text" id="khaKad">
+        </div>
+        <div class="form-group">
+          <label for="khaGost">KHA Göst.</label>
+          <input type="text" id="khaGost">
+        </div>
+        <div class="form-group">
+          <label for="khaEkG">KHA Ek G.</label>
+          <input type="text" id="khaEkG">
+        </div>
+        <div class="form-group">
+          <label for="emEsDer">Em.Es.Der.</label>
+          <input type="text" id="emEsDer">
+        </div>
+        <div class="form-group">
+          <label for="emEsKad">Em.Es.Kad.</label>
+          <input type="text" id="emEsKad">
+        </div>
+        <div class="form-group">
+          <label for="emEsGost">Em.Es.Göst.</label>
+          <input type="text" id="emEsGost">
+        </div>
+        <div class="form-group">
+          <label for="emEsEkG">Em.Es.Ek G</label>
+          <input type="text" id="emEsEkG">
+        </div>
+        <div class="form-group">
+          <label for="odEsDer">Öd.Es.Der.</label>
+          <input type="text" id="odEsDer">
+        </div>
+        <div class="form-group">
+          <label for="odEsKad">Öd.Es.Kad.</label>
+          <input type="text" id="odEsKad">
+        </div>
+        <div class="form-group">
+          <label for="odEsGost">Öd.Es.Göst.</label>
+          <input type="text" id="odEsGost">
+        </div>
+        <div class="form-group">
+          <label for="odEsEkG">Öd.Es.Ek G.</label>
+          <input type="text" id="odEsEkG">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="footer-actions">
+        <button class="action-btn records-btn" type="button" id="recordsBtn" title="Kayıtları Gör (Ctrl+K)"><i class="fa-solid fa-list"></i> Kayıtlar</button>
+        <button class="action-btn template-btn" type="button" id="templateBtn" title="Şablonlar (Ctrl+T)"><i class="fa-solid fa-copy"></i> Şablonlar</button>
+        <button class="action-btn save-template-btn" type="button" id="saveTemplateBtn" style="display: none;" title="Şablon Olarak Kaydet (Ctrl+Shift+S)"><i class="fa-solid fa-floppy-disk"></i> Şablon Kaydet</button>
+        <button class="action-btn reset-btn" type="button" id="resetBtn" title="Alanları Temizle (Ctrl+R)"><i class="fa-solid fa-eraser"></i> Temizle</button>
+        <button class="action-btn rule-manager-btn" type="button" id="ruleManagerBtn" title="Kural Yönetimi"><i class="fa-solid fa-sliders"></i> Kurallar</button>
+        <button class="action-btn edit-btn" type="button" id="editBtn" style="display: none;" title="Düzenle (Ctrl+E)"><i class="fa-solid fa-pen-to-square"></i> Düzenle</button>
+        <button class="action-btn action-btn-danger delete-btn" type="button" id="deleteBtn" style="display: none;" title="Kayıt Sil (Delete)"><i class="fa-solid fa-trash-can"></i> Sil</button>
+      </div>
+      <div class="footer-primary">
+        <div class="footer-category-group">
+          <label for="islemKategorisi">İşlem Kategorisi</label>
+          <select id="islemKategorisi">
+            <option>Seçiniz</option>
+            <option>Personel Yönetimi</option>
+            <option>İdari İşlemler</option>
+            <option>Disiplin</option>
+            <option>Sicil ve Terfi</option>
+            <option>İzin ve Görevlendirme</option>
+            <option>Mali Haklar</option>
+            <option>Hukuki İşlemler</option>
+            <option>Diğer</option>
+          </select>
+        </div>
+        <button class="save-btn" type="button" title="Kaydet (Ctrl+S)"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Yardım Modal -->
+  <div class="help-modal" id="helpModal" style="display: none;">
+    <div class="help-modal-content">
+      <div class="help-modal-header">
+        <h2>Yardım ve Rehber</h2>
+        <div class="help-header-actions">
+          <button class="help-edit-btn" type="button" id="helpEditBtn" title="Düzenle"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button class="help-save-btn" type="button" id="helpSaveBtn" style="display: none;" title="Kaydet"><i class="fa-solid fa-floppy-disk"></i></button>
+          <button class="help-cancel-btn" type="button" id="helpCancelBtn" style="display: none;" title="İptal"><i class="fa-solid fa-times"></i></button>
+          <button class="help-modal-close" id="helpModalClose" aria-label="Kapat"><i class="fa-solid fa-times"></i></button>
+        </div>
+      </div>
+      <div class="help-modal-body">
+        <div class="help-tabs">
+          <button class="help-tab active" data-tab="general">Genel Bilgiler</button>
+          <button class="help-tab" data-tab="fields">Alan Açıklamaları</button>
+          <button class="help-tab" data-tab="faq">Sık Sorulan Sorular</button>
+        </div>
+        <div class="help-content">
+          <div class="help-tab-content active" id="helpGeneral" data-help-section="general">
+            <div class="help-editable-content">
+              <h3>Form Kullanımı</h3>
+              <p>Bu form, hizmet giriş işlemlerini kaydetmek için kullanılır. Aşağıdaki adımları takip edin:</p>
+              <ol>
+                <li>Form alanlarını ihtiyacınıza göre doldurun</li>
+                <li>Diğer alanları ihtiyacınıza göre doldurun</li>
+                <li>Kaydet butonuna tıklayın</li>
+              </ol>
+              <h3>Önemli Notlar</h3>
+              <ul>
+                <li>Form alanları isteğe bağlıdır</li>
+                <li>Kayıtlar otomatik olarak kaydedilir</li>
+                <li>Arama özelliği ile önceki kayıtları bulabilirsiniz</li>
+                <li>Form alanlarının yanındaki ℹ️ ikonuna tıklayarak detaylı bilgi alabilirsiniz</li>
+              </ul>
+            </div>
+          </div>
+          <div class="help-tab-content" id="helpFields" style="display: none;" data-help-section="fields">
+            <div class="help-editable-content">
+              <h3>Form Alanları Açıklamaları</h3>
+              <div class="help-field-list" id="helpFieldList">
+                <!-- Dinamik olarak doldurulacak -->
+              </div>
+            </div>
+          </div>
+          <div class="help-tab-content" id="helpFaq" style="display: none;" data-help-section="faq">
+            <div class="help-editable-content">
+              <h3>Sık Sorulan Sorular</h3>
+              <div class="faq-list" id="helpFaqList">
+                <div class="faq-item">
+                  <div class="faq-question">Açıklama alanı zorunlu mu?</div>
+                  <div class="faq-answer" style="display: none;">Açıklama alanı artık zorunlu değildir. Ancak arama yaparken kayıtları kolayca bulabilmek için açıklama alanını doldurmanız önerilir.</div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">Kayıtlarım nerede saklanıyor?</div>
+                  <div class="faq-answer" style="display: none;">Kayıtlarınız tarayıcınızın localStorage'ında güvenli
+                    bir şekilde saklanır.</div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">Arama nasıl çalışıyor?</div>
+                  <div class="faq-answer" style="display: none;">Arama kutusuna anahtar kelime girdiğinizde, tüm form
+                    alanlarında arama yapılır ve eşleşen kayıtlar gösterilir.</div>
+                </div>
+                <div class="faq-item">
+                  <div class="faq-question">Hareket Türü ve Hareket Tipi arasındaki fark nedir?</div>
+                  <div class="faq-answer" style="display: none;">Hareket Türü, genel işlem kategorisini belirtir (örn:
+                    Atama, İstifa). Hareket Tipi ise seçilen Hareket Türü'ne göre daha spesifik seçenekler sunar.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="help-tooltip" id="helpTooltip" style="display: none;"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Kural Yönetim Modal -->
+  <div class="rule-manager-modal" id="ruleManagerModal" style="display: none;">
+    <div class="rule-manager-content">
+      <div class="rule-manager-header">
+        <div class="rule-manager-title">Gelişmiş Kural Tanımlama</div>
+        <button class="rule-manager-close" id="ruleManagerClose" aria-label="Kapat"><i class="fa-solid fa-times"></i></button>
+      </div>
+      <div class="rule-manager-body">
+        <div class="rule-tabs">
+          <button class="rule-tab active" data-tab="create">Yeni Kural</button>
+          <button class="rule-tab" data-tab="fromForm">Formdan Oluştur</button>
+          <button class="rule-tab" data-tab="list">Kayıtlı Kurallar</button>
+        </div>
+
+        <!-- Yeni Kural Sekmesi -->
+        <div class="rule-tab-content active" id="tabCreate">
+          <form class="rule-form" id="ruleForm">
+            <div class="rule-form-group">
+              <label class="rule-form-label">Kural Adı</label>
+              <input type="text" class="rule-form-input" id="ruleName"
+                placeholder="Örn: İşlem Türüne Göre Hareket Seçenekleri" required>
+            </div>
+
+            <div class="rule-form-group">
+              <label class="rule-form-label">Hedef Alan (Seçeneklerin ekleneceği alan)</label>
+              <select class="rule-form-select" id="ruleTargetField" required>
+                <option value="">Seçiniz...</option>
+              </select>
+            </div>
+
+            <div class="rule-form-group">
+              <label class="rule-form-label">Koşullar (Eğer bu koşullar sağlanırsa seçenekler eklenecek)</label>
+              <div class="rule-condition-group" id="ruleConditions">
+                <div class="rule-condition-row">
+                  <select class="rule-form-select rule-condition-field">
+                    <option value="">Alan seçiniz...</option>
+                  </select>
+                  <select class="rule-form-select rule-condition-operator-select">
+                    <option value="equals">Eşittir (=)</option>
+                    <option value="notEquals">Eşit Değildir (≠)</option>
+                    <option value="contains">İçerir (⊃)</option>
+                    <option value="notContains">İçermez (⊅)</option>
+                    <option value="startsWith">İle Başlar</option>
+                    <option value="endsWith">İle Biter</option>
+                  </select>
+                  <input type="text" class="rule-form-input rule-condition-value" placeholder="Değer giriniz...">
+                </div>
+              </div>
+              <button type="button" class="rule-add-condition" id="addConditionBtn"><i class="fa-solid fa-plus"></i> Koşul Ekle</button>
+            </div>
+
+            <div class="rule-options-section">
+              <div class="rule-options-header">Eklenecek Seçenekler</div>
+              <div class="rule-options-list" id="ruleOptionsList">
+                <div class="rule-option-item">
+                  <input type="text" class="rule-option-input" placeholder="Seçenek metni...">
+                  <button type="button" class="rule-option-remove" aria-label="Kaldır"><i class="fa-solid fa-times"></i></button>
+                </div>
+              </div>
+              <button type="button" class="rule-add-option" id="addOptionBtn"><i class="fa-solid fa-plus"></i> Seçenek Ekle</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Formdan Kural Oluştur Sekmesi -->
+        <div class="rule-tab-content" id="tabFromForm">
+          <div style="padding: 20px;">
+            <div style="margin-bottom: 20px;">
+              <p style="color: #6b7280; margin-bottom: 16px;">
+                Mevcut form verilerinizden otomatik kural oluşturun. Dolu alanlar koşul olarak, seçtiğiniz alan ise
+                hedef alan olarak kullanılacak.
+              </p>
+            </div>
+
+            <div class="rule-form-group">
+              <label class="rule-form-label">Hedef Alan (Seçeneklerin ekleneceği alan)</label>
+              <select class="rule-form-select" id="ruleFromFormTargetField">
+                <option value="">Seçiniz...</option>
+              </select>
+            </div>
+
+            <div class="rule-form-group">
+              <label class="rule-form-label">Kural Adı</label>
+              <input type="text" class="rule-form-input" id="ruleFromFormName"
+                placeholder="Örn: İşlem Türüne Göre Hareket Seçenekleri">
+            </div>
+
+            <div class="rule-form-group">
+              <label class="rule-form-label">Form Verileri (Koşul olarak kullanılacak)</label>
+              <div id="ruleFromFormPreview"
+                style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; max-height: 300px; overflow-y: auto;">
+                <div style="color: #6b7280; text-align: center; padding: 20px;">
+                  Form verilerini yüklemek için "Form Verilerini Yükle" butonuna tıklayın.
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+              <button type="button" class="rule-btn rule-btn-secondary" id="ruleFromFormLoadBtn"><i class="fa-solid fa-file-import"></i> Form Verilerini Yükle</button>
+              <button type="button" class="rule-btn rule-btn-primary" id="ruleFromFormCreateBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Kural Oluştur</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kayıtlı Kurallar Sekmesi -->
+        <div class="rule-tab-content" id="tabList">
+          <div class="rule-list" id="ruleList">
+            <!-- Dinamik olarak doldurulacak -->
+          </div>
+        </div>
+      </div>
+      <div class="rule-footer">
+        <button type="button" class="rule-btn rule-btn-secondary" id="ruleCancelBtn"><i class="fa-solid fa-times"></i> İptal</button>
+        <button type="button" class="rule-btn rule-btn-primary" id="ruleSaveBtn"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Yönetim Modülü - Hızlı Kelime Tanımlama - KALDIRILDI -->
+
+  <!-- Şablon Modal -->
+  <div class="template-modal" id="templateModal" style="display: none;">
+    <div class="template-modal-content">
+      <div class="template-modal-header">
+        <h2>Şablon Yönetimi</h2>
+        <button class="template-modal-close" id="templateModalClose" aria-label="Kapat"><i class="fa-solid fa-times"></i></button>
+      </div>
+      <div class="template-modal-body">
+        <div class="template-search-section">
+          <label for="templateSearch">Şablonlarda Ara</label>
+          <input type="text" id="templateSearch" placeholder="Şablon adı, kategori veya açıklama ile ara...">
+        </div>
+        <div class="template-list" id="templateList">
+          <!-- Şablonlar buraya eklenecek -->
+        </div>
+        <div class="template-empty" id="templateEmpty" style="display: none;">
+          <p>Henüz şablon kaydedilmemiş. Formu doldurup "Şablon Olarak Kaydet" butonuna tıklayarak şablon
+            oluşturabilirsiniz.</p>
+        </div>
+        <div class="template-no-results" id="templateNoResults" style="display: none;">
+          <p>Arama kriterlerinize uygun şablon bulunamadı.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bilgilendirme Paneli -->
+  <div class="info-panel" id="infoPanel">
+    <div class="info-panel-header">
+      <h3 class="info-panel-title">Bilgilendirme</h3>
+      <button class="info-panel-toggle" type="button" id="infoPanelToggle"
+        aria-label="Paneli daralt/genişlet"><i class="fa-solid fa-chevron-down"></i></button>
+    </div>
+    <div class="info-panel-content">
+      <div class="info-section">
+        <div class="info-section-title">📋 Form Kullanımı</div>
+        <div class="info-section-content">
+          <ul>
+            <li>Form alanları isteğe bağlıdır</li>
+            <li>Kayıtlar otomatik olarak kaydedilir</li>
+            <li>Arama ile kayıtları bulabilirsiniz</li>
+            <li>Kayıtları görüntülemek için "Kayıtları Gör" butonunu kullanın</li>
+          </ul>
+        </div>
+      </div>
+      <div class="info-section">
+        <div class="info-section-title">🔍 Arama Özellikleri</div>
+        <div class="info-section-content">
+          Anahtar kelime veya cümle girerek tüm alanlarda arama yapabilirsiniz. Eşleşen kayıtlar otomatik olarak forma
+          yüklenir.
+        </div>
+      </div>
+      <div class="info-section">
+        <div class="info-section-title">💾 Veri Saklama</div>
+        <div class="info-section-content">
+          Tüm kayıtlar güvenli bir şekilde saklanır ve tüm kullanıcılarla paylaşılır. Veriler gerçek zamanlı olarak
+          güncellenir.
+        </div>
+      </div>
+      <div class="info-section">
+        <div class="info-section-title">🌙 Tema</div>
+        <div class="info-section-content">
+          Sağ üst köşedeki tema butonu ile açık/koyu mod arasında geçiş yapabilirsiniz.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dropdown Yükleme Modal - KALDIRILDI -->
+  <div class="dropdown-loader-modal" id="dropdownLoaderModal" style="display: none !important;">
+    <div class="dropdown-loader-modal-content">
+      <div class="dropdown-loader-modal-header">
+        <h2>📥 Dropdown Verilerini Web'den Yükle</h2>
+        <button class="dropdown-loader-modal-close" id="dropdownLoaderModalClose" aria-label="Kapat">×</button>
+      </div>
+      <div class="dropdown-loader-modal-body">
+        <div class="dropdown-loader-form">
+          <div class="form-group">
+            <label for="dropdownUrl">Web Sitesi URL'si</label>
+            <input type="url" id="dropdownUrl" placeholder="https://example.com/api/dropdowns.json" autocomplete="off">
+            <small class="form-hint">JSON, HTML veya CSV formatında veri sağlayan bir URL girin</small>
+          </div>
+
+          <div class="form-group">
+            <label for="dropdownFormat">Veri Formatı</label>
+            <select id="dropdownFormat">
+              <option value="json">JSON (Önerilen)</option>
+              <option value="html">HTML</option>
+              <option value="csv">CSV</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="htmlSelectorGroup" style="display: none;">
+            <label for="htmlSelector">CSS Selector (HTML için)</label>
+            <input type="text" id="htmlSelector" placeholder="select, select[id^='hareket'], vb.">
+            <small class="form-hint">Boş bırakılırsa tüm select elementleri alınır</small>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="useCache" checked>
+              Cache kullan (Hızlı yükleme için)
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="autoLoad" checked>
+              URL girildiğinde otomatik yükle
+            </label>
+          </div>
+
+          <div class="dropdown-loader-status" id="dropdownLoaderStatus" style="display: none;">
+            <div class="status-message" id="statusMessage"></div>
+            <div class="status-progress" id="statusProgress" style="display: none;">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dropdown-loader-results" id="dropdownLoaderResults" style="display: none;">
+            <h3>✅ Yüklenen Veriler:</h3>
+            <div class="results-list" id="resultsList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="dropdown-loader-modal-footer">
+        <button class="btn-secondary" type="button" id="dropdownLoaderClearCache">Cache Temizle</button>
+        <button class="btn-secondary" type="button" id="dropdownLoaderTest">Test Et</button>
+        <button class="btn-primary" type="button" id="dropdownLoaderLoad">Yükle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase Bilgileri - .env dosyasındaki değerleri buraya ekleyin -->
+  <script>
+    // Supabase bilgilerini buraya ekleyin (.env dosyasından kopyalayın)
+    window.SUPABASE_URL = "https://mmahcxmfnuoovgqgvjag.supabase.co";
+    window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tYWhjeG1mbnVvb3ZncWd2amFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzMDg2OTIsImV4cCI6MjA3ODg4NDY5Mn0.twxgZyCYvITgFkkpJQwpDX4TgC6NpA1-Rm57QdcZVh8";
+
+    // Dropdown Loader Varsayılan URL (İsteğe bağlı)
+    // Buraya varsayılan web sitesi URL'nizi yazabilirsiniz
+    // Örnek: window.DROPDOWN_LOADER_DEFAULT_URL = "https://example.com/api/dropdowns.json";
+    // window.DROPDOWN_LOADER_DEFAULT_URL = "";
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function () {
+      // Supabase yapılandırması
+      // .env dosyasından veya window'dan al
+      const SUPABASE_URL = window.SUPABASE_URL || "BURAYA_SUPABASE_URLINIZI_YAZIN";
+      const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "BURAYA_SUPABASE_ANON_KEYINIZI_YAZIN";
+      const supabaseClient = (window.supabase && SUPABASE_URL !== "BURAYA_SUPABASE_URLINIZI_YAZIN" && SUPABASE_ANON_KEY !== "BURAYA_SUPABASE_ANON_KEYINIZI_YAZIN")
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        : null;
+
+      // Global erişim için window'a ekle
+      window.supabaseClient = supabaseClient;
+
+      if (supabaseClient) {
+        console.log("✅ Supabase client başlatıldı");
+      } else {
+        console.warn("⚠️ Supabase client başlatılamadı - localStorage kullanılacak");
+      }
+
+      const fieldIds = [
+        "islemKategorisi",
+        "hizmetTuru",
+        "islemTuru",
+        "hareketTuru",
+        "hareketTipi",
+        "dayanak",
+        "hareket",
+        "baslangicTarihi",
+        "bitisTarihi",
+        "kararNo",
+        "kararTarihi",
+        "bildirimTarihi",
+        "calismaSekli",
+        "istihdamTipi",
+        "istihdamSekli",
+        "birim",
+        "disKurum",
+        "disBirim",
+        "unvan",
+        "brans",
+        "aciklama",
+        "dhy",
+        "kadroDerecesi",
+        "khaDer",
+        "khaKad",
+        "khaGost",
+        "khaEkG",
+        "emEsDer",
+        "emEsKad",
+        "emEsGost",
+        "emEsEkG",
+        "odEsDer",
+        "odEsKad",
+        "odEsGost",
+        "odEsEkG"
+      ];
+
+      const STORAGE_KEY = "hizmetIslemiKayitlari";
+      const TEMPLATE_KEY = "hizmetIslemiSablonlari";
+      const THEME_KEY = "hizmetIslemiTheme";
+      const HELP_CONTENT_KEY = "hizmetIslemiYardimIcerik";
+      const QUICK_WORDS_KEY = "hizmetIslemiHizliKelimeler";
+      let savedRecords = [];
+      let savedTemplates = [];
+      let currentEditId = null; // Düzenlenen kayıt ID'si
+      let quickWords = {}; // { fieldId: ["kelime1", "kelime2", ...] }
+      const saveBtn = document.querySelector(".save-btn");
+      const searchInput = document.getElementById("arama");
+      const recordsBtn = document.getElementById("recordsBtn");
+      const templateBtn = document.getElementById("templateBtn");
+      const saveTemplateBtn = document.getElementById("saveTemplateBtn");
+      const templateModal = document.getElementById("templateModal");
+      const templateModalClose = document.getElementById("templateModalClose");
+      const templateList = document.getElementById("templateList");
+      const templateEmpty = document.getElementById("templateEmpty");
+      const templateNoResults = document.getElementById("templateNoResults");
+      const templateSearch = document.getElementById("templateSearch");
+      const resetBtn = document.getElementById("resetBtn");
+      const editBtn = document.getElementById("editBtn");
+      const deleteBtn = document.getElementById("deleteBtn");
+      const statusBar = createStatusBar();
+      const searchResultsBox = document.getElementById("searchResults");
+      const searchResultsHeader = document.getElementById("searchResultsHeader");
+      const searchResultsList = document.getElementById("searchResultList");
+      const islemTuruSelect = document.getElementById("islemTuru");
+      const hareketTuruSelect = document.getElementById("hareketTuru");
+      const hareketTipiSelect = document.getElementById("hareketTipi");
+      const themeToggleBtn = document.getElementById("themeToggle");
+
+      // İşlem Türü / Hareket Türü / Hareket Tipi / Dayanak verisi dropdown_data.json'dan yüklenir
+      let dropdownHierarchy = [];
+
+      async function loadDropdownData() {
+        try {
+          const res = await fetch('dropdown_data.json');
+          if (!res.ok) {
+            console.warn('dropdown_data.json yüklenemedi:', res.status);
+            return;
+          }
+          const data = await res.json();
+          dropdownHierarchy = Array.isArray(data) ? data : [];
+          populateIslemTuruFromHierarchy();
+          applyHareketTuruOptions(islemTuruSelect?.value, hareketTuruSelect?.value);
+          applyHareketTipiOptions(hareketTuruSelect?.value, hareketTipiSelect?.value);
+          applyDayanakOptions(hareketTipiSelect?.value, document.getElementById('dayanak')?.value);
+        } catch (e) {
+          console.warn('dropdown_data.json okunamadı:', e);
+        }
+      }
+
+      function populateIslemTuruFromHierarchy() {
+        if (!islemTuruSelect) return;
+        const opts = ['Seçiniz'];
+        dropdownHierarchy.forEach(item => {
+          const v = (item && item.value) ? String(item.value).trim() : '';
+          if (v && !opts.includes(v)) opts.push(v);
+        });
+        populateSelect(islemTuruSelect, opts);
+      }
+
+      function collectFormValues() {
+        return fieldIds.reduce((acc, id) => {
+          const element = document.getElementById(id);
+          if (!element) {
+            return acc;
+          }
+
+          if (element instanceof HTMLSelectElement || element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+            acc[id] = element.value;
+          }
+          return acc;
+        }, {});
+      }
+
+      function fillForm(values) {
+        applyHareketTuruOptions(values?.islemTuru, values?.hareketTuru);
+        applyHareketTipiOptions(values?.hareketTuru, values?.hareketTipi);
+        applyDayanakOptions(values?.hareketTipi, values?.dayanak);
+        fieldIds.forEach((id) => {
+          const element = document.getElementById(id);
+          if (!element) {
+            return;
+          }
+
+          if (id === "hareketTuru" || id === "hareketTipi" || id === "dayanak") {
+            return;
+          }
+
+          if (Object.prototype.hasOwnProperty.call(values, id)) {
+            element.value = values[id] || "";
+          }
+        });
+        updateSaveButtonState();
+      }
+
+      // Şablonları yükle
+      async function loadTemplates() {
+        // Supabase varsa ordan oku
+        if (window.supabaseClient && window.supabaseExtras) {
+          try {
+            const templates = await window.supabaseExtras.loadTemplates(window.supabaseClient);
+            if (templates && templates.length > 0) {
+              console.log("✅ Şablonlar Supabase'den yüklendi:", templates.length);
+              return templates;
+            }
+          } catch (error) {
+            console.warn("Supabase şablonları yüklenirken hata:", error);
+          }
+        }
+
+        // Eski davranış: localStorage
+        try {
+          const raw = localStorage.getItem(TEMPLATE_KEY);
+          if (!raw) {
+            return [];
+          }
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          console.warn("Şablonlar yüklenirken hata oluştu:", error);
+          return [];
+        }
+      }
+
+      // Şablonları kaydet
+      async function saveTemplates(templates) {
+        // Supabase'e kaydet (her şablon için)
+        if (window.supabaseClient && window.supabaseExtras) {
+          try {
+            for (const template of templates) {
+              // Eğer ID string ise ve "template_" ile başlıyorsa, Supabase'de yok demektir
+              if (template.id && String(template.id).startsWith('template_')) {
+                await window.supabaseExtras.saveTemplate(window.supabaseClient, {
+                  name: template.name,
+                  values: template.values,
+                  category: template.category,
+                  tags: template.tags
+                });
+              }
+            }
+            console.log("✅ Şablonlar Supabase'e kaydedildi");
+          } catch (error) {
+            console.warn("Supabase şablon kaydetme hatası:", error);
+          }
+        }
+
+        // Eski davranış: localStorage (her zaman kaydet - fallback)
+        try {
+          localStorage.setItem(TEMPLATE_KEY, JSON.stringify(templates));
+          return true;
+        } catch (error) {
+          console.error("Şablonlar kaydedilirken hata oluştu:", error);
+          return false;
+        }
+      }
+
+      // Şablon ekle
+      async function addTemplate(name, values) {
+        const newTemplate = {
+          id: `template_${Date.now()}`,
+          name: name || `Şablon ${savedTemplates.length + 1}`,
+          values: values,
+          createdAt: Date.now()
+        };
+        savedTemplates.push(newTemplate);
+
+        // Supabase'e kaydet
+        if (window.supabaseClient && window.supabaseExtras) {
+          try {
+            const saved = await window.supabaseExtras.saveTemplate(window.supabaseClient, {
+              name: newTemplate.name,
+              values: newTemplate.values
+            });
+            if (saved && saved.id) {
+              newTemplate.id = saved.id; // Supabase ID'sini kullan
+              console.log("✅ Şablon Supabase'e kaydedildi:", saved.id);
+            }
+          } catch (error) {
+            console.warn("Supabase şablon kaydetme hatası:", error);
+          }
+        }
+
+        await saveTemplates(savedTemplates);
+        const currentSearch = templateSearch ? templateSearch.value : "";
+        renderTemplates(currentSearch);
+        return newTemplate;
+      }
+
+      // Şablon sil
+      async function removeTemplate(templateId) {
+        // Supabase'den sil (eğer Supabase ID'si ise)
+        if (window.supabaseClient && window.supabaseExtras && !String(templateId).startsWith('template_')) {
+          try {
+            await window.supabaseExtras.deleteTemplate(window.supabaseClient, templateId);
+            console.log("✅ Şablon Supabase'den silindi:", templateId);
+          } catch (error) {
+            console.warn("Supabase şablon silme hatası:", error);
+          }
+        }
+
+        savedTemplates = savedTemplates.filter(t => t.id !== templateId);
+        await saveTemplates(savedTemplates);
+        const currentSearch = templateSearch ? templateSearch.value : "";
+        renderTemplates(currentSearch);
+      }
+
+      // Şablonları render et
+      function renderTemplates(searchTerm = "") {
+        if (!templateList || !templateEmpty || !templateNoResults) return;
+
+        if (savedTemplates.length === 0) {
+          templateList.style.display = "none";
+          templateEmpty.style.display = "block";
+          templateNoResults.style.display = "none";
+          return;
+        }
+
+        const lowerSearchTerm = searchTerm.toLowerCase().trim();
+        const filteredTemplates = lowerSearchTerm
+          ? savedTemplates.filter(template => {
+            const nameMatch = template.name.toLowerCase().includes(lowerSearchTerm);
+            const categoryMatch = template.values.islemKategorisi?.toLowerCase().includes(lowerSearchTerm);
+            const descMatch = template.values.aciklama?.toLowerCase().includes(lowerSearchTerm);
+            return nameMatch || categoryMatch || descMatch;
+          })
+          : savedTemplates;
+
+        if (filteredTemplates.length === 0) {
+          templateList.style.display = "none";
+          templateEmpty.style.display = "none";
+          templateNoResults.style.display = "block";
+          return;
+        }
+
+        templateList.style.display = "block";
+        templateEmpty.style.display = "none";
+        templateNoResults.style.display = "none";
+        templateList.innerHTML = "";
+
+        filteredTemplates.forEach((template) => {
+          const templateItem = document.createElement("div");
+          templateItem.className = "template-item";
+
+          const templateInfo = document.createElement("div");
+          templateInfo.className = "template-info";
+
+          const templateName = document.createElement("div");
+          templateName.className = "template-name";
+          templateName.textContent = template.name;
+
+          const templateMeta = document.createElement("div");
+          templateMeta.className = "template-meta";
+          const metaParts = [];
+          if (template.values.islemKategorisi && template.values.islemKategorisi !== "Seçiniz") {
+            metaParts.push(`Kategori: ${template.values.islemKategorisi}`);
+          }
+          if (template.values.aciklama) {
+            metaParts.push(template.values.aciklama);
+          }
+          templateMeta.textContent = metaParts.length > 0 ? metaParts.join(" • ") : "Açıklama yok";
+
+          templateInfo.appendChild(templateName);
+          templateInfo.appendChild(templateMeta);
+
+          const templateActions = document.createElement("div");
+          templateActions.className = "template-actions";
+
+          const loadBtn = document.createElement("button");
+          loadBtn.className = "template-load-btn";
+          loadBtn.innerHTML = "<i class=\"fa-solid fa-download\"></i> Yükle";
+          loadBtn.title = "Bu şablonu forma yükle";
+          loadBtn.addEventListener("click", () => {
+            fillForm(template.values);
+            currentEditId = null;
+            if (editBtn) editBtn.style.display = "none";
+            if (deleteBtn) deleteBtn.style.display = "none";
+            if (saveBtn) saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Kaydet';
+            if (templateModal) {
+              templateModal.style.display = "none";
+              document.body.style.overflow = "";
+            }
+            showStatus(`"${template.name}" şablonu forma yüklendi.`);
+          });
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "template-delete-btn";
+          deleteBtn.innerHTML = "<i class=\"fa-solid fa-trash-can\"></i> Sil";
+          deleteBtn.title = "Bu şablonu sil";
+          deleteBtn.addEventListener("click", async () => {
+            const confirmed = await customConfirm(`"${template.name}" şablonunu silmek istediğinizden emin misiniz?`, "Şablon Sil");
+            if (confirmed) {
+              removeTemplate(template.id);
+              showStatus("Şablon silindi.");
+            }
+          });
+
+          templateActions.appendChild(loadBtn);
+          templateActions.appendChild(deleteBtn);
+
+          templateItem.appendChild(templateInfo);
+          templateItem.appendChild(templateActions);
+          templateList.appendChild(templateItem);
+        });
+      }
+
+      // Kayıtları yükle (localStorage)
+      async function loadStoredRecords() {
+        // Supabase varsa ordan oku, yoksa localStorage'a düş
+        if (window.supabaseClient) {
+          try {
+            const { data, error } = await window.supabaseClient
+              .from("hizmet_islemi_kayitlari")
+              .select("*")
+              .order("created_at", { ascending: false });
+
+            if (error) {
+              console.warn("Supabase kayıtları yüklenirken hata oluştu:", error);
+              return [];
+            }
+
+            return (data || []).map((row, index) => ({
+              id: row.id ?? row.created_at ?? `supabase_${index}`,
+              createdAt: row.created_at ? new Date(row.created_at).getTime() : null,
+              values: row.ekstra_alanlar || row.values || {}
+            }));
+          } catch (error) {
+            console.warn("Supabase kayıtları yüklenirken beklenmeyen hata oluştu:", error);
+            return [];
+          }
+        }
+
+        // Eski davranış: localStorage
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            return parsed.map((record, index) => ({
+              ...record,
+              id: record.id || record.createdAt || `local_${record.createdAt || Date.now()}_${index}`
+            }));
+          }
+          return [];
+        } catch (error) {
+          console.warn("Kayıtlar yüklenirken hata oluştu:", error);
+          return [];
+        }
+      }
+
+      // Kayıt güncelle
+      async function updateRecord(id, values) {
+        if (window.supabaseClient && id && String(id).indexOf("local_") !== 0) {
+          try {
+            const payload = { ekstra_alanlar: values };
+            const { data, error } = await window.supabaseClient
+              .from("hizmet_islemi_kayitlari")
+              .update(payload)
+              .eq("id", id)
+              .select("id, created_at, ekstra_alanlar")
+              .single();
+
+            if (error) {
+              console.warn("Supabase kayıt güncelleme hatası:", error);
+              return { success: false, error: error.message };
+            }
+
+            const updated = {
+              id: data.id,
+              createdAt: data.created_at ? new Date(data.created_at).getTime() : null,
+              values: data.ekstra_alanlar || {}
+            };
+
+            const index = savedRecords.findIndex(r => (r.id || r.createdAt) === id);
+            if (index !== -1) {
+              savedRecords[index] = updated;
+            }
+            return { success: true };
+          } catch (error) {
+            console.warn("Supabase kayıt güncelleme beklenmeyen hata:", error);
+            return { success: false, error: error.message };
+          }
+        }
+
+        // Eski davranış: localStorage
+        const index = savedRecords.findIndex(r => (r.id || r.createdAt) === id);
+        if (index !== -1) {
+          savedRecords[index] = { ...savedRecords[index], values };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(savedRecords));
+          return { success: true };
+        }
+        return { success: false, error: "Kayıt bulunamadı" };
+      }
+
+      // Kayıt sil
+      async function deleteRecord(id) {
+        if (window.supabaseClient && id && String(id).indexOf("local_") !== 0) {
+          try {
+            const { error } = await window.supabaseClient
+              .from("hizmet_islemi_kayitlari")
+              .delete()
+              .eq("id", id);
+
+            if (error) {
+              console.warn("Supabase kayıt silme hatası:", error);
+              return { success: false, error: error.message };
+            }
+
+            savedRecords = savedRecords.filter(r => (r.id || r.createdAt) !== id);
+            return { success: true };
+          } catch (error) {
+            console.warn("Supabase kayıt silme beklenmeyen hata:", error);
+            return { success: false, error: error.message };
+          }
+        }
+
+        // Eski davranış: localStorage
+        savedRecords = savedRecords.filter(r => (r.id || r.createdAt) !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedRecords));
+        return { success: true };
+      }
+
+      // Kayıt ekle
+      async function storeRecord(values) {
+        if (window.supabaseClient) {
+          try {
+            // Tüm form verilerini Supabase formatına dönüştür
+            const mainFields = [
+              "islemKategorisi", "hizmetTuru", "islemTuru", "hareketTuru", "hareketTipi",
+              "dayanak", "hareket", "baslangicTarihi", "bitisTarihi", "kararNo",
+              "kararTarihi", "bildirimTarihi", "calismaSekli", "istihdamTipi", "istihdamSekli",
+              "birim", "disKurum", "disBirim", "unvan", "brans", "aciklama", "dhy", "kadroDerecesi"
+            ];
+
+            const extraFields = [
+              "khaDer", "khaKad", "khaGost", "khaEkG",
+              "emEsDer", "emEsKad", "emEsGost", "emEsEkG",
+              "odEsDer", "odEsKad", "odEsGost", "odEsEkG"
+            ];
+
+            // Ana alanları snake_case'e çevir
+            const mainData = {};
+            mainFields.forEach(field => {
+              if (values.hasOwnProperty(field)) {
+                const snakeKey = field.replace(/([A-Z])/g, '_$1').toLowerCase();
+                // Boş string'leri null'a çevir (NOT NULL constraint hatası için)
+                const value = values[field];
+                mainData[snakeKey] = (value && value.trim && value.trim() !== '') ? value : null;
+              }
+            });
+
+            // Ekstra alanları JSONB için ayır
+            const extraData = {};
+            extraFields.forEach(field => {
+              if (values.hasOwnProperty(field) && values[field]) {
+                extraData[field] = values[field];
+              }
+            });
+
+            // Supabase payload'u oluştur
+            const payload = {
+              ...mainData,
+              ekstra_alanlar: Object.keys(extraData).length > 0 ? extraData : {}
+            };
+
+            const { data, error } = await window.supabaseClient
+              .from("hizmet_islemi_kayitlari")
+              .insert([payload])
+              .select()
+              .single();
+
+            if (error) {
+              console.error("Supabase kayıt ekleme hatası:", error);
+              return { success: false, error: error.message };
+            }
+
+            const newRecord = {
+              id: data.id,
+              createdAt: data.created_at ? new Date(data.created_at).getTime() : Date.now(),
+              values: values // Orijinal form değerlerini sakla
+            };
+            savedRecords.push(newRecord);
+            console.log("✅ Kayıt Supabase'e eklendi:", data.id);
+            return { success: true, data: newRecord };
+          } catch (error) {
+            console.error("Supabase kayıt ekleme beklenmeyen hata:", error);
+            return { success: false, error: error.message };
+          }
+        }
+
+        // Eski davranış: localStorage
+        const newRecord = {
+          id: `local_${Date.now()}`,
+          createdAt: Date.now(),
+          values
+        };
+        savedRecords.push(newRecord);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(savedRecords));
+        return { success: true };
+      }
+
+      function updateThemeToggle(mode) {
+        if (!themeToggleBtn) {
+          return;
+        }
+        if (mode === "dark") {
+          themeToggleBtn.innerHTML = "<i class=\"fa-solid fa-sun\"></i>";
+          themeToggleBtn.setAttribute("aria-label", "Açık moda geç");
+        } else {
+          themeToggleBtn.innerHTML = "<i class=\"fa-solid fa-moon\"></i>";
+          themeToggleBtn.setAttribute("aria-label", "Koyu moda geç");
+        }
+      }
+
+      function applyTheme(mode, persist = true) {
+        if (mode === "dark") {
+          document.body.classList.add("dark-mode");
+        } else {
+          document.body.classList.remove("dark-mode");
+          mode = "light";
+        }
+        updateThemeToggle(mode);
+        if (persist) {
+          localStorage.setItem(THEME_KEY, mode);
+        }
+      }
+
+      function populateSelect(selectElement, options) {
+        if (!selectElement) {
+          return;
+        }
+        selectElement.innerHTML = "";
+        options.forEach((text) => {
+          const option = document.createElement("option");
+          option.value = text;
+          option.textContent = text;
+          selectElement.appendChild(option);
+        });
+      }
+
+      function applyHareketTuruOptions(islemTuru, presetValue) {
+        if (!hareketTuruSelect) return;
+        const opts = ["Seçiniz"];
+        if (islemTuru && islemTuru !== "Seçiniz" && dropdownHierarchy.length) {
+          const root = dropdownHierarchy.find(item => (item.value || item.label || "").trim() === String(islemTuru).trim());
+          const children = root && root.children ? root.children : [];
+          children.forEach(c => {
+            const v = (c.value != null ? c.value : c.label) ? String(c.value != null ? c.value : c.label).trim() : "";
+            if (v && !opts.includes(v)) opts.push(v);
+          });
+        }
+        populateSelect(hareketTuruSelect, opts);
+        if (presetValue && opts.includes(presetValue)) hareketTuruSelect.value = presetValue;
+        else hareketTuruSelect.selectedIndex = 0;
+        applyHareketTipiOptions(hareketTuruSelect.value);
+      }
+
+      function applyHareketTipiOptions(hareketTuru, presetValue) {
+        if (!hareketTipiSelect) return;
+        const opts = ["Seçiniz"];
+        const islemTuru = islemTuruSelect ? islemTuruSelect.value : "";
+        if (islemTuru && islemTuru !== "Seçiniz" && hareketTuru && hareketTuru !== "Seçiniz" && dropdownHierarchy.length) {
+          const root = dropdownHierarchy.find(item => (item.value || item.label || "").trim() === String(islemTuru).trim());
+          const level1 = root && root.children ? root.children.find(c => ((c.value != null ? c.value : c.label) || "").trim() === String(hareketTuru).trim()) : null;
+          const children = level1 && level1.children ? level1.children : [];
+          children.forEach(c => {
+            const v = (c.value != null ? c.value : c.label) ? String(c.value != null ? c.value : c.label).trim() : "";
+            if (v && !opts.includes(v)) opts.push(v);
+          });
+        }
+        populateSelect(hareketTipiSelect, opts);
+        if (presetValue && opts.includes(presetValue)) hareketTipiSelect.value = presetValue;
+        else hareketTipiSelect.selectedIndex = 0;
+        applyDayanakOptions(hareketTipiSelect.value);
+      }
+
+      function applyDayanakOptions(hareketTipi, presetValue) {
+        const dayanakSelect = document.getElementById("dayanak");
+        if (!dayanakSelect) return;
+        const opts = ["Seçiniz"];
+        const islemTuru = islemTuruSelect ? islemTuruSelect.value : "";
+        const hareketTuru = hareketTuruSelect ? hareketTuruSelect.value : "";
+        if (islemTuru && islemTuru !== "Seçiniz" && hareketTuru && hareketTuru !== "Seçiniz" && hareketTipi && hareketTipi !== "Seçiniz" && dropdownHierarchy.length) {
+          const root = dropdownHierarchy.find(item => (item.value || item.label || "").trim() === String(islemTuru).trim());
+          const level1 = root && root.children ? root.children.find(c => ((c.value != null ? c.value : c.label) || "").trim() === String(hareketTuru).trim()) : null;
+          const level2 = level1 && level1.children ? level1.children.find(c => ((c.value != null ? c.value : c.label) || "").trim() === String(hareketTipi).trim()) : null;
+          const children = level2 && level2.children ? level2.children : [];
+          children.forEach(c => {
+            const v = (c.value != null ? c.value : c.label) ? String(c.value != null ? c.value : c.label).trim() : "";
+            if (v && !opts.includes(v)) opts.push(v);
+          });
+        }
+        populateSelect(dayanakSelect, opts);
+        if (presetValue && opts.includes(presetValue)) dayanakSelect.value = presetValue;
+        else dayanakSelect.selectedIndex = 0;
+      }
+
+      function formatDate(timestamp) {
+        if (!timestamp) {
+          return "";
+        }
+        const date = new Date(timestamp);
+        if (Number.isNaN(date.getTime())) {
+          return "";
+        }
+        return date.toLocaleString("tr-TR");
+      }
+
+      function createStatusBar() {
+        const footer = document.querySelector(".modal-footer");
+        const status = document.createElement("div");
+        status.style.flex = "1";
+        status.style.fontSize = "13px";
+        status.style.color = "#2563eb";
+        status.style.fontWeight = "500";
+        status.style.display = "none";
+        status.style.alignSelf = "center";
+        footer.insertBefore(status, footer.firstChild);
+        return status;
+      }
+
+      // Custom Modal Dialog Fonksiyonları
+      function customAlert(message, title = "Bilgilendirme") {
+        return new Promise((resolve) => {
+          const overlay = document.createElement("div");
+          overlay.className = "custom-modal-overlay";
+
+          const modal = document.createElement("div");
+          modal.className = "custom-modal";
+
+          // HTML escape için
+          const escapeHtml = (text) => {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+          };
+
+          modal.innerHTML = `
+            <div class="custom-modal-header">
+              <h3 class="custom-modal-title">
+                <span class="custom-modal-icon">ℹ️</span>
+                ${escapeHtml(title)}
+              </h3>
+            </div>
+            <div class="custom-modal-body">
+              ${message}
+            </div>
+            <div class="custom-modal-footer">
+              <button class="custom-modal-btn custom-modal-btn-primary" data-action="ok">Tamam</button>
+            </div>
+          `;
+
+          overlay.appendChild(modal);
+          document.body.appendChild(overlay);
+          document.body.style.overflow = "hidden";
+
+          const closeModal = () => {
+            overlay.style.animation = "fadeOut 0.2s ease";
+            modal.style.animation = "modalSlideOut 0.2s ease";
+            setTimeout(() => {
+              document.body.removeChild(overlay);
+              document.body.style.overflow = "";
+              resolve(true);
+            }, 200);
+          };
+
+          modal.querySelector("[data-action='ok']").addEventListener("click", closeModal);
+
+          overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+              closeModal();
+            }
+          });
+
+          // Enter tuşu ile kapat
+          const handleKeyDown = (e) => {
+            if (e.key === "Enter" || e.key === "Escape") {
+              e.preventDefault();
+              closeModal();
+              document.removeEventListener("keydown", handleKeyDown);
+            }
+          };
+          document.addEventListener("keydown", handleKeyDown);
+        });
+      }
+
+      // customConfirm fonksiyonunu global scope'a ekle
+      window.customConfirm = function (message, title = "Onay") {
+        return new Promise((resolve) => {
+          const overlay = document.createElement("div");
+          overlay.className = "custom-modal-overlay";
+
+          const modal = document.createElement("div");
+          modal.className = "custom-modal";
+
+          // HTML escape için
+          const escapeHtml = (text) => {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+          };
+
+          modal.innerHTML = `
+            <div class="custom-modal-header">
+              <h3 class="custom-modal-title">
+                <span class="custom-modal-icon">⚠️</span>
+                ${escapeHtml(title)}
+              </h3>
+            </div>
+            <div class="custom-modal-body">
+              ${message}
+            </div>
+            <div class="custom-modal-footer">
+              <button class="custom-modal-btn custom-modal-btn-secondary" data-action="cancel">İptal</button>
+              <button class="custom-modal-btn custom-modal-btn-danger" data-action="confirm">Onayla</button>
+            </div>
+          `;
+
+          overlay.appendChild(modal);
+          document.body.appendChild(overlay);
+          document.body.style.overflow = "hidden";
+
+          const closeModal = (result) => {
+            overlay.style.animation = "fadeOut 0.2s ease";
+            modal.style.animation = "modalSlideOut 0.2s ease";
+            setTimeout(() => {
+              document.body.removeChild(overlay);
+              document.body.style.overflow = "";
+              resolve(result);
+            }, 200);
+          };
+
+          modal.querySelector("[data-action='confirm']").addEventListener("click", () => closeModal(true));
+          modal.querySelector("[data-action='cancel']").addEventListener("click", () => closeModal(false));
+
+          overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+              closeModal(false);
+            }
+          });
+
+          // Klavye kısayolları
+          const handleKeyDown = (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              closeModal(true);
+              document.removeEventListener("keydown", handleKeyDown);
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              closeModal(false);
+              document.removeEventListener("keydown", handleKeyDown);
+            }
+          };
+          document.addEventListener("keydown", handleKeyDown);
+        });
+      };
+
+      // Geriye uyumluluk için local scope'ta da tanımla
+      const customConfirm = window.customConfirm;
+
+      function customPrompt(message, defaultValue = "", title = "Giriş") {
+        return new Promise((resolve) => {
+          const overlay = document.createElement("div");
+          overlay.className = "custom-modal-overlay";
+
+          const modal = document.createElement("div");
+          modal.className = "custom-modal";
+
+          // HTML escape için
+          const escapeHtml = (text) => {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+          };
+
+          modal.innerHTML = `
+            <div class="custom-modal-header">
+              <h3 class="custom-modal-title">
+                <span class="custom-modal-icon">📝</span>
+                ${escapeHtml(title)}
+              </h3>
+            </div>
+            <div class="custom-modal-body">
+              ${message}
+              <input type="text" class="custom-modal-input" value="${escapeHtml(defaultValue)}" autofocus>
+            </div>
+            <div class="custom-modal-footer">
+              <button class="custom-modal-btn custom-modal-btn-secondary" data-action="cancel">İptal</button>
+              <button class="custom-modal-btn custom-modal-btn-primary" data-action="confirm">Tamam</button>
+            </div>
+          `;
+
+          overlay.appendChild(modal);
+          document.body.appendChild(overlay);
+          document.body.style.overflow = "hidden";
+
+          const input = modal.querySelector(".custom-modal-input");
+
+          const closeModal = (result) => {
+            overlay.style.animation = "fadeOut 0.2s ease";
+            modal.style.animation = "modalSlideOut 0.2s ease";
+            setTimeout(() => {
+              document.body.removeChild(overlay);
+              document.body.style.overflow = "";
+              resolve(result);
+            }, 200);
+          };
+
+          const confirm = () => {
+            const value = input.value.trim();
+            closeModal(value || null);
+          };
+
+          modal.querySelector("[data-action='confirm']").addEventListener("click", confirm);
+          modal.querySelector("[data-action='cancel']").addEventListener("click", () => closeModal(null));
+
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              confirm();
+            } else if (e.key === "Escape") {
+              e.preventDefault();
+              closeModal(null);
+            }
+          });
+
+          overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+              closeModal(null);
+            }
+          });
+
+          // Input'a odaklan
+          setTimeout(() => {
+            input.focus();
+            input.select();
+          }, 100);
+        });
+      }
+
+      // Toast fonksiyonu
+      // showToast fonksiyonunu global scope'a ekle
+      window.showToast = function (message, type = "info", duration = 4000) {
+        const toastContainer = document.getElementById("toastContainer");
+        if (!toastContainer) {
+          // Eğer container yoksa, oluştur
+          const container = document.createElement("div");
+          container.className = "toast-container";
+          container.id = "toastContainer";
+          document.body.appendChild(container);
+        }
+
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+
+        // İkonlar
+        const icons = {
+          success: "✅",
+          error: "❌",
+          warning: "⚠️",
+          info: "ℹ️"
+        };
+
+        toast.innerHTML = `
+          <span class="toast-icon">${icons[type] || icons.info}</span>
+          <div class="toast-content">
+            <p class="toast-message">${message}</p>
+          </div>
+          <button class="toast-close" aria-label="Kapat">×</button>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        // Progress bar için özel stil ekle
+        const toastId = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        toast.id = toastId;
+
+        const style = document.createElement("style");
+        style.textContent = `
+          #${toastId}::before {
+            animation: toastProgress ${duration}ms linear;
+          }
+        `;
+        document.head.appendChild(style);
+
+        // Kapat butonu
+        const closeBtn = toast.querySelector(".toast-close");
+        let timeoutId;
+
+        const closeToast = () => {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+          toast.classList.add("hiding");
+          setTimeout(() => {
+            if (toast.parentNode) {
+              toast.parentNode.removeChild(toast);
+              // Stil elementini de temizle
+              const styleEl = document.querySelector(`style[data-toast-id="${toastId}"]`);
+              if (styleEl) {
+                styleEl.remove();
+              }
+            }
+          }, 300);
+        };
+
+        closeBtn.addEventListener("click", closeToast);
+
+        // Otomatik kapanma
+        let startTime = Date.now();
+        timeoutId = setTimeout(closeToast, duration);
+
+        // Hover'da duraklat
+        toast.addEventListener("mouseenter", () => {
+          const elapsed = Date.now() - startTime;
+          clearTimeout(timeoutId);
+          const remaining = duration - elapsed;
+          if (remaining > 0) {
+            toast._remainingTime = remaining;
+          }
+        });
+
+        toast.addEventListener("mouseleave", () => {
+          if (toast._remainingTime) {
+            startTime = Date.now();
+            timeoutId = setTimeout(closeToast, toast._remainingTime);
+            delete toast._remainingTime;
+          }
+        });
+
+        // Stil elementine ID ekle
+        style.setAttribute("data-toast-id", toastId);
+      };
+
+      // Geriye uyumluluk için local scope'ta da tanımla
+      const showToast = window.showToast;
+
+      function showStatus(message, type = "info") {
+        // Status bar'ı da göster (geriye dönük uyumluluk için)
+        statusBar.textContent = message;
+        statusBar.style.display = "block";
+        statusBar.style.color = type === "error" ? "#dc2626" : "#2563eb";
+        clearTimeout(showStatus.timeoutId);
+        showStatus.timeoutId = setTimeout(() => {
+          statusBar.style.display = "none";
+        }, 3500);
+
+        // Toast bildirimi göster
+        showToast(message, type, 4000);
+      }
+
+      function isFormReady(values) {
+        // Açıklama zorunluluğu kaldırıldı - form her zaman kaydedilebilir
+        return true;
+      }
+
+      function updateSaveButtonState() {
+        const values = collectFormValues();
+        saveBtn.disabled = !isFormReady(values);
+        // Şablon kaydet butonunu göster/gizle
+        const hasFormData = Object.values(values).some(v => v && v.toString().trim());
+        if (saveTemplateBtn) {
+          saveTemplateBtn.style.display = hasFormData ? "inline-block" : "none";
+        }
+      }
+
+      function recordMatchesTerm(record, term) {
+        const lowerTerm = term.toLowerCase();
+        return fieldIds.some((id) => {
+          const value = record.values?.[id];
+          return typeof value === "string" && value.toLowerCase().includes(lowerTerm);
+        });
+      }
+
+      function searchRecords(term) {
+        const trimmed = term.trim().toLowerCase();
+        if (!trimmed) {
+          return [];
+        }
+        return savedRecords.filter((record) => recordMatchesTerm(record, trimmed));
+      }
+
+      function renderSearchResults(matches, term) {
+        if (!term.trim()) {
+          searchResultsBox.style.display = "none";
+          searchResultsList.innerHTML = "";
+          return;
+        }
+
+        if (!matches.length) {
+          searchResultsHeader.textContent = `"${term}" ifadesiyle eşleşen kayıt bulunamadı.`;
+          searchResultsList.innerHTML = "";
+          searchResultsBox.style.display = "flex";
+          return;
+        }
+
+        searchResultsHeader.textContent = `"${term}" ifadesiyle eşleşen ${matches.length} kayıt bulundu.`;
+        searchResultsList.innerHTML = "";
+
+        matches
+          .slice()
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+          .forEach((record, index) => {
+            const item = document.createElement("div");
+            item.className = `search-result-item${index === 0 ? " active" : ""}`;
+            const title = document.createElement("div");
+            title.className = "search-result-title";
+            title.textContent = record.values?.aciklama || "Açıklama bulunmuyor";
+            const meta = document.createElement("div");
+            meta.className = "search-result-meta";
+            meta.textContent = formatDate(record.createdAt);
+            item.appendChild(title);
+            item.appendChild(meta);
+            item.addEventListener("click", () => {
+              fillForm(record.values);
+              currentEditId = record.id || record.createdAt; // ID'yi sakla
+              editBtn.style.display = "inline-block";
+              deleteBtn.style.display = "inline-block";
+              saveBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Güncelle';
+              updateSaveButtonState();
+              searchResultsList.querySelectorAll(".search-result-item").forEach((el) => el.classList.remove("active"));
+              item.classList.add("active");
+              showStatus("Kayıt bilgileri forma yansıtıldı. Düzenleyebilir veya silebilirsiniz.");
+            });
+            searchResultsList.appendChild(item);
+          });
+
+        searchResultsBox.style.display = "flex";
+      }
+
+      function handleSearch(term) {
+        const matches = searchRecords(term);
+        renderSearchResults(matches, term);
+        if (matches.length) {
+          fillForm(matches[0].values);
+          updateSaveButtonState();
+        }
+      }
+
+      function resetForm() {
+        fieldIds.forEach((id) => {
+          const element = document.getElementById(id);
+          if (!element) {
+            return;
+          }
+
+          if (element instanceof HTMLSelectElement) {
+            element.selectedIndex = 0;
+          } else if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+            element.value = "";
+          }
+        });
+        applyHareketTuruOptions(islemTuruSelect.value);
+        applyHareketTipiOptions(hareketTuruSelect.value);
+        applyDayanakOptions(hareketTipiSelect.value);
+        updateSaveButtonState();
+        currentEditId = null;
+        editBtn.style.display = "none";
+        deleteBtn.style.display = "none";
+        if (saveBtn) saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Kaydet';
+        showStatus("Tüm alanlar temizlendi.");
+        searchInput.value = "";
+        searchResultsBox.style.display = "none";
+        searchResultsHeader.textContent = "";
+        searchResultsList.innerHTML = "";
+      }
+
+      saveBtn.addEventListener("click", async () => {
+        const values = collectFormValues();
+        // Açıklama zorunluluğu kaldırıldı - kontrol edilmiyor
+        // if (!isFormReady(values)) {
+        //   showStatus("Kaydetmeden önce açıklama alanını doldurmalısınız.", "error");
+        //   return;
+        // }
+
+        saveBtn.disabled = true;
+        showStatus(currentEditId ? "Güncelleniyor..." : "Kaydediliyor...", "info");
+
+        const result = currentEditId
+          ? await updateRecord(currentEditId, values)
+          : await storeRecord(values);
+
+        if (result.success) {
+          showStatus(currentEditId ? "Kayıt başarıyla güncellendi." : "Kayıt başarıyla kaydedildi.");
+          resetForm();
+          if (searchInput.value.trim()) {
+            handleSearch(searchInput.value);
+          }
+        } else {
+          showStatus(currentEditId ? "Kayıt güncellenirken bir hata oluştu." : "Kayıt eklenirken bir hata oluştu.", "error");
+          console.error("Kayıt hatası:", result.error);
+        }
+
+        saveBtn.disabled = false;
+      });
+
+      // Düzenle butonu
+      if (editBtn) {
+        editBtn.addEventListener("click", () => {
+          if (!currentEditId) {
+            showStatus("Düzenlemek için önce bir kayıt seçin.", "error");
+            return;
+          }
+          // Form zaten dolu, sadece kaydet butonuna odaklan
+          saveBtn.scrollIntoView({ behavior: "smooth", block: "center" });
+          showStatus("Kayıt düzenleme modunda. Değişiklikleri yapıp 'Güncelle' butonuna tıklayın.");
+        });
+      }
+
+      // Sil butonu
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", async () => {
+          if (!currentEditId) {
+            showStatus("Silmek için önce bir kayıt seçin.", "error");
+            return;
+          }
+
+          const confirmDelete = await customConfirm("Bu kaydı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.", "Kayıt Sil");
+          if (!confirmDelete) {
+            return;
+          }
+
+          deleteBtn.disabled = true;
+          showStatus("Siliniyor...", "info");
+          const result = await deleteRecord(currentEditId);
+
+          if (result.success) {
+            showStatus("Kayıt başarıyla silindi.");
+            resetForm();
+          } else {
+            showStatus("Kayıt silinirken bir hata oluştu.", "error");
+            console.error("Silme hatası:", result.error);
+          }
+
+          deleteBtn.disabled = false;
+        });
+      }
+
+      searchInput.addEventListener("input", () => {
+        handleSearch(searchInput.value);
+      });
+
+      recordsBtn.addEventListener("click", () => {
+        // State paylaşımı için form verilerini localStorage'a kaydet
+        const formValues = collectFormValues();
+        if (Object.keys(formValues).length > 0) {
+          localStorage.setItem('ekip_form_state', JSON.stringify({
+            values: formValues,
+            timestamp: Date.now()
+          }));
+        }
+        
+        // Aynı sekmede aç
+        window.location.href = "kayitlar.html";
+      });
+
+      // Şablon butonu
+      if (templateBtn && templateModal) {
+        templateBtn.addEventListener("click", () => {
+          templateModal.style.display = "flex";
+          document.body.style.overflow = "hidden";
+          if (templateSearch) templateSearch.value = "";
+          renderTemplates();
+        });
+      }
+
+      // Şablon arama
+      if (templateSearch) {
+        templateSearch.addEventListener("input", (e) => {
+          renderTemplates(e.target.value);
+        });
+      }
+
+      // Şablon modal kapatma
+      if (templateModalClose && templateModal) {
+        templateModalClose.addEventListener("click", () => {
+          templateModal.style.display = "none";
+          document.body.style.overflow = "";
+        });
+      }
+
+      // Modal dışına tıklayınca kapat
+      if (templateModal) {
+        templateModal.addEventListener("click", (e) => {
+          if (e.target === templateModal) {
+            templateModal.style.display = "none";
+            document.body.style.overflow = "";
+          }
+        });
+      }
+
+      // Şablon kaydet butonu
+      if (saveTemplateBtn) {
+        saveTemplateBtn.addEventListener("click", async () => {
+          const values = collectFormValues();
+          const hasData = Object.values(values).some(v => v && v.toString().trim());
+
+          if (!hasData) {
+            showStatus("Şablon kaydetmek için formu doldurun.", "error");
+            return;
+          }
+
+          const templateName = await customPrompt("Şablon adı girin:", values.aciklama?.substring(0, 30) || `Şablon ${savedTemplates.length + 1}`, "Şablon Adı");
+
+          if (templateName && templateName.trim()) {
+            addTemplate(templateName.trim(), values);
+            showStatus(`"${templateName}" şablonu kaydedildi.`);
+          }
+        });
+      }
+
+      resetBtn.addEventListener("click", resetForm);
+
+      islemTuruSelect.addEventListener("change", () => {
+        applyHareketTuruOptions(islemTuruSelect.value);
+        updateSaveButtonState();
+      });
+
+      hareketTuruSelect.addEventListener("change", () => {
+        applyHareketTipiOptions(hareketTuruSelect.value);
+        applyDayanakOptions(hareketTipiSelect.value);
+        updateSaveButtonState();
+      });
+
+      hareketTipiSelect.addEventListener("change", () => {
+        applyDayanakOptions(hareketTipiSelect.value);
+        updateSaveButtonState();
+      });
+
+      const storedTheme = localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light";
+      applyTheme(storedTheme, false);
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+          const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+          applyTheme(nextTheme);
+        });
+      }
+
+      // Bilgilendirme paneli toggle
+      const infoPanel = document.getElementById("infoPanel");
+      const infoPanelToggle = document.getElementById("infoPanelToggle");
+      if (infoPanel && infoPanelToggle) {
+        infoPanelToggle.addEventListener("click", () => {
+          infoPanel.classList.toggle("collapsed");
+          infoPanelToggle.innerHTML = infoPanel.classList.contains("collapsed")
+            ? "<i class=\"fa-solid fa-chevron-up\"></i>"
+            : "<i class=\"fa-solid fa-chevron-down\"></i>";
+        });
+      }
+
+      // Yardım Modülü
+      const helpBtn = document.getElementById("helpBtn");
+      const helpModal = document.getElementById("helpModal");
+      const helpModalClose = document.getElementById("helpModalClose");
+      const helpEditBtn = document.getElementById("helpEditBtn");
+      const helpSaveBtn = document.getElementById("helpSaveBtn");
+      const helpCancelBtn = document.getElementById("helpCancelBtn");
+      const helpTooltip = document.getElementById("helpTooltip");
+      const helpTabs = document.querySelectorAll(".help-tab");
+      const helpTabContents = document.querySelectorAll(".help-tab-content");
+      let helpEditMode = false;
+      let helpOriginalContent = {};
+
+      // Yardım butonu tıklama
+      if (helpBtn && helpModal) {
+        helpBtn.addEventListener("click", () => {
+          helpModal.style.display = "flex";
+          document.body.style.overflow = "hidden";
+          loadHelpContent(); // Kaydedilmiş içeriği yükle
+          setupFaqToggle(); // FAQ toggle'ları ayarla
+        });
+      }
+
+      // Yardım modal kapatma
+      if (helpModalClose && helpModal) {
+        helpModalClose.addEventListener("click", () => {
+          helpModal.style.display = "none";
+          document.body.style.overflow = "";
+        });
+      }
+
+      // Modal dışına tıklayınca kapat
+      if (helpModal) {
+        helpModal.addEventListener("click", (e) => {
+          if (e.target === helpModal) {
+            helpModal.style.display = "none";
+            document.body.style.overflow = "";
+          }
+        });
+      }
+
+      // Yardım tab'ları
+      helpTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const targetTab = tab.getAttribute("data-tab");
+
+          // Tüm tab'ları ve içerikleri sıfırla
+          helpTabs.forEach((t) => t.classList.remove("active"));
+          helpTabContents.forEach((content) => {
+            content.style.display = "none";
+            content.classList.remove("active");
+          });
+
+          // Seçili tab'ı aktif yap
+          tab.classList.add("active");
+          const targetContent = document.getElementById(`help${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`);
+          if (targetContent) {
+            targetContent.style.display = "block";
+            targetContent.classList.add("active");
+          }
+        });
+      });
+
+      // Form alanları için yardım açıklamaları
+      const fieldHelpTexts = {
+        hizmetTuru: "Personelin hizmet türünü seçin. Bu alan, personelin hangi kategoride hizmet verdiğini belirtir.",
+        islemTuru: "Yapılacak işlemin türünü seçin (Atama, Disiplin, İdari Davalar, Sicil, Terfi).",
+        hareketTuru: "Hareket türünü seçin. Bu seçim, Hareket Tipi alanındaki seçenekleri etkiler.",
+        hareketTipi: "Seçilen Hareket Türü'ne göre spesifik hareket tipini seçin.",
+        dayanak: "İşlemin dayanağını belirtin (Yönetmelik, Genelge).",
+        hareket: "Hareket türünü seçin (Ayrılış, Başlayış, Etkisiz, vb.).",
+        baslangicTarihi: "İşlemin başlangıç tarihini girin.",
+        bitisTarihi: "İşlemin bitiş tarihini girin (varsa).",
+        kararNo: "Karar numarasını girin.",
+        kararTarihi: "Karar tarihini girin.",
+        bildirimTarihi: "Bildirim tarihini girin.",
+        calismaSekli: "Personelin çalışma şeklini seçin.",
+        istihdamTipi: "Personelin istihdam tipini seçin (Memur, Sözleşmeli, İşçi).",
+        istihdamSekli: "Personelin istihdam şeklini seçin. Bu alan, istihdam tipine göre detaylı seçenekler sunar.",
+        birim: "Personelin bağlı olduğu birimi girin.",
+        disKurum: "Dış kurum bilgisini girin (varsa).",
+        disBirim: "Dış kurum alt birim bilgisini girin (varsa).",
+        unvan: "Personelin unvanını seçin.",
+        brans: "Personelin branşını seçin.",
+        aciklama: "İşlem hakkında detaylı açıklama yazın. Bu alan arama için kullanılır (isteğe bağlı).",
+        dhy: "DHY (Devlet Hizmet Yükümlülüğü) durumunu seçin.",
+        kadroDerecesi: "Kadro derecesini girin.",
+        islemKategorisi: "İşlemin kategorisini seçin. Bu, kayıtların daha iyi organize edilmesini sağlar."
+      };
+
+      // Yardım ikonlarına tıklama ve tooltip gösterimi - DEVRE DIŞI
+      // Tüm mevcut yardım ikonlarını kaldır (hem mevcut hem de gelecekte eklenecek olanlar için)
+      const removeHelpIcons = () => {
+        document.querySelectorAll(".help-icon").forEach((icon) => {
+          icon.remove();
+        });
+      };
+      
+      // Sayfa yüklendiğinde kaldır
+      removeHelpIcons();
+      
+      // MutationObserver ile dinamik olarak eklenen ikonları da kaldır
+      const observer = new MutationObserver(() => {
+        removeHelpIcons();
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      // const helpIcons = document.querySelectorAll(".help-icon");
+      // helpIcons.forEach((icon) => {
+      //   icon.addEventListener("click", (e) => {
+      //     e.stopPropagation();
+      //     const fieldId = icon.getAttribute("data-help");
+      //     const helpText = fieldHelpTexts[fieldId] || "Bu alan hakkında bilgi bulunmuyor.";
+
+      //     // Tooltip göster
+      //     const rect = icon.getBoundingClientRect();
+      //     helpTooltip.textContent = helpText;
+      //     helpTooltip.style.display = "block";
+      //     helpTooltip.style.left = rect.right + 10 + "px";
+      //     helpTooltip.style.top = rect.top + "px";
+
+      //     // 5 saniye sonra kapat
+      //     setTimeout(() => {
+      //       helpTooltip.style.display = "none";
+      //     }, 5000);
+      //   });
+      // });
+
+      // Tooltip dışına tıklayınca kapat
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".help-icon") && !e.target.closest(".help-tooltip")) {
+          helpTooltip.style.display = "none";
+        }
+      });
+
+      // Form alanlarına odaklanıldığında yardım göster - DEVRE DIŞI
+      // fieldIds.forEach((id) => {
+      //   const element = document.getElementById(id);
+      //   if (element && fieldHelpTexts[id]) {
+      //     element.addEventListener("focus", () => {
+      //       const helpIcon = document.querySelector(`[data-help="${id}"]`);
+      //       if (helpIcon) {
+      //         helpIcon.style.opacity = "1";
+      //         helpIcon.style.transform = "scale(1.2)";
+      //       }
+      //     });
+
+      //     element.addEventListener("blur", () => {
+      //       const helpIcon = document.querySelector(`[data-help="${id}"]`);
+      //       if (helpIcon) {
+      //         helpIcon.style.opacity = "0.6";
+      //         helpIcon.style.transform = "scale(1)";
+      //       }
+      //     });
+      //   }
+      // });
+
+      // Yardım alanları listesini doldur
+      const helpFieldList = document.getElementById("helpFieldList");
+      if (helpFieldList) {
+        Object.keys(fieldHelpTexts).forEach((fieldId) => {
+          const fieldElement = document.getElementById(fieldId);
+          if (fieldElement) {
+            const label = fieldElement.previousElementSibling?.textContent?.replace("ℹ️", "").trim() || fieldId;
+            const helpItem = document.createElement("div");
+            helpItem.className = "help-field-item";
+            helpItem.innerHTML = `
+              <strong>${label}:</strong>
+              <p>${fieldHelpTexts[fieldId]}</p>
+            `;
+            helpFieldList.appendChild(helpItem);
+          }
+        });
+      }
+
+      // FAQ aç/kapa
+      function setupFaqToggle() {
+        const faqQuestions = document.querySelectorAll(".faq-question");
+        faqQuestions.forEach((question) => {
+          // Mevcut listener'ları kaldır
+          const newQuestion = question.cloneNode(true);
+          question.parentNode.replaceChild(newQuestion, question);
+
+          newQuestion.addEventListener("click", () => {
+            if (helpEditMode) return; // Düzenleme modunda aç/kapa çalışmasın
+            const answer = newQuestion.nextElementSibling;
+            const isOpen = answer.style.display === "block";
+
+            // Tüm cevapları kapat
+            document.querySelectorAll(".faq-answer").forEach((ans) => {
+              ans.style.display = "none";
+            });
+            document.querySelectorAll(".faq-item").forEach((item) => {
+              item.classList.remove("active");
+            });
+
+            // Tıklanan soruyu aç/kapa
+            if (!isOpen) {
+              answer.style.display = "block";
+              newQuestion.parentElement.classList.add("active");
+            }
+          });
+        });
+      }
+      setupFaqToggle();
+
+      // Yardım içeriğini yükle
+      function loadHelpContent() {
+        try {
+          const saved = localStorage.getItem(HELP_CONTENT_KEY);
+          if (saved) {
+            const content = JSON.parse(saved);
+            if (content.general) {
+              const generalContent = document.querySelector("#helpGeneral .help-editable-content");
+              if (generalContent) {
+                generalContent.innerHTML = content.general;
+              }
+            }
+            if (content.faq) {
+              const faqList = document.getElementById("helpFaqList");
+              if (faqList) {
+                faqList.innerHTML = content.faq;
+                setupFaqToggle();
+              }
+            }
+          }
+        } catch (error) {
+          console.warn("Yardım içeriği yüklenirken hata:", error);
+        }
+      }
+
+      // Yardım içeriğini kaydet
+      function saveHelpContent() {
+        try {
+          const generalContent = document.querySelector("#helpGeneral .help-editable-content");
+          const faqList = document.getElementById("helpFaqList");
+
+          const content = {
+            general: generalContent ? generalContent.innerHTML : "",
+            faq: faqList ? faqList.innerHTML : ""
+          };
+
+          localStorage.setItem(HELP_CONTENT_KEY, JSON.stringify(content));
+          return true;
+        } catch (error) {
+          console.error("Yardım içeriği kaydedilirken hata:", error);
+          return false;
+        }
+      }
+
+      // Yardım düzenleme modunu aç
+      function enableHelpEditMode() {
+        helpEditMode = true;
+        const editableContents = document.querySelectorAll(".help-editable-content");
+
+        editableContents.forEach((content) => {
+          content.setAttribute("contenteditable", "true");
+          content.style.border = "2px dashed #3b82f6";
+          content.style.padding = "12px";
+          content.style.borderRadius = "6px";
+          content.style.minHeight = "50px";
+        });
+
+        // FAQ soruları ve cevapları düzenlenebilir yap
+        const faqQuestions = document.querySelectorAll(".faq-question");
+        const faqAnswers = document.querySelectorAll(".faq-answer");
+        faqQuestions.forEach((q) => {
+          q.setAttribute("contenteditable", "true");
+          q.style.border = "1px dashed #3b82f6";
+          q.style.padding = "8px";
+          q.style.borderRadius = "4px";
+        });
+        faqAnswers.forEach((a) => {
+          a.setAttribute("contenteditable", "true");
+          a.style.border = "1px dashed #10b981";
+          a.style.padding = "8px";
+          a.style.borderRadius = "4px";
+          a.style.display = "block"; // Düzenleme modunda tüm cevapları göster
+        });
+
+        helpEditBtn.style.display = "none";
+        helpSaveBtn.style.display = "inline-block";
+        helpCancelBtn.style.display = "inline-block";
+
+        showStatus("Düzenleme modu aktif. İçeriği düzenleyebilirsiniz.");
+      }
+
+      // Yardım düzenleme modunu kapat
+      function disableHelpEditMode() {
+        helpEditMode = false;
+        const editableContents = document.querySelectorAll(".help-editable-content");
+
+        editableContents.forEach((content) => {
+          content.setAttribute("contenteditable", "false");
+          content.style.border = "";
+          content.style.padding = "";
+          content.style.borderRadius = "";
+          content.style.minHeight = "";
+        });
+
+        const faqQuestions = document.querySelectorAll(".faq-question");
+        const faqAnswers = document.querySelectorAll(".faq-answer");
+        faqQuestions.forEach((q) => {
+          q.setAttribute("contenteditable", "false");
+          q.style.border = "";
+          q.style.padding = "";
+          q.style.borderRadius = "";
+        });
+        faqAnswers.forEach((a) => {
+          a.setAttribute("contenteditable", "false");
+          a.style.border = "";
+          a.style.padding = "";
+          a.style.borderRadius = "";
+          a.style.display = ""; // Normal moda dön
+        });
+
+        helpEditBtn.style.display = "inline-block";
+        helpSaveBtn.style.display = "none";
+        helpCancelBtn.style.display = "none";
+      }
+
+      // Yardım düzenle butonu
+      if (helpEditBtn) {
+        helpEditBtn.addEventListener("click", () => {
+          // Orijinal içeriği kaydet
+          const generalContent = document.querySelector("#helpGeneral .help-editable-content");
+          const faqList = document.getElementById("helpFaqList");
+          helpOriginalContent = {
+            general: generalContent ? generalContent.innerHTML : "",
+            faq: faqList ? faqList.innerHTML : ""
+          };
+          enableHelpEditMode();
+        });
+      }
+
+      // Yardım kaydet butonu
+      if (helpSaveBtn) {
+        helpSaveBtn.addEventListener("click", () => {
+          if (saveHelpContent()) {
+            showStatus("Yardım içeriği başarıyla kaydedildi.");
+            disableHelpEditMode();
+            setupFaqToggle(); // FAQ toggle'ları yeniden ayarla
+          } else {
+            showStatus("Yardım içeriği kaydedilirken bir hata oluştu.", "error");
+          }
+        });
+      }
+
+      // Yardım iptal butonu
+      if (helpCancelBtn) {
+        helpCancelBtn.addEventListener("click", () => {
+          // Orijinal içeriği geri yükle
+          const generalContent = document.querySelector("#helpGeneral .help-editable-content");
+          const faqList = document.getElementById("helpFaqList");
+          if (generalContent && helpOriginalContent.general) {
+            generalContent.innerHTML = helpOriginalContent.general;
+          }
+          if (faqList && helpOriginalContent.faq) {
+            faqList.innerHTML = helpOriginalContent.faq;
+            setupFaqToggle();
+          }
+          disableHelpEditMode();
+          showStatus("Değişiklikler iptal edildi.");
+        });
+      }
+
+      fieldIds.forEach((id) => {
+        const element = document.getElementById(id);
+        if (!element) {
+          return;
+        }
+        element.addEventListener("input", updateSaveButtonState);
+        element.addEventListener("change", updateSaveButtonState);
+
+        // Tarih alanları için tab tuşu desteği
+        if (element.type === "date") {
+          // Tab tuşu ile geçişi sağla
+          element.setAttribute("tabindex", "0");
+
+          // Tarih değiştiğinde bir sonraki alana geç (opsiyonel)
+          element.addEventListener("change", () => {
+            // Kısa bir gecikme ile bir sonraki alana geç
+            setTimeout(() => {
+              const formElements = Array.from(document.querySelectorAll('input:not([type="button"]):not([type="submit"]), select, textarea'));
+              const currentIndex = formElements.indexOf(element);
+              if (currentIndex !== -1 && currentIndex < formElements.length - 1) {
+                const nextElement = formElements[currentIndex + 1];
+                if (nextElement && !nextElement.disabled && nextElement.offsetParent !== null) {
+                  nextElement.focus();
+                }
+              }
+            }, 50);
+          });
+        }
+
+        // Yardım ikonu ekleme kodu devre dışı bırakıldı
+        // if (fieldHelpTexts[id]) {
+        //   const label = element.previousElementSibling;
+        //   if (label && label.tagName === "LABEL" && !label.querySelector(".help-icon")) {
+        //     const helpIcon = document.createElement("span");
+        //     helpIcon.className = "help-icon";
+        //     helpIcon.setAttribute("data-help", id);
+        //     helpIcon.textContent = "ℹ️";
+        //     helpIcon.setAttribute("aria-label", "Yardım");
+        //     label.appendChild(helpIcon);
+        //   }
+        // }
+      });
+
+      loadDropdownData().then(() => updateSaveButtonState());
+
+      // ===== HIZLI KELİME YÖNETİM MODÜLÜ - Panel DOM'da yoksa null, kod güvenle atlanır =====
+      const quickWordsPanel = document.getElementById("quickWordsPanel");
+      const quickWordsToggle = document.getElementById("quickWordsToggle");
+      const quickWordsFieldSelect = document.getElementById("quickWordsFieldSelect");
+      const quickWordsInput = document.getElementById("quickWordsInput");
+      const quickWordsAddBtn = document.getElementById("quickWordsAddBtn");
+      const quickWordsSections = document.getElementById("quickWordsSections");
+
+      // Alan etiketleri
+      const fieldLabels = {
+        islemKategorisi: "İşlem Kategorisi",
+        hizmetTuru: "Hizmet Türü",
+        islemTuru: "İşlem Türü",
+        hareketTuru: "Hareket Türü",
+        hareketTipi: "Hareket Tipi",
+        dayanak: "Dayanak",
+        hareket: "Hareket",
+        kararNo: "Karar No",
+        calismaSekli: "Çalışma Şekli",
+        istihdamTipi: "İstihdam Tipi",
+        istihdamSekli: "İstihdam Şekli",
+        birim: "Birim",
+        disKurum: "Dış Kurum",
+        disBirim: "Dış Kurum Alt Birim",
+        unvan: "Unvan",
+        brans: "Branş",
+        aciklama: "Açıklama",
+        dhy: "DHY Durumu",
+        kadroDerecesi: "Kadro Derecesi",
+        khaDer: "KHA Der.",
+        khaKad: "KHA Kad.",
+        khaGost: "KHA Göst.",
+        khaEkG: "KHA Ek G.",
+        emEsDer: "Em.Es.Der.",
+        emEsKad: "Em.Es.Kad.",
+        emEsGost: "Em.Es.Göst.",
+        emEsEkG: "Em.Es.Ek G",
+        odEsDer: "Öd.Es.Der.",
+        odEsKad: "Öd.Es.Kad.",
+        odEsGost: "Öd.Es.Göst.",
+        odEsEkG: "Öd.Es.Ek G."
+      };
+
+      // Sadece text input ve textarea alanları için
+      const textFields = fieldIds.filter(id => {
+        const element = document.getElementById(id);
+        return element && (element.tagName === "INPUT" && element.type === "text" || element.tagName === "TEXTAREA");
+      });
+
+      // Hızlı kelimeleri yükle
+      function loadQuickWords() {
+        try {
+          const stored = localStorage.getItem(QUICK_WORDS_KEY);
+          if (stored) {
+            quickWords = JSON.parse(stored);
+          } else {
+            quickWords = {};
+          }
+        } catch (error) {
+          console.warn("Hızlı kelimeler yüklenirken hata:", error);
+          quickWords = {};
+        }
+      }
+
+      // Hızlı kelimeleri kaydet
+      function saveQuickWords() {
+        try {
+          localStorage.setItem(QUICK_WORDS_KEY, JSON.stringify(quickWords));
+          return true;
+        } catch (error) {
+          console.error("Hızlı kelimeler kaydedilirken hata:", error);
+          return false;
+        }
+      }
+
+      // Alan seçim listesini doldur
+      function populateFieldSelect() {
+        if (!quickWordsFieldSelect) return;
+        quickWordsFieldSelect.innerHTML = '<option value="">Alan Seçiniz</option>';
+        textFields.forEach(fieldId => {
+          const label = fieldLabels[fieldId] || fieldId;
+          const option = document.createElement("option");
+          option.value = fieldId;
+          option.textContent = label;
+          quickWordsFieldSelect.appendChild(option);
+        });
+      }
+
+      // Kelime ekle
+      function addQuickWord(fieldId, word) {
+        if (!fieldId || !word || !word.trim()) {
+          return false;
+        }
+
+        const trimmedWord = word.trim();
+        if (!quickWords[fieldId]) {
+          quickWords[fieldId] = [];
+        }
+
+        // Zaten varsa ekleme
+        if (quickWords[fieldId].includes(trimmedWord)) {
+          showToast("Bu kelime zaten ekli.", "warning");
+          return false;
+        }
+
+        quickWords[fieldId].push(trimmedWord);
+        saveQuickWords();
+        renderQuickWords();
+        showToast(`"${trimmedWord}" kelimesi eklendi.`, "success");
+        return true;
+      }
+
+      // Kelime sil
+      function removeQuickWord(fieldId, word) {
+        if (!quickWords[fieldId]) {
+          return false;
+        }
+
+        quickWords[fieldId] = quickWords[fieldId].filter(w => w !== word);
+        if (quickWords[fieldId].length === 0) {
+          delete quickWords[fieldId];
+        }
+        saveQuickWords();
+        renderQuickWords();
+        showToast(`"${word}" kelimesi silindi.`, "info");
+        return true;
+      }
+
+      // Kelimeyi alana ekle
+      function insertWordToField(fieldId, word) {
+        const element = document.getElementById(fieldId);
+        if (!element) {
+          return;
+        }
+
+        if (element.tagName === "TEXTAREA") {
+          const currentValue = element.value;
+          const cursorPos = element.selectionStart || currentValue.length;
+          const newValue = currentValue.slice(0, cursorPos) + word + currentValue.slice(cursorPos);
+          element.value = newValue;
+          element.focus();
+          const newCursorPos = cursorPos + word.length;
+          element.setSelectionRange(newCursorPos, newCursorPos);
+        } else {
+          element.value = word;
+          element.focus();
+        }
+
+        updateSaveButtonState();
+        showToast(`"${word}" alana eklendi.`, "success");
+      }
+
+      // Hızlı kelimeleri render et
+      function renderQuickWords() {
+        if (!quickWordsSections) return;
+        quickWordsSections.innerHTML = "";
+
+        // Sadece kelime içeren alanları göster
+        const fieldsWithWords = textFields.filter(fieldId =>
+          quickWords[fieldId] && quickWords[fieldId].length > 0
+        );
+
+        if (fieldsWithWords.length === 0) {
+          const emptyMsg = document.createElement("div");
+          emptyMsg.style.padding = "20px";
+          emptyMsg.style.textAlign = "center";
+          emptyMsg.style.color = "var(--text-secondary)";
+          emptyMsg.style.fontSize = "13px";
+          emptyMsg.textContent = "Henüz kelime eklenmemiş. Yukarıdan alan seçip kelime ekleyin.";
+          quickWordsSections.appendChild(emptyMsg);
+          return;
+        }
+
+        fieldsWithWords.forEach(fieldId => {
+          const section = document.createElement("div");
+          section.className = "quick-words-field-section";
+
+          const label = document.createElement("div");
+          label.className = "quick-words-field-label";
+          label.textContent = fieldLabels[fieldId] || fieldId;
+
+          const list = document.createElement("div");
+          list.className = "quick-words-list";
+
+          quickWords[fieldId].forEach(word => {
+            const item = document.createElement("div");
+            item.className = "quick-word-item";
+            item.title = `${word} - Tıklayarak alana ekle, × ile sil`;
+
+            // Kelime metni
+            const wordText = document.createElement("span");
+            wordText.textContent = word;
+            item.appendChild(wordText);
+
+            // Silme butonu
+            const deleteBtn = document.createElement("span");
+            deleteBtn.className = "quick-word-delete";
+            deleteBtn.textContent = " ×";
+            deleteBtn.style.color = "#ef4444";
+            deleteBtn.style.cursor = "pointer";
+            deleteBtn.style.fontWeight = "bold";
+            deleteBtn.title = "Sil";
+            deleteBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              removeQuickWord(fieldId, word);
+            });
+
+            item.appendChild(deleteBtn);
+
+            // Tıklayınca alana ekle
+            item.addEventListener("click", (e) => {
+              if (!e.target.classList.contains("quick-word-delete")) {
+                insertWordToField(fieldId, word);
+              }
+            });
+
+            list.appendChild(item);
+          });
+
+          section.appendChild(label);
+          section.appendChild(list);
+          quickWordsSections.appendChild(section);
+        });
+      }
+
+      // Panel toggle
+      if (quickWordsToggle && quickWordsPanel) {
+        quickWordsToggle.addEventListener("click", () => {
+          quickWordsPanel.classList.toggle("collapsed");
+          quickWordsToggle.textContent = quickWordsPanel.classList.contains("collapsed") ? "⚡" : "−";
+        });
+      }
+
+      // Kelime ekle butonu
+      if (quickWordsAddBtn) {
+        quickWordsAddBtn.addEventListener("click", () => {
+          const fieldId = quickWordsFieldSelect.value;
+          const word = quickWordsInput.value.trim();
+
+          if (!fieldId) {
+            showToast("Lütfen bir alan seçin.", "warning");
+            quickWordsFieldSelect.focus();
+            return;
+          }
+
+          if (!word) {
+            showToast("Lütfen bir kelime girin.", "warning");
+            quickWordsInput.focus();
+            return;
+          }
+
+          if (addQuickWord(fieldId, word)) {
+            quickWordsInput.value = "";
+            quickWordsInput.focus();
+          }
+        });
+      }
+
+      // Enter tuşu ile ekle
+      if (quickWordsInput) {
+        quickWordsInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            quickWordsAddBtn.click();
+          }
+        });
+      }
+
+      // Sayfa yüklendiğinde kayıtları ve şablonları yükle
+      (async () => {
+        savedRecords = await loadStoredRecords();
+        savedTemplates = await loadTemplates();
+        // Hızlı Kelimeler modülü devre dışı
+        // loadQuickWords();
+        // populateFieldSelect();
+        // renderQuickWords();
+        
+        // Hizmet Türü dropdown'ında varsayılan değer olarak "Kurum" seçili gelsin
+        const hizmetTuruSelect = document.getElementById('hizmetTuru');
+        if (hizmetTuruSelect && !hizmetTuruSelect.value) {
+          const kurumOption = Array.from(hizmetTuruSelect.options).find(opt => opt.textContent.trim() === 'Kurum');
+          if (kurumOption) {
+            hizmetTuruSelect.value = kurumOption.textContent;
+          }
+        }
+        
+        if (searchInput.value.trim()) {
+          handleSearch(searchInput.value);
+        }
+        updateSaveButtonState();
+
+        // Kayıtlar sayfasından "Düzenle" ile gelindiyse formu doldur ve düzenleme moduna geç
+        const editRecordRaw = localStorage.getItem('ekip_edit_record');
+        if (editRecordRaw) {
+          try {
+            const editRecord = JSON.parse(editRecordRaw);
+            if (editRecord.id && editRecord.values) {
+              fillForm(editRecord.values);
+              currentEditId = editRecord.id;
+              if (editBtn) editBtn.style.display = 'inline-block';
+              if (deleteBtn) deleteBtn.style.display = 'inline-block';
+              if (saveBtn) saveBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Güncelle';
+              updateSaveButtonState();
+              showStatus('Kayıt düzenleme modunda. Değişiklikleri yapıp "Güncelle" butonuna tıklayın.');
+            }
+          } catch (e) {
+            console.warn('ekip_edit_record parse hatası:', e);
+          }
+          localStorage.removeItem('ekip_edit_record');
+        }
+      })();
+
+      // Klavye kısayolları
+      document.addEventListener("keydown", (e) => {
+        // Ctrl veya Cmd tuşu kontrolü
+        const isCtrl = e.ctrlKey || e.metaKey;
+
+        // Ctrl+S: Kaydet
+        if (isCtrl && e.key === "s") {
+          e.preventDefault();
+          if (!saveBtn.disabled) {
+            saveBtn.click();
+          } else {
+            showStatus("Formu kaydetmek için en az bir alan doldurulmalıdır.", "error");
+          }
+          return;
+        }
+
+        // Ctrl+Shift+S: Şablon Olarak Kaydet
+        if (isCtrl && e.shiftKey && e.key === "S") {
+          e.preventDefault();
+          if (saveTemplateBtn && saveTemplateBtn.style.display !== "none") {
+            saveTemplateBtn.click();
+          } else {
+            showStatus("Şablon kaydetmek için formu doldurun.", "error");
+          }
+          return;
+        }
+
+        // Ctrl+R: Alanları Temizle
+        if (isCtrl && e.key === "r") {
+          e.preventDefault();
+          resetBtn.click();
+          return;
+        }
+
+        // Ctrl+K: Kayıtları Gör
+        if (isCtrl && e.key === "k") {
+          e.preventDefault();
+          recordsBtn.click();
+          return;
+        }
+
+        // Ctrl+T: Şablonlar
+        if (isCtrl && e.key === "t") {
+          e.preventDefault();
+          if (templateBtn) {
+            templateBtn.click();
+          }
+          return;
+        }
+
+        // Ctrl+F: Arama alanına odaklan
+        if (isCtrl && e.key === "f") {
+          e.preventDefault();
+          searchInput.focus();
+          searchInput.select();
+          return;
+        }
+
+        // F1: Yardım
+        if (e.key === "F1") {
+          e.preventDefault();
+          if (helpBtn) {
+            helpBtn.click();
+          }
+          return;
+        }
+
+        // Ctrl+H: Yardım (alternatif)
+        if (isCtrl && e.key === "h") {
+          e.preventDefault();
+          if (helpBtn) {
+            helpBtn.click();
+          }
+          return;
+        }
+
+        // Ctrl+D: Tema değiştir
+        if (isCtrl && e.key === "d") {
+          e.preventDefault();
+          if (themeToggleBtn) {
+            themeToggleBtn.click();
+          }
+          return;
+        }
+
+        // Escape: Modal'ları kapat
+        if (e.key === "Escape") {
+          if (helpModal && helpModal.style.display !== "none") {
+            if (helpModalClose) helpModalClose.click();
+            return;
+          }
+          if (templateModal && templateModal.style.display !== "none") {
+            if (templateModalClose) templateModalClose.click();
+            return;
+          }
+        }
+
+        // Ctrl+E: Düzenle (eğer kayıt seçiliyse)
+        if (isCtrl && e.key === "e") {
+          e.preventDefault();
+          if (editBtn && editBtn.style.display !== "none") {
+            editBtn.click();
+          } else {
+            showStatus("Düzenlemek için önce bir kayıt seçin.", "error");
+          }
+          return;
+        }
+
+        // Delete: Kayıt Sil (eğer kayıt seçiliyse ve modal açık değilse)
+        if (e.key === "Delete" && !e.ctrlKey && !e.shiftKey) {
+          const activeElement = document.activeElement;
+          const isInputFocused = activeElement && (
+            activeElement.tagName === "INPUT" ||
+            activeElement.tagName === "TEXTAREA" ||
+            activeElement.tagName === "SELECT"
+          );
+
+          if (!isInputFocused && deleteBtn && deleteBtn.style.display !== "none") {
+            e.preventDefault();
+            customConfirm("Bu kaydı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.", "Kayıt Sil").then((confirmed) => {
+              if (confirmed) {
+                deleteBtn.click();
+              }
+            });
+          }
+        }
+      });
+
+      // Kısayol tuşları bilgilendirmesi
+      async function showKeyboardShortcuts() {
+        const shortcuts = [
+          "⌨️ Klavye Kısayolları:",
+          "Ctrl+S: Kaydet",
+          "Ctrl+Shift+S: Şablon Olarak Kaydet",
+          "Ctrl+R: Alanları Temizle",
+          "Ctrl+K: Kayıtları Gör",
+          "Ctrl+T: Şablonlar",
+          "Ctrl+F: Arama",
+          "F1 veya Ctrl+H: Yardım",
+          "Ctrl+D: Tema Değiştir",
+          "Ctrl+E: Düzenle (kayıt seçiliyse)",
+          "Delete: Kayıt Sil (kayıt seçiliyse)",
+          "Esc: Modal'ları Kapat"
+        ];
+        await customAlert(shortcuts.join("<br>"), "Klavye Kısayolları");
+      }
+
+      // Yardım modal'ına kısayol bilgisi ekle
+      const helpGeneralContent = document.getElementById("helpGeneral");
+      if (helpGeneralContent) {
+        const shortcutsSection = document.createElement("div");
+        shortcutsSection.style.marginTop = "20px";
+        shortcutsSection.style.paddingTop = "20px";
+        shortcutsSection.style.borderTop = "1px solid #e5e7eb";
+        shortcutsSection.innerHTML = `
+          <h3>⌨️ Klavye Kısayolları</h3>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px 24px; margin-top: 16px; font-size: 13px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">S</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Kaydet</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Shift</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">S</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Şablon Olarak Kaydet</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">R</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Alanları Temizle</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">K</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Kayıtları Gör</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">T</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Şablonlar</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">F</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Arama</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">F1</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">veya</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">H</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Yardım</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">D</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Tema Değiştir</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Ctrl</kbd>
+              <span>+</span>
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">E</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Düzenle</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Delete</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Kayıt Sil</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <kbd style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db;">Esc</kbd>
+              <span style="margin-left: 8px; color: #4b5563;">Modal Kapat</span>
+            </div>
+          </div>
+        `;
+        helpGeneralContent.appendChild(shortcutsSection);
+      }
+    }());
+
+    // ============================================
+    // GELİŞMİŞ KURAL TANIMLAMA MODÜLÜ
+    // ============================================
+    (function () {
+      const RULES_STORAGE_KEY = 'formFieldRules';
+      let rules = [];
+      let editingRuleId = null;
+
+      // HTML escape fonksiyonu
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      // DOM Elementleri
+      const ruleManagerBtn = document.getElementById('ruleManagerBtn');
+      const ruleManagerModal = document.getElementById('ruleManagerModal');
+      const ruleManagerClose = document.getElementById('ruleManagerClose');
+      const ruleCancelBtn = document.getElementById('ruleCancelBtn');
+      const ruleSaveBtn = document.getElementById('ruleSaveBtn');
+      const ruleTabs = document.querySelectorAll('.rule-tab');
+      const ruleTabContents = document.querySelectorAll('.rule-tab-content');
+      const ruleForm = document.getElementById('ruleForm');
+      const ruleNameInput = document.getElementById('ruleName');
+      const ruleTargetField = document.getElementById('ruleTargetField');
+      const ruleConditions = document.getElementById('ruleConditions');
+      const addConditionBtn = document.getElementById('addConditionBtn');
+      const ruleOptionsList = document.getElementById('ruleOptionsList');
+      const addOptionBtn = document.getElementById('addOptionBtn');
+      const ruleList = document.getElementById('ruleList');
+
+      // Tüm select alanlarını bul
+      function getAllSelectFields() {
+        const selects = document.querySelectorAll('select[id]');
+        return Array.from(selects).map(select => ({
+          id: select.id,
+          label: select.previousElementSibling?.textContent?.trim() || select.id,
+          element: select
+        }));
+      }
+
+      // Modal aç/kapat
+      async function openRuleManager() {
+        ruleManagerModal.style.display = 'flex';
+        await loadRules();
+        populateFieldSelects();
+        populateFromFormFieldSelects();
+        renderRuleList();
+        document.body.style.overflow = 'hidden';
+
+        // İlk koşul ve seçenek satırlarını ekle (eğer yoksa)
+        if (ruleConditions.querySelectorAll('.rule-condition-row').length === 0) {
+          addCondition();
+        }
+        if (ruleOptionsList.querySelectorAll('.rule-option-item').length === 0) {
+          addOption();
+        }
+      }
+
+      function closeRuleManager() {
+        ruleManagerModal.style.display = 'none';
+        document.body.style.overflow = '';
+        resetRuleForm();
+      }
+
+      // Sekme değiştirme
+      ruleTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const targetTab = tab.dataset.tab;
+
+          ruleTabs.forEach(t => t.classList.remove('active'));
+          ruleTabContents.forEach(c => c.classList.remove('active'));
+
+          tab.classList.add('active');
+          document.getElementById(`tab${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`).classList.add('active');
+        });
+      });
+
+      // Alan seçeneklerini doldur
+      function populateFieldSelects() {
+        const fields = getAllSelectFields();
+        const fieldOptions = fields.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
+
+        // Hedef alan dropdown'ını doldur
+        ruleTargetField.innerHTML = '<option value="">Seçiniz...</option>' + fieldOptions;
+
+        // Koşul alanları dropdown'larını doldur
+        document.querySelectorAll('.rule-condition-field').forEach(select => {
+          select.innerHTML = '<option value="">Alan seçiniz...</option>' + fieldOptions;
+        });
+      }
+
+      // Formdan kural oluşturma için alan seçeneklerini doldur
+      function populateFromFormFieldSelects() {
+        const fields = getAllSelectFields();
+        const fieldOptions = fields.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
+
+        const ruleFromFormTargetField = document.getElementById('ruleFromFormTargetField');
+        if (ruleFromFormTargetField) {
+          ruleFromFormTargetField.innerHTML = '<option value="">Seçiniz...</option>' + fieldOptions;
+        }
+      }
+
+      // Form değerlerini topla (kural yönetimi modülü için)
+      function collectFormValuesForRule() {
+        const values = {};
+        const selects = document.querySelectorAll('select[id]');
+        const inputs = document.querySelectorAll('input[id]:not([type="button"]):not([type="submit"]):not([type="hidden"])');
+        const textareas = document.querySelectorAll('textarea[id]');
+
+        [...selects, ...inputs, ...textareas].forEach(element => {
+          if (element.id) {
+            values[element.id] = element.value || '';
+          }
+        });
+
+        return values;
+      }
+
+      // Form verilerini yükle ve önizle
+      function loadFormDataToRule() {
+        const formValues = collectFormValuesForRule();
+        const fields = getAllSelectFields();
+        const previewDiv = document.getElementById('ruleFromFormPreview');
+
+        if (!previewDiv) return;
+
+        // Dolu alanları filtrele
+        const filledFields = Object.entries(formValues)
+          .filter(([key, value]) => value && value.toString().trim() !== '')
+          .map(([key, value]) => {
+            const field = fields.find(f => f.id === key);
+            return {
+              id: key,
+              label: field?.label || key,
+              value: value.toString().trim()
+            };
+          });
+
+        if (filledFields.length === 0) {
+          previewDiv.innerHTML = '<div style="color: #6b7280; text-align: center; padding: 20px;">Formda dolu alan bulunamadı. Lütfen formu doldurun.</div>';
+          return;
+        }
+
+        // Önizleme HTML'i oluştur
+        previewDiv.innerHTML = `
+          <div style="display: grid; gap: 12px;">
+            ${filledFields.map(field => `
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+                <div>
+                  <strong style="color: #374151;">${escapeHtml(field.label)}</strong>
+                  <div style="color: #6b7280; font-size: 14px; margin-top: 4px;">${escapeHtml(field.value)}</div>
+                </div>
+                <div style="color: #10b981; font-size: 12px;">Koşul olarak kullanılacak</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      // Form verilerinden kural oluştur
+      async function createRuleFromForm() {
+        const formValues = collectFormValuesForRule();
+        const targetFieldId = document.getElementById('ruleFromFormTargetField')?.value;
+        const ruleName = document.getElementById('ruleFromFormName')?.value.trim();
+
+        if (!targetFieldId) {
+          showToast('Lütfen hedef alan seçiniz.', 'error');
+          return;
+        }
+
+        const targetField = getAllSelectFields().find(f => f.id === targetFieldId);
+        if (!targetField) {
+          showToast('Hedef alan bulunamadı.', 'error');
+          return;
+        }
+
+        const targetValue = formValues[targetFieldId];
+        if (!targetValue || targetValue.toString().trim() === '') {
+          showToast('Hedef alan boş. Lütfen bir değer seçin.', 'error');
+          return;
+        }
+
+        // Koşulları oluştur (hedef alan hariç tüm dolu alanlar)
+        const conditions = [];
+        Object.entries(formValues).forEach(([key, value]) => {
+          if (key !== targetFieldId && value && value.toString().trim() !== '') {
+            conditions.push({
+              field: key,
+              operator: 'equals',
+              value: value.toString().trim()
+            });
+          }
+        });
+
+        if (conditions.length === 0) {
+          showToast('En az bir koşul için form alanı dolu olmalı.', 'error');
+          return;
+        }
+
+        // Kural adı
+        const finalRuleName = ruleName || `${targetField.label} için Kural`;
+
+        // Kuralı oluştur
+        const rule = {
+          id: Date.now().toString(),
+          name: finalRuleName,
+          targetField: targetFieldId,
+          conditions: conditions,
+          options: [targetValue.toString().trim()],
+          results: [targetValue.toString().trim()],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
+        // Kuralı ekle
+        rules.push(rule);
+
+        // Supabase'e kaydet
+        if (window.supabaseClient && window.supabaseExtras) {
+          try {
+            const saved = await window.supabaseExtras.saveRule(window.supabaseClient, {
+              name: rule.name,
+              description: `Form verilerinden otomatik oluşturuldu`,
+              targetField: rule.targetField,
+              conditions: rule.conditions || [],
+              results: rule.results || rule.options || [],
+              options: rule.results || rule.options || [],
+              active: true,
+              priority: 0
+            });
+
+            if (saved && saved.id) {
+              rule.id = saved.id;
+              console.log("✅ Kural Supabase'e kaydedildi:", saved.id);
+            }
+          } catch (error) {
+            console.warn("Supabase kural kaydetme hatası:", error);
+          }
+        }
+
+        await saveRules();
+        renderRuleList();
+        showToast('Kural başarıyla oluşturuldu!', 'success');
+
+        // Kayıtlı Kurallar sekmesine geç
+        const listTab = document.querySelector('.rule-tab[data-tab="list"]');
+        if (listTab) {
+          listTab.click();
+        }
+      }
+
+      // Koşul ekle
+      function addCondition() {
+        const fields = getAllSelectFields();
+        const fieldOptions = fields.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
+
+        const conditionRow = document.createElement('div');
+        conditionRow.className = 'rule-condition-row';
+        conditionRow.innerHTML = `
+          <select class="rule-form-select rule-condition-field">
+            <option value="">Alan seçiniz...</option>
+            ${fieldOptions}
+          </select>
+          <select class="rule-form-select rule-condition-operator-select">
+            <option value="equals">Eşittir (=)</option>
+            <option value="notEquals">Eşit Değildir (≠)</option>
+            <option value="contains">İçerir (⊃)</option>
+            <option value="notContains">İçermez (⊅)</option>
+            <option value="startsWith">İle Başlar</option>
+            <option value="endsWith">İle Biter</option>
+          </select>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" class="rule-form-input rule-condition-value" placeholder="Değer giriniz..." style="flex: 1;">
+            <button type="button" class="rule-remove-condition" aria-label="Koşulu kaldır"><i class="fa-solid fa-times"></i></button>
+          </div>
+        `;
+
+        conditionRow.querySelector('.rule-remove-condition').addEventListener('click', () => {
+          conditionRow.remove();
+        });
+
+        ruleConditions.appendChild(conditionRow);
+      }
+
+      // Seçenek ekle
+      function addOption() {
+        const optionItem = document.createElement('div');
+        optionItem.className = 'rule-option-item';
+        optionItem.innerHTML = `
+          <input type="text" class="rule-option-input" placeholder="Seçenek metni...">
+          <button type="button" class="rule-option-remove" aria-label="Kaldır"><i class="fa-solid fa-times"></i></button>
+        `;
+
+        optionItem.querySelector('.rule-option-remove').addEventListener('click', () => {
+          optionItem.remove();
+        });
+
+        ruleOptionsList.appendChild(optionItem);
+      }
+
+      // Kural kaydet
+      async function saveRule() {
+        const name = ruleNameInput.value.trim();
+        const targetField = ruleTargetField.value;
+
+        if (!name || !targetField) {
+          showToast('Lütfen kural adı ve hedef alan seçiniz.', 'error');
+          return;
+        }
+
+        // Koşulları topla
+        const conditions = [];
+        document.querySelectorAll('.rule-condition-row').forEach(row => {
+          const field = row.querySelector('.rule-condition-field').value;
+          const operator = row.querySelector('.rule-condition-operator-select').value;
+          const value = row.querySelector('.rule-condition-value').value.trim();
+
+          if (field && operator && value) {
+            conditions.push({ field, operator, value });
+          }
+        });
+
+        if (conditions.length === 0) {
+          showToast('En az bir koşul tanımlamalısınız.', 'error');
+          return;
+        }
+
+        // Seçenekleri topla
+        const options = [];
+        document.querySelectorAll('.rule-option-input').forEach(input => {
+          const value = input.value.trim();
+          if (value) {
+            options.push(value);
+          }
+        });
+
+        if (options.length === 0) {
+          showToast('En az bir seçenek eklemelisiniz.', 'error');
+          return;
+        }
+
+        const rule = {
+          id: editingRuleId || Date.now().toString(),
+          name,
+          targetField,
+          conditions,
+          options,
+          results: options, // Supabase için results alanı
+          createdAt: editingRuleId ? rules.find(r => r.id === editingRuleId)?.createdAt : new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
+        if (editingRuleId) {
+          const index = rules.findIndex(r => r.id === editingRuleId);
+          if (index !== -1) {
+            rules[index] = rule;
+          }
+        } else {
+          rules.push(rule);
+        }
+
+        // Supabase'e kaydet ve ID'yi güncelle
+        if (window.supabaseClient && window.supabaseExtras) {
+          try {
+            const saved = await window.supabaseExtras.saveRule(window.supabaseClient, {
+              id: editingRuleId && (/^\d+$/.test(String(editingRuleId)) || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(editingRuleId))) ? editingRuleId : undefined,
+              name: rule.name,
+              description: rule.description,
+              targetField: rule.targetField,
+              conditions: rule.conditions || [],
+              results: rule.results || rule.options || [],
+              options: rule.results || rule.options || [],
+              active: rule.active !== false,
+              priority: rule.priority || 0
+            });
+
+            if (saved && saved.id) {
+              // Supabase'den dönen ID'yi kullan
+              rule.id = saved.id;
+              if (editingRuleId) {
+                const index = rules.findIndex(r => r.id === editingRuleId);
+                if (index !== -1) {
+                  rules[index] = rule;
+                }
+              } else {
+                const index = rules.findIndex(r => r.id === Date.now().toString());
+                if (index !== -1) {
+                  rules[index] = rule;
+                }
+              }
+              console.log("✅ Kural Supabase'e kaydedildi:", saved.id);
+            }
+          } catch (error) {
+            console.warn("Supabase kural kaydetme hatası:", error);
+          }
+        }
+
+        saveRules();
+        renderRuleList();
+        resetRuleForm();
+        showToast('Kural başarıyla kaydedildi!', 'success');
+
+        // Kuralları uygula
+        applyRules();
+      }
+
+      // Kuralları yükle
+      async function loadRules() {
+        // Supabase'den yükle
+        if (window.supabaseClient && window.supabaseExtras) {
+          try {
+            const supabaseRules = await window.supabaseExtras.loadRules(window.supabaseClient);
+            if (supabaseRules && supabaseRules.length > 0) {
+              // Supabase formatından mevcut formata çevir
+              rules = supabaseRules.map(rule => ({
+                id: rule.id,
+                name: rule.name,
+                description: rule.description,
+                targetField: rule.targetField,
+                conditions: rule.conditions || [],
+                results: rule.results || rule.options || [],
+                options: rule.results || rule.options || [], // Geriye uyumluluk için
+                active: rule.active !== false,
+                priority: rule.priority || 0
+              }));
+              console.log("✅ Kurallar Supabase'den yüklendi:", rules.length);
+              return;
+            }
+          } catch (error) {
+            console.warn("Supabase kuralları yüklenirken hata:", error);
+          }
+        }
+
+        // Eski davranış: localStorage
+        const stored = localStorage.getItem(RULES_STORAGE_KEY);
+        if (stored) {
+          try {
+            rules = JSON.parse(stored);
+          } catch (e) {
+            rules = [];
+          }
+        } else {
+          rules = [];
+        }
+      }
+
+      // Kuralları kaydet
+      async function saveRules() {
+        // Supabase'e kaydet (her kural için)
+        if (window.supabaseClient && window.supabaseExtras) {
+          try {
+            for (const rule of rules) {
+              // Geçerli Supabase ID formatında olmayan ID'leri gönderme (yeni kayıt olarak eklenecek)
+              // BIGSERIAL sayısal olmalı veya UUID formatında olmalı
+              const isValidId = rule.id && (/^\d+$/.test(String(rule.id)) || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(rule.id)));
+              const ruleId = isValidId ? rule.id : undefined;
+
+              await window.supabaseExtras.saveRule(window.supabaseClient, {
+                id: ruleId,
+                name: rule.name,
+                description: rule.description,
+                targetField: rule.targetField,
+                conditions: rule.conditions || [],
+                results: rule.results || rule.options || [],
+                options: rule.results || rule.options || [], // Geriye uyumluluk için
+                active: rule.active !== false,
+                priority: rule.priority || 0
+              });
+            }
+            console.log("✅ Kurallar Supabase'e kaydedildi");
+          } catch (error) {
+            console.warn("Supabase kural kaydetme hatası:", error);
+          }
+        }
+
+        // Eski davranış: localStorage (her zaman kaydet - fallback)
+        localStorage.setItem(RULES_STORAGE_KEY, JSON.stringify(rules));
+      }
+
+      // Kural listesini render et
+      function renderRuleList() {
+        if (rules.length === 0) {
+          ruleList.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">Henüz kural tanımlanmamış.</div>';
+          return;
+        }
+
+        ruleList.innerHTML = rules.map(rule => {
+          const conditionsText = rule.conditions.map(c => {
+            const fieldLabel = getAllSelectFields().find(f => f.id === c.field)?.label || c.field;
+            const operatorText = {
+              equals: '=',
+              notEquals: '≠',
+              contains: 'içerir',
+              notContains: 'içermez',
+              startsWith: 'ile başlar',
+              endsWith: 'ile biter'
+            }[c.operator] || c.operator;
+            return `${fieldLabel} ${operatorText} "${c.value}"`;
+          }).join(' VE ');
+
+          return `
+            <div class="rule-item">
+              <div class="rule-item-header">
+                <div class="rule-item-title">${escapeHtml(rule.name)}</div>
+                <div class="rule-item-actions">
+                  <button class="rule-item-btn rule-item-edit" data-rule-id="${rule.id}"><i class="fa-solid fa-pen-to-square"></i> Düzenle</button>
+                  <button class="rule-item-btn rule-item-delete" data-rule-id="${rule.id}"><i class="fa-solid fa-trash-can"></i> Sil</button>
+                </div>
+              </div>
+              <div class="rule-item-preview">
+                <strong>Hedef Alan:</strong> ${getAllSelectFields().find(f => f.id === rule.targetField)?.label || rule.targetField}<br>
+                <strong>Koşullar:</strong> ${conditionsText}<br>
+                <strong>Seçenekler:</strong> ${(rule.options || rule.results || []).map(o => escapeHtml(o)).join(', ')}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Düzenle ve sil butonlarına event listener ekle
+        ruleList.querySelectorAll('.rule-item-edit').forEach(btn => {
+          const ruleId = btn.getAttribute('data-rule-id') || btn.dataset.ruleId;
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Düzenle butonu tıklandı, ruleId:', ruleId);
+            if (ruleId) {
+              editRule(ruleId);
+            } else {
+              console.error('Rule ID bulunamadı');
+            }
+          });
+        });
+
+        ruleList.querySelectorAll('.rule-item-delete').forEach(btn => {
+          const ruleId = btn.getAttribute('data-rule-id') || btn.dataset.ruleId;
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Sil butonu tıklandı, ruleId:', ruleId);
+            if (ruleId) {
+              await deleteRule(ruleId);
+            } else {
+              console.error('Rule ID bulunamadı');
+            }
+          });
+        });
+      }
+
+      // Kural düzenle
+      function editRule(ruleId) {
+        // ID'yi string'e çevir (karşılaştırma için)
+        const idStr = String(ruleId);
+        const rule = rules.find(r => String(r.id) === idStr);
+        if (!rule) {
+          console.warn('Kural bulunamadı:', ruleId, 'Mevcut kurallar:', rules.map(r => r.id));
+          showToast('Kural bulunamadı.', 'error');
+          return;
+        }
+
+        console.log('Kural düzenleniyor:', rule);
+
+        editingRuleId = idStr; // String formatında sakla
+        ruleNameInput.value = rule.name;
+        ruleTargetField.value = rule.targetField;
+
+        // Koşulları ekle
+        ruleConditions.innerHTML = '';
+        rule.conditions.forEach(condition => {
+          const fields = getAllSelectFields();
+          const fieldOptions = fields.map(f => `<option value="${f.id}">${f.label}</option>`).join('');
+
+          const conditionRow = document.createElement('div');
+          conditionRow.className = 'rule-condition-row';
+          conditionRow.innerHTML = `
+            <select class="rule-form-select rule-condition-field">
+              <option value="">Alan seçiniz...</option>
+              ${fieldOptions}
+            </select>
+            <select class="rule-form-select rule-condition-operator-select">
+              <option value="equals">Eşittir (=)</option>
+              <option value="notEquals">Eşit Değildir (≠)</option>
+              <option value="contains">İçerir (⊃)</option>
+              <option value="notContains">İçermez (⊅)</option>
+              <option value="startsWith">İle Başlar</option>
+              <option value="endsWith">İle Biter</option>
+            </select>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" class="rule-form-input rule-condition-value" placeholder="Değer giriniz..." style="flex: 1;">
+              <button type="button" class="rule-remove-condition" aria-label="Koşulu kaldır"><i class="fa-solid fa-times"></i></button>
+            </div>
+          `;
+
+          conditionRow.querySelector('.rule-condition-field').value = condition.field;
+          conditionRow.querySelector('.rule-condition-operator-select').value = condition.operator;
+          conditionRow.querySelector('.rule-condition-value').value = condition.value;
+
+          conditionRow.querySelector('.rule-remove-condition').addEventListener('click', () => {
+            conditionRow.remove();
+          });
+
+          ruleConditions.appendChild(conditionRow);
+        });
+
+        // Seçenekleri ekle
+        ruleOptionsList.innerHTML = '';
+        (rule.options || rule.results || []).forEach(option => {
+          const optionItem = document.createElement('div');
+          optionItem.className = 'rule-option-item';
+          optionItem.innerHTML = `
+            <input type="text" class="rule-option-input" placeholder="Seçenek metni..." value="${escapeHtml(option)}">
+            <button type="button" class="rule-option-remove" aria-label="Kaldır"><i class="fa-solid fa-times"></i></button>
+          `;
+
+          optionItem.querySelector('.rule-option-remove').addEventListener('click', () => {
+            optionItem.remove();
+          });
+
+          ruleOptionsList.appendChild(optionItem);
+        });
+
+        // Yeni kural sekmesine geç
+        ruleTabs[0].click();
+      }
+
+      // Kural sil
+      async function deleteRule(ruleId) {
+        const confirmed = await customConfirm('Bu kuralı silmek istediğinizden emin misiniz?', 'Kural Sil');
+        if (confirmed) {
+          // Supabase'den sil (eğer geçerli ID ise)
+          if (window.supabaseClient && window.supabaseExtras) {
+            const isValidId = ruleId && (/^\d+$/.test(String(ruleId)) || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(ruleId)));
+            if (isValidId) {
+              try {
+                await window.supabaseExtras.deleteRule(window.supabaseClient, ruleId);
+                console.log("✅ Kural Supabase'den silindi:", ruleId);
+              } catch (error) {
+                console.warn("Supabase kural silme hatası:", error);
+              }
+            }
+          }
+
+          // ID'yi string'e çevir (karşılaştırma için)
+          const idStr = String(ruleId);
+          rules = rules.filter(r => String(r.id) !== idStr);
+          await saveRules();
+          renderRuleList();
+          showToast('Kural silindi.', 'success');
+          applyRules();
+        }
+      }
+
+      // Formu sıfırla
+      function resetRuleForm() {
+        editingRuleId = null;
+        ruleForm.reset();
+        ruleConditions.innerHTML = '';
+        ruleOptionsList.innerHTML = '';
+        addCondition();
+        addOption();
+      }
+
+      // Koşul kontrolü
+      function checkCondition(condition, fieldValue) {
+        const value = String(fieldValue || '').trim();
+        const conditionValue = condition.value.trim();
+
+        switch (condition.operator) {
+          case 'equals':
+            return value === conditionValue;
+          case 'notEquals':
+            return value !== conditionValue;
+          case 'contains':
+            return value.toLowerCase().includes(conditionValue.toLowerCase());
+          case 'notContains':
+            return !value.toLowerCase().includes(conditionValue.toLowerCase());
+          case 'startsWith':
+            return value.toLowerCase().startsWith(conditionValue.toLowerCase());
+          case 'endsWith':
+            return value.toLowerCase().endsWith(conditionValue.toLowerCase());
+          default:
+            return false;
+        }
+      }
+
+      // Kuralları uygula
+      function applyRules() {
+        rules.forEach(rule => {
+          // Tüm koşulların sağlanıp sağlanmadığını kontrol et
+          const allConditionsMet = rule.conditions.every(condition => {
+            const fieldElement = document.getElementById(condition.field);
+            if (!fieldElement) return false;
+
+            const fieldValue = fieldElement.value || fieldElement.textContent || '';
+            return checkCondition(condition, fieldValue);
+          });
+
+          if (allConditionsMet) {
+            const targetSelect = document.getElementById(rule.targetField);
+            if (targetSelect) {
+              // Mevcut seçenekleri kontrol et ve eksik olanları ekle
+              const existingOptions = Array.from(targetSelect.options).map(opt => opt.text.trim());
+
+              rule.options.forEach(option => {
+                if (!existingOptions.includes(option)) {
+                  const optionElement = document.createElement('option');
+                  optionElement.textContent = option;
+                  optionElement.value = option;
+                  targetSelect.appendChild(optionElement);
+                }
+              });
+            }
+          }
+        });
+      }
+
+      // Event Listeners
+      ruleManagerBtn?.addEventListener('click', openRuleManager);
+      ruleManagerClose?.addEventListener('click', closeRuleManager);
+      ruleCancelBtn?.addEventListener('click', closeRuleManager);
+      ruleSaveBtn?.addEventListener('click', saveRule);
+      addConditionBtn?.addEventListener('click', addCondition);
+      addOptionBtn?.addEventListener('click', addOption);
+
+      // Formdan kural oluşturma butonları
+      const ruleFromFormLoadBtn = document.getElementById('ruleFromFormLoadBtn');
+      const ruleFromFormCreateBtn = document.getElementById('ruleFromFormCreateBtn');
+
+      ruleFromFormLoadBtn?.addEventListener('click', () => {
+        loadFormDataToRule();
+      });
+
+      ruleFromFormCreateBtn?.addEventListener('click', async () => {
+        await createRuleFromForm();
+      });
+
+      // Modal dışına tıklanınca kapat
+      ruleManagerModal?.addEventListener('click', (e) => {
+        if (e.target === ruleManagerModal) {
+          closeRuleManager();
+        }
+      });
+
+      // Escape tuşu ile kapat
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && ruleManagerModal?.style.display !== 'none') {
+          closeRuleManager();
+        }
+      });
+
+      // Form alanları değiştiğinde kuralları uygula
+      document.addEventListener('change', (e) => {
+        if (e.target.tagName === 'SELECT') {
+          applyRules();
+        }
+      });
+
+      // Sayfa yüklendiğinde kuralları yükle ve uygula
+      (async () => {
+        await loadRules();
+        applyRules();
+      })();
+    }());
+
+  </script>
+  <script type="module" src="js/form-options.js"></script>
+  <script type="module">
+    // Dropdown Loader Modal İşlevselliği - DEVRE DIŞI
+    // import { loadDropdownsFromWeb, clearDropdownCache } from './js/dropdown-loader.js';
+    // import { loadDropdownsFromExternalSource } from './js/form-options.js';
+
+    (function () {
+      // Dropdown Loader modülü devre dışı
+      // const dropdownLoaderBtn = document.getElementById('dropdownLoaderBtn');
+      const dropdownLoaderModal = document.getElementById('dropdownLoaderModal');
+      const dropdownLoaderModalClose = document.getElementById('dropdownLoaderModalClose');
+      const dropdownUrl = document.getElementById('dropdownUrl');
+      const dropdownFormat = document.getElementById('dropdownFormat');
+      const htmlSelector = document.getElementById('htmlSelector');
+      const htmlSelectorGroup = document.getElementById('htmlSelectorGroup');
+      const useCache = document.getElementById('useCache');
+      const autoLoad = document.getElementById('autoLoad');
+      const dropdownLoaderLoad = document.getElementById('dropdownLoaderLoad');
+      const dropdownLoaderTest = document.getElementById('dropdownLoaderTest');
+      const dropdownLoaderClearCache = document.getElementById('dropdownLoaderClearCache');
+      const dropdownLoaderStatus = document.getElementById('dropdownLoaderStatus');
+      const statusMessage = document.getElementById('statusMessage');
+      const statusProgress = document.getElementById('statusProgress');
+      const progressFill = document.getElementById('progressFill');
+      const dropdownLoaderResults = document.getElementById('dropdownLoaderResults');
+      const resultsList = document.getElementById('resultsList');
+
+      let loadTimeout = null;
+
+      // Modal aç/kapat
+      function openDropdownLoaderModal() {
+        dropdownLoaderModal.style.display = 'flex';
+        dropdownUrl.focus();
+
+        // Son kullanılan URL'yi yükle
+        const lastUrl = localStorage.getItem('dropdownLoader_lastUrl');
+        // Varsayılan URL varsa onu kullan
+        const defaultUrl = window.DROPDOWN_LOADER_DEFAULT_URL || lastUrl;
+
+        if (defaultUrl) {
+          dropdownUrl.value = defaultUrl;
+          if (autoLoad.checked) {
+            loadTimeout = setTimeout(() => {
+              loadDropdowns();
+            }, 1000); // 1 saniye bekle
+          }
+        }
+      }
+
+      function closeDropdownLoaderModal() {
+        dropdownLoaderModal.style.display = 'none';
+        if (loadTimeout) {
+          clearTimeout(loadTimeout);
+          loadTimeout = null;
+        }
+        resetStatus();
+      }
+
+      // Format değiştiğinde HTML selector'ı göster/gizle
+      dropdownFormat?.addEventListener('change', (e) => {
+        if (e.target.value === 'html') {
+          htmlSelectorGroup.style.display = 'block';
+        } else {
+          htmlSelectorGroup.style.display = 'none';
+        }
+      });
+
+      // URL değiştiğinde otomatik yükle
+      dropdownUrl?.addEventListener('input', (e) => {
+        const url = e.target.value.trim();
+
+        if (loadTimeout) {
+          clearTimeout(loadTimeout);
+        }
+
+        if (url && autoLoad.checked && isValidUrl(url)) {
+          loadTimeout = setTimeout(() => {
+            loadDropdowns();
+          }, 1500); // 1.5 saniye bekle
+        }
+      });
+
+      // URL geçerliliğini kontrol et
+      function isValidUrl(string) {
+        try {
+          const url = new URL(string);
+          return url.protocol === 'http:' || url.protocol === 'https:';
+        } catch (_) {
+          return false;
+        }
+      }
+
+      // Durum mesajı göster
+      function showStatus(message, type = 'info', showProgress = false) {
+        dropdownLoaderStatus.style.display = 'block';
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message status-${type}`;
+
+        if (showProgress) {
+          statusProgress.style.display = 'block';
+          progressFill.style.width = '0%';
+          animateProgress();
+        } else {
+          statusProgress.style.display = 'none';
+        }
+      }
+
+      function animateProgress() {
+        let width = 0;
+        const interval = setInterval(() => {
+          if (width >= 90) {
+            clearInterval(interval);
+          } else {
+            width += 10;
+            progressFill.style.width = width + '%';
+          }
+        }, 200);
+      }
+
+      function resetStatus() {
+        dropdownLoaderStatus.style.display = 'none';
+        dropdownLoaderResults.style.display = 'none';
+        statusProgress.style.display = 'none';
+        progressFill.style.width = '0%';
+      }
+
+      // Sonuçları göster
+      function showResults(data) {
+        dropdownLoaderResults.style.display = 'block';
+        resultsList.innerHTML = '';
+
+        const keys = Object.keys(data);
+        if (keys.length === 0) {
+          resultsList.innerHTML = '<p>Yüklenen veri bulunamadı.</p>';
+          return;
+        }
+
+        keys.forEach(key => {
+          const div = document.createElement('div');
+          div.className = 'result-item';
+
+          const value = data[key];
+          if (Array.isArray(value)) {
+            div.innerHTML = `
+              <strong>${key}:</strong> ${value.length} öğe
+              <ul>
+                ${value.slice(0, 5).map(item => `<li>${item}</li>`).join('')}
+                ${value.length > 5 ? `<li>... ve ${value.length - 5} öğe daha</li>` : ''}
+              </ul>
+            `;
+          } else if (typeof value === 'object') {
+            const subKeys = Object.keys(value);
+            div.innerHTML = `
+              <strong>${key}:</strong> ${subKeys.length} kategori
+              <ul>
+                ${subKeys.slice(0, 3).map(subKey => `<li>${subKey}: ${Array.isArray(value[subKey]) ? value[subKey].length + ' öğe' : 'object'}</li>`).join('')}
+                ${subKeys.length > 3 ? `<li>... ve ${subKeys.length - 3} kategori daha</li>` : ''}
+              </ul>
+            `;
+          } else {
+            div.innerHTML = `<strong>${key}:</strong> ${value}`;
+          }
+
+          resultsList.appendChild(div);
+        });
+      }
+
+      // Dropdown'ları yükle
+      async function loadDropdowns() {
+        const url = dropdownUrl.value.trim();
+
+        if (!url) {
+          showStatus('⚠️ Lütfen bir URL girin', 'warning');
+          return;
+        }
+
+        if (!isValidUrl(url)) {
+          showStatus('❌ Geçersiz URL formatı', 'error');
+          return;
+        }
+
+        showStatus('📥 Veriler yükleniyor...', 'info', true);
+
+        try {
+          const format = dropdownFormat.value;
+          const options = {
+            format: format,
+            cache: useCache.checked,
+            cacheExpiry: 3600000, // 1 saat
+            timeout: 10000
+          };
+
+          if (format === 'html' && htmlSelector.value.trim()) {
+            options.selector = htmlSelector.value.trim();
+          }
+
+          const data = await loadDropdownsFromWeb(url, options);
+
+          // URL'yi kaydet
+          localStorage.setItem('dropdownLoader_lastUrl', url);
+
+          // Verileri dropdown'lara uygula
+          await applyDropdownsToForm(data);
+
+          progressFill.style.width = '100%';
+          showStatus('✅ Veriler başarıyla yüklendi ve uygulandı!', 'success');
+          showResults(data);
+
+          // Başarı mesajını 3 saniye sonra kaldır
+          setTimeout(() => {
+            if (statusMessage.textContent.includes('✅')) {
+              resetStatus();
+            }
+          }, 3000);
+
+        } catch (error) {
+          console.error('Dropdown yükleme hatası:', error);
+          showStatus(`❌ Hata: ${error.message}`, 'error');
+        }
+      }
+
+      // Dropdown'ları forma uygula
+      async function applyDropdownsToForm(data) {
+        // Hareket Türü dropdown'ını güncelle
+        if (data.hareketTuruOptions) {
+          const hareketTuruSelect = document.getElementById('hareketTuru');
+          if (hareketTuruSelect) {
+            updateSelectFromOptions(hareketTuruSelect, data.hareketTuruOptions);
+          }
+        }
+
+        // Hareket Tipi dropdown'ını güncelle
+        if (data.hareketTipiOptions) {
+          const hareketTipiSelect = document.getElementById('hareketTipi');
+          if (hareketTipiSelect) {
+            updateSelectFromOptions(hareketTipiSelect, data.hareketTipiOptions);
+          }
+        }
+
+        // Diğer dropdown'ları güncelle
+        Object.keys(data).forEach(key => {
+          if (key !== 'hareketTuruOptions' && key !== 'hareketTipiOptions') {
+            const select = document.getElementById(key);
+            if (select) {
+              const options = data[key];
+              if (Array.isArray(options)) {
+                updateSelectFromArray(select, options);
+              } else if (typeof options === 'object') {
+                updateSelectFromOptions(select, options);
+              }
+            }
+          }
+        });
+      }
+
+      function updateSelectFromOptions(select, options) {
+        // Eğer options bir object ise (örn: { default: [...], Atama: [...] })
+        if (typeof options === 'object' && !Array.isArray(options)) {
+          const defaultOptions = options.default || options['Seçiniz'] || [];
+          updateSelectFromArray(select, defaultOptions);
+        } else if (Array.isArray(options)) {
+          updateSelectFromArray(select, options);
+        }
+      }
+
+      function updateSelectFromArray(select, options) {
+        const currentValue = select.value;
+        select.innerHTML = '';
+
+        options.forEach(option => {
+          const opt = document.createElement('option');
+          opt.value = option;
+          opt.textContent = option;
+          select.appendChild(opt);
+        });
+
+        // Önceki değeri koru (varsa)
+        if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) {
+          select.value = currentValue;
+        }
+      }
+
+      // Test butonu
+      dropdownLoaderTest?.addEventListener('click', async () => {
+        const url = dropdownUrl.value.trim();
+        if (!url) {
+          showStatus('⚠️ Lütfen bir URL girin', 'warning');
+          return;
+        }
+
+        if (!isValidUrl(url)) {
+          showStatus('❌ Geçersiz URL formatı', 'error');
+          return;
+        }
+
+        showStatus('🔍 URL test ediliyor...', 'info');
+
+        try {
+          const response = await fetch(url, { method: 'HEAD' });
+          if (response.ok) {
+            showStatus(`✅ URL erişilebilir (${response.status})`, 'success');
+          } else {
+            showStatus(`⚠️ URL erişilebilir ancak hata kodu: ${response.status}`, 'warning');
+          }
+        } catch (error) {
+          showStatus(`❌ URL erişilemiyor: ${error.message}`, 'error');
+        }
+      });
+
+      // Cache temizle
+      dropdownLoaderClearCache?.addEventListener('click', () => {
+        clearDropdownCache();
+        showStatus('✅ Cache temizlendi', 'success');
+        setTimeout(() => resetStatus(), 2000);
+      });
+
+      // Event listeners - DEVRE DIŞI
+      // dropdownLoaderBtn?.addEventListener('click', openDropdownLoaderModal);
+      // dropdownLoaderModalClose?.addEventListener('click', closeDropdownLoaderModal);
+      // dropdownLoaderLoad?.addEventListener('click', loadDropdowns);
+
+      // Modal dışına tıklanınca kapat
+      dropdownLoaderModal?.addEventListener('click', (e) => {
+        if (e.target === dropdownLoaderModal) {
+          closeDropdownLoaderModal();
+        }
+      });
+
+      // ESC tuşu ile kapat
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && dropdownLoaderModal.style.display === 'flex') {
+          closeDropdownLoaderModal();
+        }
+      });
+    })();
+  </script>
+  <script type="module" src="js/form-handler.js"></script>
+  <script type="module" src="js/custom-rules.js"></script>
+  <!-- Firebase Auth -->
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module">
+    // Sayfa yüklendiğinde kayıtlar sayfasından dönüş state'ini kontrol et
+    window.addEventListener('load', () => {
+      const returnState = localStorage.getItem('kayitlar_return_state');
+      if (returnState) {
+        try {
+          const state = JSON.parse(returnState);
+          // Eğer state 5 dakikadan eski değilse, kullanıcıya bilgi ver
+          const stateAge = Date.now() - state.timestamp;
+          if (stateAge < 5 * 60 * 1000 && state.hasFormData) { // 5 dakika
+            // Kullanıcıya geri döndüğünü bildir (opsiyonel)
+            console.log('Kayıtlar sayfasından geri dönüldü');
+            // State'i temizle
+            localStorage.removeItem('kayitlar_return_state');
+          } else {
+            // Eski state'i temizle
+            localStorage.removeItem('kayitlar_return_state');
+          }
+        } catch (e) {
+          console.warn('Return state parse edilemedi:', e);
+          localStorage.removeItem('kayitlar_return_state');
+        }
+      }
+    });
+  </script>
+  <script type="module">
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
+      authDomain: "mulakat-takip-sistemi.firebaseapp.com",
+      projectId: "mulakat-takip-sistemi",
+      storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
+      messagingSenderId: "1050671861081",
+      appId: "1:1050671861081:web:1e41fc9305731961809048"
+    };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    
+    // DOM Elements
+    const userInfoContainer = document.getElementById('userInfoContainer');
+    const userEmail = document.getElementById('userEmail');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const backToPageBtn = document.getElementById('backToPageBtn');
+    
+    // Auth State Observer
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Kullanıcı giriş yapmış
+        userEmail.textContent = `Hoşgeldin ${user.email}`;
+        userInfoContainer.style.display = 'flex';
+      } else {
+        // Kullanıcı giriş yapmamış - login sayfasına yönlendir
+        userInfoContainer.style.display = 'none';
+        window.location.href = '../login.html';
+      }
+    });
+    
+    // Çıkış Yap butonu – anasayfaya yönlendir, giriş ekranı ortada açılsın
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        try {
+          await signOut(auth);
+          console.log("Çıkış yapıldı");
+          window.location.href = '../index.html?showLogin=1';
+        } catch (error) {
+          console.error("Çıkış hatası:", error);
+          alert('Çıkış yapılırken bir hata oluştu. Lütfen tekrar deneyin.');
+        }
+      });
+    }
+    
+    // Önceki Sayfa butonu
+    if (backToPageBtn) {
+      backToPageBtn.addEventListener('click', () => {
+        // ekip.html yoksa index.html'e dön
+        window.location.href = '../index.html';
+      });
+    }
+  </script>
+  <!-- Supabase Extras Modülü -->
+  <script type="module">
+    import {
+      loadTemplatesFromSupabase,
+      saveTemplateToSupabase,
+      deleteTemplateFromSupabase,
+      loadRulesFromSupabase,
+      saveRuleToSupabase,
+      deleteRuleFromSupabase
+    } from './js/supabase-extras.js';
+
+    // Supabase client'ı window'a ekle (global erişim için)
+    window.supabaseExtras = {
+      loadTemplates: loadTemplatesFromSupabase,
+      saveTemplate: saveTemplateToSupabase,
+      deleteTemplate: deleteTemplateFromSupabase,
+      loadRules: loadRulesFromSupabase,
+      saveRule: saveRuleToSupabase,
+      deleteRule: deleteRuleFromSupabase
+    };
+  </script>
+  
+  <!-- State Paylaşımı - Kayıtlar sayfasından dönüş kontrolü -->
+  <script type="module">
+    // Sayfa yüklendiğinde kayıtlar sayfasından dönüş state'ini kontrol et
+    window.addEventListener('load', () => {
+      const returnState = localStorage.getItem('kayitlar_return_state');
+      if (returnState) {
+        try {
+          const state = JSON.parse(returnState);
+          // Eğer state 5 dakikadan eski değilse, kullanıcıya bilgi ver
+          const stateAge = Date.now() - state.timestamp;
+          if (stateAge < 5 * 60 * 1000 && state.hasFormData) { // 5 dakika
+            // Kullanıcıya geri döndüğünü bildir (opsiyonel)
+            console.log('Kayıtlar sayfasından geri dönüldü');
+            // State'i temizle
+            localStorage.removeItem('kayitlar_return_state');
+          } else {
+            // Eski state'i temizle
+            localStorage.removeItem('kayitlar_return_state');
+          }
+        } catch (e) {
+          console.warn('Return state parse edilemedi:', e);
+          localStorage.removeItem('kayitlar_return_state');
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

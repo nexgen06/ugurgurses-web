@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --text-color: #333333;
+            --a4-width: 210mm;
+            --a4-height: 297mm;
+            --inner-page-padding-top: 3cm;
+            --inner-page-padding-bottom: 3cm;
+            --inner-page-padding-side: 2cm;
+            --page-gap: 50px;
+            --bleed: 3mm;
+        }
+        body { 
+            font-family: 'Merriweather', serif; 
+            color: var(--text-color); 
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            counter-reset: page-counter;
+        }
+        .font-heading { font-family: 'Inter', sans-serif; }
+        
+        #printable-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .paged-view .page-block {
+            margin-bottom: var(--page-gap);
+            position: relative;
+        }
+
+        .show-guides .page-block::before {
+            content: '';
+            position: absolute;
+            top: calc(-1 * var(--bleed));
+            left: calc(-1 * var(--bleed));
+            right: calc(-1 * var(--bleed));
+            bottom: calc(-1 * var(--bleed));
+            border: 0.5px solid rgba(231, 76, 60, 0.3);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .inner-page-container {
+            background-color: white;
+            width: var(--a4-width);
+            height: var(--a4-height);
+            padding: var(--inner-page-padding-top) var(--inner-page-padding-side) var(--inner-page-padding-bottom) var(--inner-page-padding-side);
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header-area {
+            position: absolute;
+            top: 0;
+            left: var(--inner-page-padding-side);
+            right: var(--inner-page-padding-side);
+            height: var(--inner-page-padding-top);
+            display: flex;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 9pt;
+            color: #666;
+            border-bottom: 0.5px solid #eee;
+            z-index: 50;
+        }
+
+        .page-footer-area {
+            position: absolute;
+            bottom: 0;
+            left: var(--inner-page-padding-side);
+            right: var(--inner-page-padding-side);
+            height: var(--inner-page-padding-bottom);
+            display: flex;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 9pt;
+            color: #666;
+            border-top: 0.5px solid #eee;
+            z-index: 50;
+        }
+
+        @media print {
+            body { background: white; }
+            .no-print { display: none !important; }
+            .page-block { margin-bottom: 0 !important; }
+            .inner-page-container {
+                box-shadow: none !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
+            .dynamic-page-num::after {
+                counter-increment: page-counter;
+                content: counter(page-counter);
+            }
+        }
+
+        .dictionary-columns {
+            column-count: 2;
+            column-gap: 1.2cm;
+            column-rule: 0.5px solid #f1f5f9;
+            height: 100%;
+            overflow: hidden;
+        }
+        .letter-header {
+            column-span: all;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 20px;
+            margin: 0 0 15px 0;
+            font-family: 'Inter';
+            font-weight: 800;
+            font-size: 18pt;
+            border-left: 10px solid var(--accent-color);
+            break-after: avoid;
+            display: flex;
+            align-items: baseline;
+        }
+        .entry-item {
+            break-inside: avoid;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
