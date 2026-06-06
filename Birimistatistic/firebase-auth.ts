@@ -11,7 +11,7 @@ import {
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   type User
 } from 'firebase/auth';
-import { fetchUserProfile, ensureUserDoc, getAdminUids, type UserProfileRoleFields } from './users-service';
+import { fetchUserProfile, ensureUserDoc, getAdminUids, type UserProfileRoleFields } from './services/users-service';
 import type { SessionUser } from './types';
 
 function auth() {

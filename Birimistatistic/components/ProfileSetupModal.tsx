@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserCircle, LogOut } from 'lucide-react';
 import { db } from '../db';
-import { completeUserProfile } from '../users-service';
+import { completeUserProfile } from '../services/users-service';
 import { getFirebaseAuth } from '../firebase';
 import { updateProfile } from 'firebase/auth';
 import type { SessionUser } from '../types';

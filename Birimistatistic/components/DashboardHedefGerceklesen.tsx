@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Target } from 'lucide-react';
 import type { IslemKaydi, Birim } from '../types';
-import { getHedefler, type HedeflerStore } from '../hedefler-service';
-import { filterByMonth, totalOps, hedefDurumu, monthBounds } from '../report-stats';
+import { getHedefler, type HedeflerStore } from '../services/hedefler-service';
+import { filterByMonth, totalOps, hedefDurumu, monthBounds } from '../lib/report-stats';
 
 interface Props {
   selectedAy: string;

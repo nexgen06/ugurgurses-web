@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AlertTriangle, X, Info } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 import { useBirimler } from '../contexts/BirimlerContext';
-import { fetchOperationalAlerts, type OperationalAlert } from '../quality-service';
+import { fetchOperationalAlerts, type OperationalAlert } from '../services/quality-service';
 
 const DISMISS_KEY = 'operational_alerts_dismissed';
 

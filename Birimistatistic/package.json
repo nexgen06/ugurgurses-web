@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/write-build-version.mjs && vite build",
-    "build:site": "npm run build",
     "preview": "vite preview",
     "start": "npm run build && vite preview",
     "seed": "node scripts/seed-firestore.mjs",

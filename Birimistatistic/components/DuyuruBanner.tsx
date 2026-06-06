@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Megaphone } from 'lucide-react';
-import { getDuyuru, duyuruVersionKey, type DuyuruDoc } from '../duyuru-service';
+import { getDuyuru, duyuruVersionKey, type DuyuruDoc } from '../services/duyuru-service';
 import { useUser } from '../contexts/UserContext';
-import { needsProfileSetup } from '../user-display';
-import { shouldShowDuyuruModal, markDuyuruSeen } from '../duyuru-prefs';
+import { needsProfileSetup } from '../lib/user-display';
+import { shouldShowDuyuruModal, markDuyuruSeen } from '../lib/duyuru-prefs';
 import DuyuruModal from './DuyuruModal';
 
 const emptyDoc: DuyuruDoc = { metin: '' };

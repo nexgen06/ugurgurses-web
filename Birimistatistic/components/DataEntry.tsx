@@ -3,7 +3,7 @@ import { db } from '../db';
 import { lockDocId } from '../firestore-db';
 import { TAVIM_BASLANGIC_TARIH } from '../constants';
 import { IslemTuru, Birim } from '../types';
-import { kategoriKaynak } from '../kategoriler-service';
+import { kategoriKaynak } from '../services/kategoriler-service';
 import { useBreadcrumb } from '../contexts/BreadcrumbContext';
 import { useBirimler } from '../contexts/BirimlerContext';
 import { useKategoriler } from '../contexts/KategorilerContext';
@@ -19,9 +19,9 @@ import {
   canEnterDataOnDate,
   isKayitTarihiEditorIcinKapali
 } from '../contexts/UserContext';
-import { listUserProfiles, type UserProfile } from '../users-service';
-import { displayUserName } from '../user-display';
-import { writeAuditLog } from '../audit-service';
+import { listUserProfiles, type UserProfile } from '../services/users-service';
+import { displayUserName } from '../lib/user-display';
+import { writeAuditLog } from '../services/audit-service';
 import {
   getKilitAcmaTalep,
   createKilitAcmaTalep,
@@ -33,15 +33,15 @@ import {
   isOpenTalep,
   KILIT_TALEP_DURUM_LABELS,
   type KilitAcmaTalep
-} from '../kilit-acma-talep-service';
+} from '../services/kilit-acma-talep-service';
 import {
   getGunOnay,
   setKurumOnay,
   hasKurumOnay,
   type GunOnay
-} from '../gun-onay-service';
-import { getAkisConfig } from '../akis-config-service';
-import { isAyKapali, monthKeyFromDate } from '../ay-kapanis-service';
+} from '../services/gun-onay-service';
+import { getAkisConfig } from '../services/akis-config-service';
+import { isAyKapali, monthKeyFromDate } from '../services/ay-kapanis-service';
 import {
   Save,
   AlertCircle,
@@ -61,15 +61,15 @@ import { KategoriGirisBaslik, KategoriGirisSatiri } from './KategoriGirisSatiri'
 import Son7GunSecici from './Son7GunSecici';
 import KayitTarihiSecici from './KayitTarihiSecici';
 import BirimSecici, { resolveInitialBirim } from './BirimSecici';
-import { trackRecentBirim } from '../birim-prefs';
+import { trackRecentBirim } from '../lib/birim-prefs';
 import {
   loadEntryPrefs,
   saveEntryPrefs,
   todayIso,
   type EntryViewMode
-} from '../user-prefs';
-import { clampKayitTarihi, minKayitTarihi } from '../entry-date-utils';
-import { normalizeKategoriAdi, isKaldirilanKategori } from '../kategori-aliases';
+} from '../lib/user-prefs';
+import { clampKayitTarihi, minKayitTarihi } from '../lib/entry-date-utils';
+import { normalizeKategoriAdi, isKaldirilanKategori } from '../lib/kategori-aliases';
 import {
   VERI_BASLANGIC_TARIH,
   ADMIN_PROXY_BITIS_TARIH,
@@ -77,14 +77,14 @@ import {
   defaultKayitTarihi,
   isAdminGeriDonukAralik,
   isHaftaSonuGirisKapali
-} from '../date-policy';
+} from '../lib/date-policy';
 import { useIsMobile } from '../hooks/use-mobile';
 import {
   listPersonelIzins,
   isUserOnLeaveOnDate,
   IZIN_TUR_LABELS,
   type PersonelIzin
-} from '../personel-izin-service';
+} from '../services/personel-izin-service';
 
 const KESINLESEN_GUNLER_COLLECTION = 'kesinlesen_gunler';
 

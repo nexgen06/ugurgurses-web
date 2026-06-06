@@ -2,10 +2,10 @@
  * Haftalık kesinleştirme özeti — proje yetkilisi / admin
  */
 
-import { db } from './db';
-import { lockDocId } from './firestore-db';
-import { TAVIM_BASLANGIC_TARIH } from './constants';
-import { displayKategoriAdi } from './kategori-aliases';
+import { db } from '../db';
+import { lockDocId } from '../firestore-db';
+import { TAVIM_BASLANGIC_TARIH } from '../constants';
+import { displayKategoriAdi } from '../lib/kategori-aliases';
 
 export interface WeeklyFinalizeSummary {
   weekStart: string;

@@ -9,8 +9,8 @@ import {
   weeklySummaryMailto,
   getWeekId,
   type WeeklyFinalizeSummary
-} from '../weekly-finalize-summary';
-import { getAkisConfig } from '../akis-config-service';
+} from '../services/weekly-finalize-summary';
+import { getAkisConfig } from '../services/akis-config-service';
 
 const STORAGE_KEY = 'birimistatistik_weekly_digest_seen';
 

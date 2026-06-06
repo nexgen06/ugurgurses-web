@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CalendarOff, Plus, Trash2 } from 'lucide-react';
-import type { UserProfile } from '../users-service';
+import type { UserProfile } from '../services/users-service';
 import type { SessionUser } from '../types';
 import { getAllowedBirimler } from '../contexts/UserContext';
-import { writeAuditLog } from '../audit-service';
+import { writeAuditLog } from '../services/audit-service';
 import { TAVIM_BASLANGIC_TARIH } from '../constants';
 import {
   createPersonelIzin,
@@ -12,8 +12,8 @@ import {
   IZIN_TUR_LABELS,
   type PersonelIzin,
   type PersonelIzinTuru
-} from '../personel-izin-service';
-import { displayUserName } from '../user-display';
+} from '../services/personel-izin-service';
+import { displayUserName } from '../lib/user-display';
 
 type Props = {
   currentUser: SessionUser;

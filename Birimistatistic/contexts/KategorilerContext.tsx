@@ -4,7 +4,7 @@ import {
   getAllBirimOzelMap,
   mergeKategoriler,
   getBirimOzelKategoriler
-} from '../kategoriler-service';
+} from '../services/kategoriler-service';
 import { ISLEM_TURLERI as DEFAULT_ORTAK } from '../constants';
 
 interface KategorilerCtx {

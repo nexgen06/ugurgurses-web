@@ -13,8 +13,8 @@ import { pdfTurkce } from '../utils/pdfTurkish';
 import { db } from '../db';
 import { IslemKaydi, ChartData, LineChartData, Birim } from '../types';
 import { COLORS, TAVIM_BASLANGIC_TARIH, TAVIM_BASLANGIC_AY } from '../constants';
-import { isRaporTarihiGecerli } from '../date-policy';
-import { displayKategoriAdi, isKaldirilanKategori } from '../kategori-aliases';
+import { isRaporTarihiGecerli } from '../lib/date-policy';
+import { displayKategoriAdi, isKaldirilanKategori } from '../lib/kategori-aliases';
 
 applyPlugin(jsPDF);
 import { useBirimler } from '../contexts/BirimlerContext';
@@ -27,8 +27,8 @@ import DashboardDonemKiyas from './DashboardDonemKiyas';
 import BirimSecici, { resolveInitialBirim } from './BirimSecici';
 import { useTheme } from '../contexts/ThemeContext';
 import { getChartTheme, chartTooltipStyle } from '../utils/chart-theme';
-import { trackRecentBirim } from '../birim-prefs';
-import { getUserEmailMap } from '../users-service';
+import { trackRecentBirim } from '../lib/birim-prefs';
+import { getUserEmailMap } from '../services/users-service';
 import {
   Calendar, Filter, TrendingUp, Users, Activity, BarChart3, PieChart as PieIcon,
   Trophy, Layers, Lock, AlertTriangle, Percent, Award, CalendarCheck,

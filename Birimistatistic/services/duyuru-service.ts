@@ -2,7 +2,7 @@
  * Kurumsal duyuru — Firestore: config/duyuru (alan: metin)
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const PATH = 'config/duyuru';

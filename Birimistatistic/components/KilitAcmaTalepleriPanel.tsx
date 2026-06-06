@@ -11,8 +11,8 @@ import {
   adminReddetKilitTalep,
   tamamlaKilitAcmaTalep,
   type KilitAcmaTalep
-} from '../kilit-acma-talep-service';
-import { writeAuditLog } from '../audit-service';
+} from '../services/kilit-acma-talep-service';
+import { writeAuditLog } from '../services/audit-service';
 
 const KESINLESEN_GUNLER = 'kesinlesen_gunler';
 

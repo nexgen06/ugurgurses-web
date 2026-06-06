@@ -3,9 +3,9 @@
  * Günlük girişte değil; yalnızca ay kapanışı sürecinde (Yönetim).
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { lockDocId } from './firestore-db';
+import { lockDocId } from '../firestore-db';
 
 const COLLECTION = 'ay_birim_onaylari';
 

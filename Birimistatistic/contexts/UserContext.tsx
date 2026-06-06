@@ -4,7 +4,7 @@ import {
   VERI_BASLANGIC_TARIH,
   EDITOR_GIRIS_BASLANGIC_TARIH,
   isAdminProxyAraligi
-} from '../date-policy';
+} from '../lib/date-policy';
 
 const UserContext = createContext<SessionUser | null>(null);
 

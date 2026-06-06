@@ -3,7 +3,7 @@
  * Türler: yillik_izin, rapor, diger
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import {
   collection,
   addDoc,

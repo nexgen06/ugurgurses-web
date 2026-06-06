@@ -4,16 +4,16 @@
 
 import jsPDF from 'jspdf';
 import { applyPlugin } from 'jspdf-autotable';
-import { pdfTurkce } from './utils/pdfTurkish';
-import type { IslemKaydi } from './types';
+import { pdfTurkce } from '../utils/pdfTurkish';
+import type { IslemKaydi } from '../types';
 import {
   aggregateByCategory,
   totalOps,
   pctChange,
   unfinalizedDaysWithData,
   monthBounds
-} from './report-stats';
-import { lockDocId } from './firestore-db';
+} from '../lib/report-stats';
+import { lockDocId } from '../firestore-db';
 
 applyPlugin(jsPDF);
 

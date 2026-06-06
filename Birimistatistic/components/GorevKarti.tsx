@@ -2,8 +2,8 @@ import React from 'react';
 import { ClipboardList } from 'lucide-react';
 import { useUser } from '../contexts/UserContext';
 import { useBirimler } from '../contexts/BirimlerContext';
-import { buildGorevOzeti } from '../user-task-summary';
-import { ROLE_LABELS } from '../role-labels';
+import { buildGorevOzeti } from '../lib/user-task-summary';
+import { ROLE_LABELS } from '../lib/role-labels';
 
 const GorevKarti: React.FC = () => {
   const user = useUser();

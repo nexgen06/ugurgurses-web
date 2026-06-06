@@ -2,7 +2,7 @@
  * Kesinleştirme akış ayarları — config/akis
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export interface AkisConfig {

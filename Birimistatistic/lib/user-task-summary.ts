@@ -1,12 +1,12 @@
-import type { SessionUser } from './types';
+import type { SessionUser } from '../types';
 import {
   canAdmin,
   canEnterData,
   canFinalize,
   canUnlock,
   needsBirimAssignment
-} from './contexts/UserContext';
-import { ROLE_LABELS } from './role-labels';
+} from '../contexts/UserContext';
+import { ROLE_LABELS } from '../lib/role-labels';
 
 function birimMetni(user: SessionUser, allBirimler: string[]): string {
   if (needsBirimAssignment(user)) return 'henüz atanmış birim yok';

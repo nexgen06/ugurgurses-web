@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { db } from '../db';
 import type { SessionUser } from '../types';
-import { ROLE_LABELS } from '../role-labels';
+import { ROLE_LABELS } from '../lib/role-labels';
 import { useBirimler } from '../contexts/BirimlerContext';
 import {
   canAdmin,
@@ -19,7 +19,7 @@ import {
   canViewNamedReports,
   needsBirimAssignment
 } from '../contexts/UserContext';
-import { getDisplayName, getAvatarInitials } from '../user-display';
+import { getDisplayName, getAvatarInitials } from '../lib/user-display';
 
 const ROLE_BADGE: Record<SessionUser['role'], string> = {
   admin: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',

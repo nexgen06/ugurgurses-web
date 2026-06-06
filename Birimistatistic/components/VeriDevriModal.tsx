@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, ArrowRightLeft } from 'lucide-react';
-import { transferUserRecords } from '../veri-devir-service';
-import type { UserProfile } from '../users-service';
+import { transferUserRecords } from '../services/veri-devir-service';
+import type { UserProfile } from '../services/users-service';
 
 interface VeriDevriModalProps {
   fromUser: UserProfile;

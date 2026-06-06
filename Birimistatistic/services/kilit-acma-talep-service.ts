@@ -3,9 +3,9 @@
  * Firestore: kilit_acma_talepleri/{tarih}__{birim}
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc, getDocs, collection, query, where, limit } from 'firebase/firestore';
-import { lockDocId } from './firestore-db';
+import { lockDocId } from '../firestore-db';
 import { writeAuditLog } from './audit-service';
 
 export type KilitAcmaDurum = 'bekliyor_py' | 'bekliyor_admin' | 'tamamlandi' | 'reddedildi' | 'iptal';

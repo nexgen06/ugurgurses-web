@@ -1,35 +1,35 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { listUserProfiles, updateUserProfile, deleteUserProfile, type UserProfile } from '../users-service';
+import { listUserProfiles, updateUserProfile, deleteUserProfile, type UserProfile } from '../services/users-service';
 import { useUser, canViewAudit, canAdmin, canFinalize, getAllowedBirimler } from '../contexts/UserContext';
-import { getDuyuru, setDuyuru } from '../duyuru-service';
-import { getHedefler, saveAyHedefleri, type AyHedefMap } from '../hedefler-service';
+import { getDuyuru, setDuyuru } from '../services/duyuru-service';
+import { getHedefler, saveAyHedefleri, type AyHedefMap } from '../services/hedefler-service';
 import { TAVIM_BASLANGIC_AY } from '../constants';
-import { getAkisConfig, setAkisConfig } from '../akis-config-service';
-import { closeAy, openAy, isAyKapali } from '../ay-kapanis-service';
+import { getAkisConfig, setAkisConfig } from '../services/akis-config-service';
+import { closeAy, openAy, isAyKapali } from '../services/ay-kapanis-service';
 import {
   getAyBirimOnay,
   setAyBirimOnay,
   hasAyBirimOnay,
   eksikAyBirimOnaylari
-} from '../ay-birim-onay-service';
-import { listAuditLogs, writeAuditLog, AUDIT_ACTION_LABELS, type AuditLogEntry } from '../audit-service';
-import { setBirimler as saveBirimler } from '../birimler-service';
+} from '../services/ay-birim-onay-service';
+import { listAuditLogs, writeAuditLog, AUDIT_ACTION_LABELS, type AuditLogEntry } from '../services/audit-service';
+import { setBirimler as saveBirimler } from '../services/birimler-service';
 import {
   setOrtakKategoriler,
   setBirimOzelKategoriler,
   deleteBirimOzelKategoriler
-} from '../kategoriler-service';
+} from '../services/kategoriler-service';
 import { useBirimler } from '../contexts/BirimlerContext';
 import { useKategoriler } from '../contexts/KategorilerContext';
 import type { UserRole } from '../types';
 import { Settings, Save, Users, Shield, AlertCircle, Building2, Plus, Trash2, Tags, Layers, ScrollText, Megaphone, Target, Calendar, ArrowRightLeft, Database, Filter } from 'lucide-react';
 import { db } from '../db';
-import { applyBirimSablon, BIRIM_SABLON_OZEL_KATEGORILER } from '../birim-sablon-service';
+import { applyBirimSablon, BIRIM_SABLON_OZEL_KATEGORILER } from '../services/birim-sablon-service';
 import VeriDevriModal from './VeriDevriModal';
 import PersonelIzinPanel from './PersonelIzinPanel';
 import KilitAcmaTalepleriPanel from './KilitAcmaTalepleriPanel';
-import { purgeDemoAndOldData, VERI_KESIM_TARIH } from '../purge-data-service';
-import { backfillIslemKayitlariBirim } from '../birim-backfill-service';
+import { purgeDemoAndOldData, VERI_KESIM_TARIH } from '../services/purge-data-service';
+import { backfillIslemKayitlariBirim } from '../services/birim-backfill-service';
 
 const ROLES: { value: UserRole; label: string }[] = [
   { value: 'viewer', label: 'Sadece görüntüleme (viewer)' },

@@ -1,4 +1,4 @@
-import type { SessionUser } from './types';
+import type { SessionUser } from '../types';
 
 type NameLike = { ad?: string; soyad?: string; email?: string; uid?: string } | null | undefined;
 

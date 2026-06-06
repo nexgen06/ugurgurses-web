@@ -3,9 +3,9 @@
  * Firestore: users/{uid}, config/admins
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, collection } from 'firebase/firestore';
-import type { UserRole } from './types';
+import type { UserRole } from '../types';
 
 const USERS_COLLECTION = 'users';
 const CONFIG_ADMINS_PATH = 'config/admins';

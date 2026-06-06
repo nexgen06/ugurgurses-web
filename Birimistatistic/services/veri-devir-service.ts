@@ -2,7 +2,7 @@
  * Personel devri — islem_kayitlari user_id toplu güncelleme (yalnızca admin).
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { collection, query, where, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { writeAuditLog } from './audit-service';
 

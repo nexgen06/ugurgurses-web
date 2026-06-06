@@ -5,7 +5,7 @@
  * - 6 Haziran 2026+: editör / proje yetkilisi normal giriş
  */
 
-import { todayIso } from './user-prefs';
+import { todayIso } from '../lib/user-prefs';
 
 /** Veri ve raporların başlangıç tarihi */
 export const VERI_BASLANGIC_TARIH = '2026-06-01';

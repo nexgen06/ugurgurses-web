@@ -1,7 +1,7 @@
 
 import { IslemTuru, Birim } from './types';
 
-import { VERI_BASLANGIC_TARIH, VERI_BASLANGIC_AY } from './date-policy';
+import { VERI_BASLANGIC_TARIH, VERI_BASLANGIC_AY } from './lib/date-policy';
 
 /** Veri kayıt ve raporlar — 1 Haziran 2026 öncesi kullanılamaz */
 export const TAVIM_BASLANGIC_TARIH = VERI_BASLANGIC_TARIH;

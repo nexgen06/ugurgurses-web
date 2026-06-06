@@ -3,7 +3,7 @@
  * Yapı: { "2026-06": { "Birim Adı": { toplam: 500, kategoriler?: { "DYS": 200 } } } }
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const PATH = 'config/hedefler';

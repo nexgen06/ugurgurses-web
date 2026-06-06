@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Calendar, ChevronDown } from 'lucide-react';
-import { isTakvimAyiSecilebilir, isHaftasonuTarihi } from '../date-policy';
+import { isTakvimAyiSecilebilir, isHaftasonuTarihi } from '../lib/date-policy';
 
 const AY_ADLARI = [
   'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',

@@ -5,7 +5,7 @@ import {
   trackRecentBirim,
   setFavoriteBirim,
   resolveInitialBirim
-} from '../birim-prefs';
+} from '../lib/birim-prefs';
 
 export type BirimSecim = string | 'Tümü';
 

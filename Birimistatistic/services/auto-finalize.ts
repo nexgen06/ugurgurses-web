@@ -5,13 +5,13 @@
  * olmadığı için açılış-tetikli çalışır.
  */
 
-import { db } from './db';
-import { lockDocId } from './firestore-db';
+import { db } from '../db';
+import { lockDocId } from '../firestore-db';
 import { writeAuditLog } from './audit-service';
-import { TAVIM_BASLANGIC_TARIH } from './constants';
+import { TAVIM_BASLANGIC_TARIH } from '../constants';
 import { getBirimler } from './birimler-service';
-import { getAllowedBirimler, canFinalize } from './contexts/UserContext';
-import type { SessionUser } from './types';
+import { getAllowedBirimler, canFinalize } from '../contexts/UserContext';
+import type { SessionUser } from '../types';
 
 const KESINLESEN_GUNLER_COLLECTION = 'kesinlesen_gunler';
 

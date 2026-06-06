@@ -3,16 +3,16 @@
  * VERI_BASLANGIC ve sonrası kalır.
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { collection, getDocs, deleteDoc, doc, query, limit } from 'firebase/firestore';
-import { VERI_BASLANGIC_TARIH } from './date-policy';
+import { VERI_BASLANGIC_TARIH } from '../lib/date-policy';
 
 export {
   VERI_BASLANGIC_TARIH,
   VERI_KESIM_TARIH,
   isKesimOncesiGeriGiris,
   isAdminGeriDonukAralik
-} from './date-policy';
+} from '../lib/date-policy';
 
 const SEED_TAG = 'birimistatistik-demo-v1';
 const BATCH = 400;

@@ -4,10 +4,10 @@
  * - config/_kategoriler/birimler/{birimDocId} (alt koleksiyon)
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
-import { ISLEM_TURLERI as DEFAULT_ORTAK } from './constants';
-import { normalizeKategoriList } from './kategori-aliases';
+import { ISLEM_TURLERI as DEFAULT_ORTAK } from '../constants';
+import { normalizeKategoriList } from '../lib/kategori-aliases';
 
 const ORTAK_DOC = ['config', 'kategoriler_ortak'] as const;
 const BIRIM_PARENT = ['config', '_kategoriler'] as const;

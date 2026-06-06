@@ -3,15 +3,15 @@
  * Kapalı ayda veri girişi engellenir; tüm günler toplu kilitlenir. Yalnızca admin açar.
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
-import { db } from './db';
-import { lockDocId } from './firestore-db';
+import { db } from '../db';
+import { lockDocId } from '../firestore-db';
 import { writeAuditLog } from './audit-service';
-import { TAVIM_BASLANGIC_TARIH } from './constants';
+import { TAVIM_BASLANGIC_TARIH } from '../constants';
 import { getBirimler } from './birimler-service';
-import type { SessionUser } from './types';
-import { canFinalize, canAdmin } from './contexts/UserContext';
+import type { SessionUser } from '../types';
+import { canFinalize, canAdmin } from '../contexts/UserContext';
 
 const COLLECTION = 'ay_kapanislari';
 

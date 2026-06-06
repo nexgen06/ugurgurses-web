@@ -1,5 +1,5 @@
-import { VERI_BASLANGIC_TARIH } from './date-policy';
-import { todayIso } from './user-prefs';
+import { VERI_BASLANGIC_TARIH } from '../lib/date-policy';
+import { todayIso } from '../lib/user-prefs';
 
 /** Tüm roller için takvim alt sınırı */
 export function minKayitTarihi(_admin = false): string {

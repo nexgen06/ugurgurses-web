@@ -9,7 +9,7 @@ import {
   monthBounds,
   prevMonth,
   AY_ISIMLERI
-} from '../report-stats';
+} from '../lib/report-stats';
 import { TAVIM_BASLANGIC_AY } from '../constants';
 
 interface Props {

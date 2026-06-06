@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { getBirimler } from '../birimler-service';
+import { getBirimler } from '../services/birimler-service';
 import { BIRIMLER as DEFAULT_BIRIMLER } from '../constants';
 
 interface BirimlerCtx {

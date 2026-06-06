@@ -3,9 +3,9 @@
  * Doküman yoksa veya boşsa constants.tsx'teki varsayılan liste kullanılır.
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { BIRIMLER as DEFAULT_BIRIMLER } from './constants';
+import { BIRIMLER as DEFAULT_BIRIMLER } from '../constants';
 
 function cleanList(list: unknown): string[] {
   if (!Array.isArray(list)) return [];

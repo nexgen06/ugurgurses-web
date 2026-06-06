@@ -4,9 +4,9 @@
  * Birim onayı ay kapanışında (ay_birim_onaylari) — bkz. ay-birim-onay-service.ts
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { lockDocId } from './firestore-db';
+import { lockDocId } from '../firestore-db';
 
 const COLLECTION = 'gun_onaylari';
 

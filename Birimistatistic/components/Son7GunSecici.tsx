@@ -1,7 +1,7 @@
 import React from 'react';
-import { getRecentDays, formatGunChip } from '../entry-date-utils';
-import { isHaftasonuTarihi } from '../date-policy';
-import { todayIso } from '../user-prefs';
+import { getRecentDays, formatGunChip } from '../lib/entry-date-utils';
+import { isHaftasonuTarihi } from '../lib/date-policy';
+import { todayIso } from '../lib/user-prefs';
 
 interface Son7GunSeciciProps {
   value: string;

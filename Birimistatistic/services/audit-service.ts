@@ -3,7 +3,7 @@
  * Firestore: audit_log/{autoId}
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import { collection, addDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 
 export type AuditAction =

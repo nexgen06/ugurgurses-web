@@ -2,17 +2,17 @@
  * Veri kalitesi uyarıları: eksik gün, kategori anomalisi.
  */
 
-import { db } from './db';
-import { lockDocId } from './firestore-db';
-import { TAVIM_BASLANGIC_TARIH } from './constants';
-import { isHaftasonuTarihi } from './date-policy';
+import { db } from '../db';
+import { lockDocId } from '../firestore-db';
+import { TAVIM_BASLANGIC_TARIH } from '../constants';
+import { isHaftasonuTarihi } from '../lib/date-policy';
 import { isAyKapali, monthKeyFromDate } from './ay-kapanis-service';
 import {
   getAllowedBirimler,
   canEnterData,
   canFinalize,
   type SessionUser
-} from './contexts/UserContext';
+} from '../contexts/UserContext';
 import { listUserProfiles, type UserProfile } from './users-service';
 import { listPersonelIzins, isUserOnLeaveOnDate, type PersonelIzin } from './personel-izin-service';
 

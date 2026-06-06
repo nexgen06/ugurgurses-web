@@ -3,7 +3,7 @@
  * Birim izolasyon kurallarından sonra eski kayıtların görünmesi için.
  */
 
-import { getFirebaseFirestore } from './firebase';
+import { getFirebaseFirestore } from '../firebase';
 import {
   collection,
   doc,

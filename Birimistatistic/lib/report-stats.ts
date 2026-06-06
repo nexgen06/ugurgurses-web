@@ -1,6 +1,6 @@
-import type { IslemKaydi } from './types';
-import { lockDocId } from './firestore-db';
-import { displayKategoriAdi, isKaldirilanKategori } from './kategori-aliases';
+import type { IslemKaydi } from '../types';
+import { lockDocId } from '../firestore-db';
+import { displayKategoriAdi, isKaldirilanKategori } from '../lib/kategori-aliases';
 
 export const AY_ISIMLERI = [
   'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { BarChart2 } from 'lucide-react';
 import type { IslemKaydi } from '../types';
-import { editorAnonimKiyas } from '../report-stats';
+import { editorAnonimKiyas } from '../lib/report-stats';
 
 interface Props {
   userId: string | undefined;
