@@ -3,6 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
+  <base href="" id="base-url">
+  <script>document.getElementById('base-url').href = (function () { var p = location.pathname; if (p.endsWith('/')) return location.origin + p; if (/index\.html$/i.test(p)) return location.origin + p.replace(/[^/]+$/, ''); return location.origin + p + '/'; })();</script>
   <title>Hizmet Giriş Formu Simülasyon Ekranı</title>
   <link rel="stylesheet" href="css/styles.css">
   <!-- Font Awesome Icons -->
