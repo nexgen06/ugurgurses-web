@@ -10,10 +10,55 @@
  */
 
 const { onSchedule } = require('firebase-functions/v2/scheduler');
+const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
+const { getAuth } = require('firebase-admin/auth');
+const jwt = require('jsonwebtoken');
 
 initializeApp();
+
+/**
+ * Supabase access token → Firebase custom token (Firestore kuralları için).
+ * Kurulum: firebase functions:secrets:set SUPABASE_JWT_SECRET
+ * Secret değeri: Supabase Dashboard → Project Settings → API → JWT Secret
+ */
+exports.issueFirebaseTokenFromSupabase = onCall(
+  { region: 'europe-west1', secrets: ['SUPABASE_JWT_SECRET'] },
+  async (request) => {
+    const accessToken = request.data?.accessToken;
+    if (!accessToken || typeof accessToken !== 'string') {
+      throw new HttpsError('invalid-argument', 'accessToken gerekli');
+    }
+
+    const secret = process.env.SUPABASE_JWT_SECRET;
+    if (!secret) {
+      throw new HttpsError('failed-precondition', 'SUPABASE_JWT_SECRET yapılandırılmamış');
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(accessToken, secret, { algorithms: ['HS256'] });
+    } catch {
+      throw new HttpsError('unauthenticated', 'Geçersiz Supabase oturumu');
+    }
+
+    const email = typeof decoded.email === 'string' ? decoded.email.trim().toLowerCase() : '';
+    if (!email) {
+      throw new HttpsError('not-found', 'E-posta bulunamadı');
+    }
+
+    const db = getFirestore();
+    const snap = await db.collection('users').where('email', '==', email).limit(1).get();
+    if (snap.empty) {
+      throw new HttpsError('not-found', `Firestore users kaydı yok: ${email}`);
+    }
+
+    const firebaseUid = snap.docs[0].id;
+    const token = await getAuth().createCustomToken(firebaseUid);
+    return { token };
+  }
+);
 
 function weekStartEnd() {
   const end = new Date();

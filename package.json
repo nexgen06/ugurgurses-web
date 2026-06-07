@@ -3,9 +3,16 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "start": "node scripts/start-server.mjs"
+    "start": "node scripts/start-server.mjs",
+    "data:migrate": "node scripts/migrate-firestore-to-supabase.mjs",
+    "phone:migrate": "node scripts/migrate-phone-contacts-to-ekip-supabase.mjs",
+    "ekip:sync-users": "node scripts/sync-portfolio-users-to-ekip-auth.mjs"
   },
   "dependencies": {
-    "serve": "^14.2.4"
+    "@supabase/supabase-js": "^2.49.1",
+    "firebase-admin": "^12.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "serve": "^14.2.4",
+    "serve-handler": "^6.1.6"
   }
 }

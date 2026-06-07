@@ -1,20 +1,19 @@
 /**
  * Tek Firebase uygulaması — Auth ve Firestore aynı projeyi kullanır.
- * index.html (js/auth.js) ile aynı proje kullanıldığında giriş durumu paylaşılır.
  */
 
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import { viteEnv } from './lib/vite-env';
 
-const env = (typeof import.meta !== 'undefined' && (import.meta as any)?.env) ? (import.meta as any).env : {};
 export const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY || '',
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || '',
-  projectId: env.VITE_FIREBASE_PROJECT_ID || '',
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || '',
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: env.VITE_FIREBASE_APP_ID || ''
+  apiKey: viteEnv.firebaseApiKey,
+  authDomain: viteEnv.firebaseAuthDomain,
+  projectId: viteEnv.firebaseProjectId,
+  storageBucket: viteEnv.firebaseStorageBucket,
+  messagingSenderId: viteEnv.firebaseMessagingSenderId,
+  appId: viteEnv.firebaseAppId
 };
 
 let app: FirebaseApp | null = null;
@@ -27,7 +26,7 @@ function getAppInstance(): FirebaseApp {
     return app;
   }
   if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-    throw new Error('Firebase yapılandırması eksik. .env dosyasında VITE_FIREBASE_* değişkenlerini ayarlayın.');
+    throw new Error('Firebase yapılandırması eksik. .env veya runtime-env.js içinde VITE_FIREBASE_* ayarlayın.');
   }
   app = initializeApp(firebaseConfig);
   return app;

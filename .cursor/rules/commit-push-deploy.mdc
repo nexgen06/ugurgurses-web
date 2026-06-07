@@ -1,0 +1,172 @@
+---
+description: Commit, push ve Railway deploy kuralları — ugurgurses-platform monorepo
+alwaysApply: true
+---
+
+# Commit, Push ve Deploy Kuralları
+
+Bu repo **iki ayrı Railway servisi** kullanır. Yanlış dizinden deploy en sık hata kaynağıdır.
+
+## Mimari özeti
+
+| Servis | URL | Deploy kaynağı |
+|--------|-----|----------------|
+| `web` | https://www.ugurgurses.com.tr | Repo kökü (`scripts/start-server.mjs`) |
+| `birimistatistic` | https://bi.ugurgurses.com.tr | `Birimistatistic/` (Dockerfile) |
+
+- Supabase (2 proje): **BI/Livetable** `lgvhlldqdczrnimeetct` · **Ekip+Phone** `mmahcxmfnuoovgqgvjag` — bkz. `EKIP-PHONE-SUPABASE.md`
+- `BI_APP_URL` (web servisi): `https://bi.ugurgurses.com.tr`
+- Portfolyo auth: **Supabase** (`js/auth-config.js`); ekip/phone için Firebase köprü API (`/api/firebase-custom-token`)
+- Birim İstatistik: Firebase UI kapalı (`VITE_FIREBASE_ENABLED=false`)
+
+---
+
+## Git — commit
+
+**Yalnızca kullanıcı açıkça istediğinde commit at.** Varsayılan: commit yok.
+
+### Asla commit etme
+
+- `.env`, `.env.local`, `Birimistatistic/.env.local`
+- `firebase-users.json`, service account JSON
+- `SUPABASE_SERVICE_ROLE_KEY`, `FIREBASE_SERVICE_ACCOUNT_JSON` içeren dosyalar
+- Kullanıcının istemediği büyük `dist/` artefakt değişiklikleri (Birimistatistic Railway’de Dockerfile ile build alır)
+
+### Commit öncesi
+
+```bash
+git status
+git diff
+git log -3 --oneline
+```
+
+Mesaj: neden odaklı, 1–2 cümle Türkçe veya İngilizce (repo stiline uy).
+
+### Push
+
+**Kullanıcı istemedikçe `git push` yapma.** Push sonrası Railway otomatik deploy yok (CLI `railway up` kullanılıyor).
+
+---
+
+## Deploy — hangi servis?
+
+Değişen dosyaya göre:
+
+| Değişiklik yeri | Servis | Komut |
+|-----------------|--------|--------|
+| `Birimistatistic/**` (UI, servisler, Dockerfile) | `birimistatistic` | `railway up ./Birimistatistic --path-as-root` |
+| `index.html`, `ekip/`, `scripts/start-server.mjs`, `js/` | `web` | `railway up` (repo kökünden) |
+| Her ikisi | Önce `birimistatistic`, sonra `web` (veya kullanıcıya sor) |
+
+### Birimistatistic deploy (zorunlu bayraklar)
+
+```bash
+cd /path/to/ugurgurses-platform
+railway service link birimistatistic
+railway up ./Birimistatistic --path-as-root --detach -m "kısa açıklama"
+```
+
+**YAPMA:**
+
+```bash
+cd Birimistatistic && railway up   # YANLIŞ: kök package.json (web) çalışır
+railway up   # birimistatistic linkliyken repo kökünü yükler → web start-server çalışır
+```
+
+Doğrulama (log): `Birimistatistic dist →` görünmeli; `scripts/start-server.mjs` **görünmemeli**.
+
+### Web (ana site) deploy
+
+```bash
+cd /path/to/ugurgurses-platform
+railway service link web
+railway up --detach -m "kısa açıklama"
+```
+
+`/Birimistatistic/dist/*` istekleri `BI_APP_URL` ile `https://bi.ugurgurses.com.tr` adresine **302** yönlendirilir.
+
+---
+
+## Ortam değişkenleri (Railway)
+
+### `birimistatistic` — build-time `VITE_*`
+
+```
+VITE_AUTH_PROVIDER=supabase
+VITE_DATA_PROVIDER=supabase
+VITE_FIREBASE_ENABLED=false
+VITE_USE_FIRESTORE=false
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+`runtime-env.js` kullanılmaz; değerler Docker build ARG ile bundle’a gömülür.
+
+### `web`
+
+```
+BI_APP_URL=https://bi.ugurgurses.com.tr
+FIREBASE_BRIDGE_ENABLED=false   # Firebase köprüsü kapalıysa
+```
+
+Service role / Firebase SA yalnızca gerekirse; canlı BI için zorunlu değil.
+
+---
+
+## Supabase SQL (deploy değil)
+
+Şema değişikliği **Railway deploy ile gitmez**. Sıra:
+
+1. `supabase/migrations/00x_*.sql` → Supabase SQL Editor’da çalıştır
+2. Gerekirse `npm run data:migrate` / `data:verify` (lokal, service role ile)
+3. Sonra uygulama deploy
+
+---
+
+## Deploy sonrası smoke test
+
+**birimistatistic:**
+
+- https://bi.ugurgurses.com.tr — giriş
+- Dashboard kayıt sayısı
+- Veri girişi kaydet (003 write RLS çalışıyor olmalı)
+
+**web:**
+
+- https://www.ugurgurses.com.tr — ana sayfa
+- Birim İstatistik kartı → `bi.ugurgurses.com.tr`
+- https://www.ugurgurses.com.tr/Birimistatistic/dist/ → `bi.ugurgurses.com.tr` (adres çubuğu)
+
+Tarayıcı eski **301** önbelleği Railway URL’sine götürebilir; gizli pencere veya site verisi temizliği öner.
+
+---
+
+## Sık hatalar
+
+| Belirti | Sebep | Çözüm |
+|---------|--------|--------|
+| bi.ugurgurses.com.tr ana site içeriği gösterir | Yanlış servis deploy | `path-as-root` ile birimistatistic yeniden deploy |
+| Log: `start-server.mjs` birimistatistic’te | Monorepo kökü yüklendi | `railway up ./Birimistatistic --path-as-root` |
+| Yazma RLS hatası | 003 SQL çalışmamış | SQL Editor’da migration çalıştır |
+| Eski Railway URL yönlendirme | Tarayıcı 301 önbelleği | 302 + `Cache-Control: no-store` (web); kullanıcı cache temizlesin |
+| Gizli anahtar commit | `.env` staged | Commit iptal, `.gitignore` kontrol |
+
+---
+
+## Yerel build (isteğe bağlı doğrulama)
+
+```bash
+cd Birimistatistic
+cp .env.example .env.local   # VITE_* doldur
+npm run build
+```
+
+Deploy öncesi zorunlu değil; Railway Dockerfile build alır.
+
+---
+
+## Referans
+
+- `Birimistatistic/DEPLOY.md` — birimistatistic servis detayı
+- `DATA-MIGRATION-WEEKEND.md` — veri cutover checklist
+- `AUTH-MIGRATION.md` — auth geçiş notları

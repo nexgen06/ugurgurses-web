@@ -7,201 +7,348 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+
+    <!-- Inter font – modern, yüksek okunurluk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        /* ===== KURUMSAL TEMA – CSS Custom Properties ===== */
+        /* ===========================================================
+           PHONE REHBERİ – MODERN UI THEME (LIGHT + DARK)
+           =========================================================== */
+
         :root {
-            --color-primary: #1e40af;
-            --color-primary-hover: #1d4ed8;
-            --color-primary-light: #3b82f6;
-            --color-surface: #ffffff;
-            --color-surface-alt: #f8fafc;
-            --color-background: #f1f5f9;
-            --color-border: #e2e8f0;
-            --color-text: #0f172a;
-            --color-text-muted: #64748b;
-            --color-success: #059669;
-            --color-danger: #dc2626;
-            --color-warning: #d97706;
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 14px;
-            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-            --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
-            --font-sans: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            /* Renkler – LIGHT */
+            --bg-app: #f5f7fb;
+            --bg-app-grad: radial-gradient(1200px 600px at -10% -20%, rgba(99, 102, 241, 0.10), transparent 60%),
+                           radial-gradient(900px 500px at 110% 110%, rgba(56, 189, 248, 0.10), transparent 60%);
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --surface-glass: rgba(255, 255, 255, 0.72);
+            --surface-glass-strong: rgba(255, 255, 255, 0.85);
+            --border: #e6e9f0;
+            --border-strong: #d6dbe6;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --text-soft: #94a3b8;
+
+            /* Marka rengi – Indigo (modern) */
+            --brand: #6366f1;
+            --brand-2: #8b5cf6;
+            --brand-3: #ec4899;
+            --brand-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            --brand-grad-soft: linear-gradient(135deg, rgba(99,102,241,0.10), rgba(139,92,246,0.10) 50%, rgba(236,72,153,0.10));
+            --brand-tint: rgba(99, 102, 241, 0.10);
+            --brand-tint-strong: rgba(99, 102, 241, 0.18);
+
+            /* Durum renkleri */
+            --success: #10b981;
+            --danger:  #ef4444;
+            --warning: #f59e0b;
+            --info:    #06b6d4;
+
+            /* Geometri */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 22px;
+            --radius-2xl: 28px;
+
+            /* Gölgeler – çok katmanlı */
+            --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-sm: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06);
+            --shadow-md: 0 2px 4px rgba(15,23,42,0.04), 0 6px 16px rgba(15,23,42,0.08);
+            --shadow-lg: 0 4px 8px rgba(15,23,42,0.05), 0 16px 40px rgba(15,23,42,0.10);
+            --shadow-xl: 0 8px 16px rgba(15,23,42,0.07), 0 32px 64px rgba(15,23,42,0.14);
+            --shadow-glow: 0 0 0 1px rgba(99,102,241,0.18), 0 8px 24px rgba(99,102,241,0.20);
+
+            /* Hareket */
+            --ease: cubic-bezier(0.22, 1, 0.36, 1);
+            --duration-fast: 150ms;
+            --duration: 220ms;
+            --duration-slow: 360ms;
+
             --touch-min: 44px;
-            --transition: 0.2s ease;
+            --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* Reset & Base – güncel özellikler */
-        *, *::before, *::after { box-sizing: border-box; }
-        html {
-            -webkit-text-size-adjust: 100%;
-            scroll-behavior: smooth;
+        /* DARK MODE */
+        :root[data-theme="dark"] {
+            --bg-app: #0b1020;
+            --bg-app-grad: radial-gradient(1200px 600px at -10% -20%, rgba(139, 92, 246, 0.18), transparent 60%),
+                           radial-gradient(900px 500px at 110% 110%, rgba(56, 189, 248, 0.14), transparent 60%);
+            --surface: #121829;
+            --surface-alt: #0f1524;
+            --surface-glass: rgba(20, 27, 45, 0.72);
+            --surface-glass-strong: rgba(18, 24, 41, 0.88);
+            --border: #1f2942;
+            --border-strong: #283355;
+            --text: #e6eaf5;
+            --text-muted: #9aa4be;
+            --text-soft: #6f7a96;
+            --brand-tint: rgba(139, 92, 246, 0.16);
+            --brand-tint-strong: rgba(139, 92, 246, 0.28);
+
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.30), 0 1px 3px rgba(0,0,0,0.40);
+            --shadow-md: 0 2px 4px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.45);
+            --shadow-lg: 0 4px 8px rgba(0,0,0,0.40), 0 16px 40px rgba(0,0,0,0.55);
+            --shadow-xl: 0 8px 16px rgba(0,0,0,0.45), 0 32px 64px rgba(0,0,0,0.60);
         }
+
+        /* ====================== Reset & Base ====================== */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
         body {
             margin: 0;
             min-height: 100vh;
-            background: var(--color-background);
-            color: var(--color-text);
+            background: var(--bg-app);
+            background-image: var(--bg-app-grad);
+            color: var(--text);
             font-family: var(--font-sans);
             font-size: clamp(0.9375rem, 1vw + 0.875rem, 1rem);
-            line-height: 1.5;
+            line-height: 1.55;
+            font-feature-settings: "cv11", "ss01", "ss03";
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { transition-duration: 0.01ms !important; }
+            *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
             html { scroll-behavior: auto; }
         }
 
-        /* Kurumsal panel / cam efektleri (hafif) */
+        /* ====================== Glass Effects ====================== */
         .glass {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            box-shadow: var(--shadow-sm);
+            background: var(--surface-glass);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            box-shadow: var(--shadow-xs);
         }
         .glass-strong {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            box-shadow: var(--shadow-md);
+            background: var(--surface-glass-strong);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            box-shadow: var(--shadow-sm);
+        }
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
         }
 
-        /* Scrollbar – kurumsal */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--color-surface-alt); border-radius: 4px; }
+        /* ====================== Scrollbar ====================== */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+            background: var(--border-strong);
+            border-radius: 999px;
+            border: 2px solid var(--bg-app);
         }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-soft); }
 
-        /* Odak – erişilebilirlik (focus-visible) */
+        /* ====================== Focus ====================== */
         :focus { outline: none; }
         :focus-visible {
-            outline: 2px solid var(--color-primary);
+            outline: 2px solid var(--brand);
             outline-offset: 2px;
-        }
-        button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
+            border-radius: var(--radius-sm);
         }
 
-        /* Kişi kartı – kurumsal, sade */
+        /* ====================== Tipografi ====================== */
+        .gradient-text {
+            background: var(--brand-grad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+        .h-display { font-weight: 800; letter-spacing: -0.02em; }
+
+        /* ====================== Butonlar ====================== */
+        .btn-gradient {
+            background: var(--brand-grad);
+            color: #fff;
+            border: none;
+            box-shadow: var(--shadow-sm), 0 6px 16px rgba(99,102,241,0.25);
+            transition: transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease), filter var(--duration) var(--ease);
+        }
+        .btn-gradient:hover { transform: translateY(-1px); box-shadow: var(--shadow-md), 0 12px 28px rgba(99,102,241,0.30); filter: brightness(1.05); }
+        .btn-gradient:active { transform: translateY(0); filter: brightness(0.95); }
+
+        .btn-ghost {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-xs);
+            transition: background var(--duration) var(--ease), border-color var(--duration) var(--ease), transform var(--duration) var(--ease);
+        }
+        .btn-ghost:hover { background: var(--surface-alt); border-color: var(--border-strong); transform: translateY(-1px); }
+
+        .btn-soft {
+            background: var(--brand-tint);
+            color: var(--brand);
+            border: 1px solid transparent;
+            transition: background var(--duration) var(--ease);
+        }
+        .btn-soft:hover { background: var(--brand-tint-strong); }
+
+        .btn-danger-soft {
+            background: rgba(239, 68, 68, 0.10);
+            color: var(--danger);
+            border: 1px solid transparent;
+            transition: background var(--duration) var(--ease);
+        }
+        .btn-danger-soft:hover { background: rgba(239, 68, 68, 0.18); }
+
+        /* ====================== Inputlar ====================== */
+        .phone-input, .phone-select {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            transition: border-color var(--duration) var(--ease), box-shadow var(--duration) var(--ease), background var(--duration) var(--ease);
+        }
+        .phone-input::placeholder { color: var(--text-soft); }
+        .phone-input:hover, .phone-select:hover { border-color: var(--border-strong); }
+        .phone-input:focus, .phone-select:focus,
+        .search-input:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 4px var(--brand-tint);
+        }
+
+        /* ====================== Contact Card ====================== */
         .contact-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-lg);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
             box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
-            transition: box-shadow var(--transition), border-color var(--transition);
+            transition: transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease), border-color var(--duration) var(--ease);
+            animation: cardIn var(--duration-slow) var(--ease) both;
         }
         .contact-card::before {
             content: '';
             position: absolute;
-            inset-inline-start: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--color-primary);
+            inset: 0;
+            background: var(--brand-grad-soft);
             opacity: 0;
-            transition: opacity var(--transition);
+            transition: opacity var(--duration) var(--ease);
+            pointer-events: none;
         }
         .contact-card:hover {
+            transform: translateY(-3px);
             box-shadow: var(--shadow-lg);
-            border-color: var(--color-primary-light);
+            border-color: var(--brand-tint-strong);
         }
         .contact-card:hover::before { opacity: 1; }
+        .contact-card > * { position: relative; z-index: 1; }
 
-        /* Mobil menü */
-        .mobile-menu {
-            transform: translateX(-100%);
-            transition: transform 0.25s ease;
-            background: var(--color-surface);
-            border-inline-end: 1px solid var(--color-border);
-            box-shadow: var(--shadow-lg);
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        .mobile-menu.open { transform: translateX(0); }
 
-        /* Yükleme */
+        /* Avatar – modern gradient */
+        .avatar-grad {
+            background: var(--brand-grad);
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            box-shadow: 0 8px 24px rgba(99,102,241,0.28);
+            transition: transform var(--duration) var(--ease);
+        }
+        .contact-card:hover .avatar-grad { transform: scale(1.04) rotate(-2deg); }
+
+        .avatar-ring {
+            position: relative;
+        }
+        .avatar-ring::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 18px;
+            background: var(--brand-grad);
+            z-index: -1;
+            opacity: 0;
+            filter: blur(8px);
+            transition: opacity var(--duration) var(--ease);
+        }
+        .contact-card:hover .avatar-ring::after { opacity: 0.6; }
+
+        /* Card hover quick action bar */
+        .card-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(-4px);
+            transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease);
+            z-index: 2;
+        }
+        .contact-card:hover .card-actions,
+        .contact-card:focus-within .card-actions { opacity: 1; transform: translateY(0); }
+
+        /* Departman renk paleti (badge) */
+        .dept-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--brand-tint);
+            color: var(--brand);
+            line-height: 1;
+        }
+        :root[data-theme="dark"] .dept-badge { color: #c7d2fe; }
+
+        /* ====================== Departman Filtresi ====================== */
+        .dept-filter {
+            transition: background var(--duration) var(--ease), color var(--duration) var(--ease), transform var(--duration) var(--ease);
+            color: var(--text);
+        }
+        .dept-filter:hover { background: var(--surface-alt); transform: translateX(2px); }
+        .dept-filter.active, .dept-filter[aria-pressed="true"] {
+            background: var(--brand-grad);
+            color: #fff;
+            box-shadow: var(--shadow-sm), 0 6px 14px rgba(99,102,241,0.25);
+        }
+
+        /* ====================== Spinner & Skeleton ====================== */
         .spinner {
-            border: 3px solid var(--color-border);
-            border-top-color: var(--color-primary);
+            border: 3px solid var(--border);
+            border-top-color: var(--brand);
             border-radius: 50%;
-            width: 48px;
-            height: 48px;
+            width: 48px; height: 48px;
             animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Başlık vurgusu (gradient-text sınıfı korunuyor) */
-        .gradient-text {
-            color: var(--color-primary);
-            font-weight: 700;
+        .skeleton {
+            background: linear-gradient(90deg, var(--surface-alt) 0%, var(--border) 50%, var(--surface-alt) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s linear infinite;
+            border-radius: var(--radius-md);
         }
+        @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 
-        /* Birincil buton – kurumsal */
-        .btn-gradient {
-            background: var(--color-primary);
-            color: #fff;
-            border: none;
-            box-shadow: var(--shadow-sm);
-            transition: background var(--transition), box-shadow var(--transition);
-        }
-        .btn-gradient:hover {
-            background: var(--color-primary-hover);
-            box-shadow: var(--shadow-md);
-        }
-        .btn-gradient:active { background: #1e3a8a; }
-
-        /* Arama kutusu odak */
-        .search-input:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
-        }
-
-        /* Departman filtresi */
-        .dept-filter {
-            transition: background var(--transition), color var(--transition);
-        }
-        .dept-filter:hover { background: var(--color-surface-alt); }
-        .dept-filter.active, .dept-filter[aria-pressed="true"] {
-            background: var(--color-primary);
-            color: #fff;
-        }
-
-        /* Avatar – sade vurgu */
-        .avatar-glow {
-            box-shadow: var(--shadow-sm);
-            transition: box-shadow var(--transition);
-        }
-        .contact-card:hover .avatar-glow {
-            box-shadow: 0 0 0 2px var(--color-primary-light);
-        }
-
-        /* Animasyonlar (isteğe bağlı) */
-        .float-animation {
-            animation: float 4s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        .pulse-animation {
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* Dokunmatik hedefler – minimum yükseklik */
+        /* ====================== Touch Target ====================== */
         .phone-touch-target {
             min-height: var(--touch-min);
             min-width: var(--touch-min);
@@ -209,56 +356,214 @@
             align-items: center;
             justify-content: center;
         }
+        .icon-btn {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: background var(--duration) var(--ease), transform var(--duration) var(--ease);
+        }
 
-        /* Modal overlay – güncel */
+        /* ====================== Modallar ====================== */
         .phone-modal-overlay {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
+            background: rgba(8, 12, 24, 0.55);
+            backdrop-filter: blur(8px) saturate(140%);
+            -webkit-backdrop-filter: blur(8px) saturate(140%);
+            animation: overlayIn var(--duration) var(--ease);
+        }
+        @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            animation: modalIn var(--duration-slow) var(--ease);
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Form alanları – tutarlı görünüm */
-        .phone-input, .phone-select {
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            background: var(--color-surface);
-            transition: border-color var(--transition), box-shadow var(--transition);
+        /* ====================== Mobile Menu ====================== */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.28s var(--ease);
+            background: var(--surface);
+            border-inline-end: 1px solid var(--border);
+            box-shadow: var(--shadow-xl);
         }
-        .phone-input:focus, .phone-select:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+        .mobile-menu.open { transform: translateX(0); }
+
+        /* ====================== Toast ====================== */
+        .toast-container {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 100;
+            display: flex; flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            max-width: 360px;
         }
+        @media (max-width: 640px) {
+            .toast-container { left: 12px; right: 12px; top: auto; bottom: 16px; max-width: none; }
+        }
+        .toast {
+            pointer-events: auto;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-lg);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            animation: toastIn var(--duration-slow) var(--ease);
+            color: var(--text);
+            font-size: 0.875rem;
+            min-width: 240px;
+        }
+        .toast .toast-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: inline-flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .toast.success .toast-icon { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .toast.error   .toast-icon { background: rgba(239, 68, 68, 0.15);  color: var(--danger); }
+        .toast.info    .toast-icon { background: rgba(99, 102, 241, 0.15); color: var(--brand); }
+        .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .toast .toast-body { flex: 1; min-width: 0; }
+        .toast .toast-title { font-weight: 600; }
+        .toast .toast-desc { color: var(--text-muted); margin-top: 2px; font-size: 0.8125rem; }
+        .toast .toast-close {
+            margin-left: 8px; flex-shrink: 0;
+            color: var(--text-muted); cursor: pointer;
+            background: transparent; border: 0; padding: 4px; border-radius: 6px;
+        }
+        .toast .toast-close:hover { background: var(--surface-alt); color: var(--text); }
+        .toast.leaving { animation: toastOut 220ms var(--ease) forwards; }
+        @keyframes toastIn  { from { opacity: 0; transform: translateY(-8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes toastOut { to { opacity: 0; transform: translateY(-8px) scale(0.98); } }
+
+        /* ====================== Stat Cards ====================== */
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-xs);
+            transition: transform var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .stat-card .stat-num { font-weight: 800; font-size: 1.25rem; line-height: 1; letter-spacing: -0.02em; }
+        .stat-card .stat-label { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        .stat-card .stat-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--brand-tint); color: var(--brand);
+        }
+
+        /* ====================== Kbd hint ====================== */
+        kbd {
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            border-bottom-width: 2px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            padding: 2px 6px;
+            line-height: 1;
+        }
+
+        /* ====================== Tema toggle ====================== */
+        .theme-toggle .lucide-sun { display: none; }
+        :root[data-theme="dark"] .theme-toggle .lucide-sun { display: inline-block; }
+        :root[data-theme="dark"] .theme-toggle .lucide-moon { display: none; }
+
+        /* Dark modda Tailwind'in slate sınıflarını yumuşak yapıver */
+        :root[data-theme="dark"] .text-slate-900 { color: var(--text) !important; }
+        :root[data-theme="dark"] .text-slate-700,
+        :root[data-theme="dark"] .text-slate-600 { color: var(--text-muted) !important; }
+        :root[data-theme="dark"] .text-slate-500,
+        :root[data-theme="dark"] .text-slate-400,
+        :root[data-theme="dark"] .text-slate-300 { color: var(--text-soft) !important; }
+        :root[data-theme="dark"] .bg-white { background-color: var(--surface) !important; }
+        :root[data-theme="dark"] .border-slate-200 { border-color: var(--border) !important; }
+        :root[data-theme="dark"] .border-slate-100 { border-color: var(--border) !important; }
+        :root[data-theme="dark"] .bg-slate-50, 
+        :root[data-theme="dark"] .bg-slate-100 { background-color: var(--surface-alt) !important; }
+        :root[data-theme="dark"] .hover\:bg-slate-50:hover,
+        :root[data-theme="dark"] .hover\:bg-slate-100:hover { background-color: var(--surface-alt) !important; }
+        :root[data-theme="dark"] .bg-slate-200 { background-color: var(--border) !important; color: var(--text-muted) !important; }
+        :root[data-theme="dark"] .text-blue-600 { color: #a5b4fc !important; }
+        :root[data-theme="dark"] .bg-emerald-50 { background-color: rgba(16,185,129,0.10) !important; }
+        :root[data-theme="dark"] .text-emerald-800 { color: #6ee7b7 !important; }
+        :root[data-theme="dark"] .bg-red-50 { background-color: rgba(239,68,68,0.10) !important; }
+        :root[data-theme="dark"] .text-red-700 { color: #fca5a5 !important; }
+        :root[data-theme="dark"] .border-emerald-200 { border-color: rgba(16,185,129,0.30) !important; }
+        :root[data-theme="dark"] .border-red-200 { border-color: rgba(239,68,68,0.30) !important; }
+        :root[data-theme="dark"] .bg-blue-600 { background-color: var(--brand) !important; }
     </style>
 </head>
 <body class="min-h-screen antialiased">
     
     <!-- Navigation (Mobil) -->
-    <nav class="lg:hidden glass-strong sticky top-0 z-50 border-b border-slate-200" aria-label="Ana menü">
-        <div class="flex items-center justify-between p-4 gap-3">
-            <h1 class="text-xl font-bold gradient-text truncate">📞 Telefon Rehberi</h1>
+    <nav class="lg:hidden glass-strong sticky top-0 z-40 border-b" aria-label="Ana menü">
+        <div class="flex items-center justify-between p-3 gap-2">
+            <button id="mobileMenuBtn" type="button" class="phone-touch-target btn-ghost rounded-xl" aria-label="Menüyü aç">
+                <i data-lucide="menu" class="w-5 h-5" aria-hidden="true"></i>
+            </button>
+            <h1 class="text-base h-display gradient-text truncate flex items-center gap-2">
+                <span class="w-7 h-7 rounded-lg avatar-grad flex items-center justify-center">
+                    <i data-lucide="phone" class="w-3.5 h-3.5 text-white" aria-hidden="true"></i>
+                </span>
+                Rehber
+            </h1>
             <div class="flex items-center gap-2 shrink-0">
-                <button id="mobileAddKurumBtn" type="button" class="phone-touch-target glass rounded-xl text-slate-700" aria-label="Kurum ekle">
-                    <i data-lucide="building-2" class="w-5 h-5" aria-hidden="true"></i>
+                <button id="themeToggleMobile" type="button" class="theme-toggle phone-touch-target btn-ghost rounded-xl" aria-label="Tema değiştir">
+                    <i data-lucide="moon" class="w-5 h-5" aria-hidden="true"></i>
+                    <i data-lucide="sun"  class="w-5 h-5" aria-hidden="true"></i>
                 </button>
-                <button id="mobileAddContactBtn" type="button" class="phone-touch-target btn-gradient text-white rounded-xl" aria-label="Yeni kişi ekle">
+                <button id="mobileAddContactBtn" type="button" class="phone-touch-target btn-gradient rounded-xl" aria-label="Yeni kişi ekle">
                     <i data-lucide="user-plus" class="w-5 h-5" aria-hidden="true"></i>
                 </button>
-                <button id="mobileMenuBtn" type="button" class="phone-touch-target glass rounded-xl" aria-label="Menüyü aç">
-                    <i data-lucide="menu" class="w-5 h-5 text-slate-700" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 w-80 max-w-[85vw] z-50 flex flex-col" role="dialog" aria-label="Menü">
+            <div class="p-4 border-b border-[var(--border)] flex items-center justify-between gap-3">
+                <h2 class="text-base h-display gradient-text">Menü</h2>
+                <button id="closeMobileMenu" type="button" class="phone-touch-target btn-ghost rounded-xl" aria-label="Menüyü kapat">
+                    <i data-lucide="x" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-[var(--border)] space-y-2">
+                <button type="button" id="mobileAddContactBtn2" class="w-full min-h-[44px] px-4 py-3 btn-gradient rounded-xl font-semibold flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>Yeni Kişi Ekle</span>
+                </button>
+                <button type="button" id="mobileAddKurumBtn" class="w-full min-h-[44px] px-4 py-3 btn-ghost rounded-xl font-semibold flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="building-2" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>Kurum Ekle</span>
+                </button>
+            </div>
+
+            <div class="px-4 pt-3 pb-2 flex items-center justify-between">
+                <h3 class="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Departmanlar</h3>
+            </div>
+            <div id="mobileDepartmentFilters" class="flex-1 overflow-y-auto px-3 pb-4 space-y-1.5"></div>
+
+            <div class="p-4 border-t border-[var(--border)]">
+                <button id="mobileLogoutBtn" type="button" class="w-full min-h-[44px] px-4 py-3 text-sm font-semibold btn-danger-soft rounded-xl flex items-center justify-center gap-2">
+                    <i data-lucide="log-out" class="w-4 h-4" aria-hidden="true"></i>
+                    <span>Çıkış Yap</span>
                 </button>
             </div>
         </div>
-        
-        <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 w-72 max-w-[85vw] glass-strong z-50 overflow-y-auto" role="dialog" aria-label="Menü">
-            <div class="p-4 border-b border-slate-200">
-                <div class="flex items-center justify-between gap-3">
-                    <h2 class="text-base font-bold gradient-text">Menü</h2>
-                    <button id="closeMobileMenu" type="button" class="phone-touch-target glass rounded-xl" aria-label="Menüyü kapat">
-                        <i data-lucide="x" class="w-5 h-5 text-slate-700" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
+
         <div id="mobileMenuOverlay" class="hidden fixed inset-0 phone-modal-overlay z-40" aria-hidden="true"></div>
     </nav>
     
@@ -266,45 +571,79 @@
     <div class="flex h-screen overflow-hidden">
         
         <!-- Sidebar (Masaüstü) -->
-        <aside class="hidden lg:flex lg:flex-col lg:w-72 glass-strong border-r border-slate-200 shrink-0" aria-label="Filtreler ve kullanıcı">
-            <div class="p-4 border-b border-slate-200">
-                <h1 class="text-lg font-bold gradient-text">📞 Telefon Rehberi</h1>
-                <p class="text-xs text-slate-500 mt-0.5">Kurumsal İletişim</p>
-                <button type="button" id="sidebarAddContactBtn" class="mt-4 w-full min-h-[44px] px-4 py-3 btn-gradient text-white rounded-xl font-semibold flex items-center justify-center gap-2 text-sm">
+        <aside class="hidden lg:flex lg:flex-col lg:w-72 glass-strong border-r shrink-0" aria-label="Filtreler ve kullanıcı">
+            <!-- Marka -->
+            <div class="p-4 border-b border-[var(--border)]">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-9 h-9 rounded-xl avatar-grad flex items-center justify-center text-base">
+                            <i data-lucide="phone" class="w-4 h-4" aria-hidden="true"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h1 class="text-base h-display gradient-text leading-tight">Rehber</h1>
+                            <p class="text-[11px] text-[var(--text-muted)] leading-tight">Kurumsal İletişim</p>
+                        </div>
+                    </div>
+                    <button type="button" id="themeToggleSidebar" class="theme-toggle icon-btn btn-ghost" aria-label="Tema değiştir" title="Tema değiştir">
+                        <i data-lucide="moon" class="w-4 h-4" aria-hidden="true"></i>
+                        <i data-lucide="sun"  class="w-4 h-4" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <button type="button" id="sidebarAddContactBtn" class="mt-4 w-full min-h-[44px] px-4 py-3 btn-gradient rounded-xl font-semibold flex items-center justify-center gap-2 text-sm">
                     <i data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"></i>
-                    <span>Yeni Kişi Ekle</span>
+                    <span>Yeni Kişi</span>
+                    <kbd class="ml-1 hidden xl:inline">⌘K</kbd>
                 </button>
-                <button type="button" id="sidebarAddKurumBtn" class="mt-3 w-full min-h-[44px] px-4 py-3 glass text-slate-700 rounded-xl font-semibold flex items-center justify-center gap-2 text-sm hover:bg-slate-100">
+                <button type="button" id="sidebarAddKurumBtn" class="mt-2 w-full min-h-[44px] px-4 py-3 btn-ghost rounded-xl font-semibold flex items-center justify-center gap-2 text-sm">
                     <i data-lucide="building-2" class="w-4 h-4" aria-hidden="true"></i>
                     <span>Kurum Ekle</span>
                 </button>
-                <p id="sidebarKurumCount" class="text-xs text-slate-500 mt-1.5" aria-live="polite">Kayıtlı kurum: 0</p>
+                <p id="sidebarKurumCount" class="text-xs text-[var(--text-muted)] mt-2" aria-live="polite">Kayıtlı kurum: 0</p>
             </div>
-            
-            <div class="flex-1 min-h-0"></div>
-            
-            <div class="p-4 border-t border-slate-200 shrink-0">
-                <div class="glass rounded-xl p-4 mb-3">
+
+            <!-- Departman bölümü -->
+            <div class="px-4 pt-4 pb-2 flex items-center justify-between">
+                <h2 class="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">Departmanlar</h2>
+                <span id="sidebarStatsText" class="text-[11px] text-[var(--text-muted)]">0 kişi</span>
+            </div>
+            <div class="px-4 pb-2">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-soft)]" aria-hidden="true">
+                        <i data-lucide="search" class="w-3.5 h-3.5"></i>
+                    </span>
+                    <input type="search" id="sidebarDeptSearch" placeholder="Departman ara"
+                        class="phone-input w-full pl-9 pr-9 py-2 rounded-lg text-sm" aria-label="Departman ara" autocomplete="off">
+                    <button type="button" id="sidebarDeptSearchClear" class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-[var(--text-soft)] hover:text-[var(--text)]" aria-label="Temizle">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="departmentFilters" class="flex-1 min-h-0 overflow-y-auto px-3 pb-3 space-y-1.5"></div>
+            <p id="sidebarDeptNoMatch" class="hidden px-4 pb-2 text-xs text-[var(--text-muted)]">Eşleşen departman yok.</p>
+
+            <!-- Kullanıcı kartı -->
+            <div class="p-4 border-t border-[var(--border)] shrink-0">
+                <div class="panel rounded-xl p-3 mb-3">
                     <div class="flex items-center gap-3">
                         <div class="relative shrink-0">
-                            <div class="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center text-white">
-                                <i data-lucide="user" class="w-5 h-5" aria-hidden="true"></i>
+                            <div class="w-10 h-10 rounded-xl avatar-grad flex items-center justify-center">
+                                <i data-lucide="user" class="w-4 h-4" aria-hidden="true"></i>
                             </div>
                             <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" aria-hidden="true"></span>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <p id="userEmail" class="text-sm font-semibold text-slate-900 truncate">Kullanıcı</p>
-                            <p class="text-xs text-slate-500">Çevrimiçi</p>
+                            <p id="userEmail" class="text-sm font-semibold truncate">Kullanıcı</p>
+                            <p class="text-[11px] text-[var(--text-muted)]">Çevrimiçi</p>
                         </div>
                     </div>
-                    <div id="dbStatus" class="mt-2 pt-2 border-t border-slate-100 text-xs hidden">
+                    <div id="dbStatus" class="mt-2 pt-2 border-t border-[var(--border)] text-xs hidden">
                         <div class="flex items-center gap-2">
                             <span id="dbStatusIcon" class="w-2 h-2 rounded-full"></span>
-                            <span id="dbStatusText" class="text-slate-600"></span>
+                            <span id="dbStatusText" class="text-[var(--text-muted)]"></span>
                         </div>
                     </div>
                 </div>
-                <button id="logoutBtn" type="button" class="w-full min-h-[44px] px-4 py-3 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl flex items-center justify-center gap-2 transition-colors">
+                <button id="logoutBtn" type="button" class="w-full min-h-[44px] px-4 py-3 text-sm font-semibold btn-danger-soft rounded-xl flex items-center justify-center gap-2">
                     <i data-lucide="log-out" class="w-4 h-4" aria-hidden="true"></i>
                     <span>Çıkış Yap</span>
                 </button>
@@ -314,51 +653,119 @@
         <!-- Ana İçerik -->
         <main class="flex-1 flex flex-col overflow-hidden min-w-0">
             
-            <header class="glass-strong border-b border-slate-200 p-4 lg:p-5">
-                <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <div class="flex-1 relative">
-                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400" aria-hidden="true">
-                            <i data-lucide="search" class="w-5 h-5"></i>
-                        </span>
-                        <input 
-                            type="search" 
-                            id="searchInput" 
-                            placeholder="İsim, departman veya kurum ara..." 
-                            class="search-input phone-input w-full pl-12 pr-4 py-3 rounded-xl text-slate-900 placeholder-slate-400 min-h-[44px]"
-                            aria-label="Kişi ara"
-                            autocomplete="off"
-                        >
+            <header class="glass-strong border-b sticky top-0 z-30">
+                <div class="max-w-6xl mx-auto p-4 lg:p-5 space-y-4">
+                    <!-- 1. satır: arama + aksiyon -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <div class="flex-1 relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--text-soft)]" aria-hidden="true">
+                                <i data-lucide="search" class="w-5 h-5"></i>
+                            </span>
+                            <input
+                                type="search"
+                                id="searchInput"
+                                placeholder="İsim, departman, kurum veya telefon ara..."
+                                class="search-input phone-input w-full pl-12 pr-20 py-3 rounded-xl placeholder-[var(--text-soft)] min-h-[44px]"
+                                aria-label="Kişi ara"
+                                autocomplete="off"
+                            >
+                            <span class="hidden md:flex absolute inset-y-0 right-0 pr-3 items-center pointer-events-none gap-1">
+                                <kbd>/</kbd>
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <div class="hidden sm:flex items-center gap-1 panel rounded-xl p-1" role="tablist" aria-label="Görünüm">
+                                <button type="button" id="viewGridBtn"  class="icon-btn btn-soft" aria-pressed="true"  title="Kart görünümü">
+                                    <i data-lucide="layout-grid" class="w-4 h-4" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" id="viewListBtn"  class="icon-btn btn-ghost" aria-pressed="false" title="Liste görünümü">
+                                    <i data-lucide="list" class="w-4 h-4" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <select id="sortSelect" class="phone-input phone-select hidden md:block px-3 py-2.5 rounded-xl text-sm min-h-[44px]" aria-label="Sırala">
+                                <option value="name-asc">A → Z (İsim)</option>
+                                <option value="name-desc">Z → A (İsim)</option>
+                                <option value="dept-asc">Departman A→Z</option>
+                                <option value="kurum-asc">Kurum A→Z</option>
+                                <option value="newest">En Yeni</option>
+                                <option value="oldest">En Eski</option>
+                            </select>
+                            <button
+                                id="addContactBtn"
+                                type="button"
+                                class="btn-gradient flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold min-h-[44px] shrink-0"
+                            >
+                                <i data-lucide="user-plus" class="w-5 h-5" aria-hidden="true"></i>
+                                <span class="hidden sm:inline">Yeni Kişi</span>
+                            </button>
+                        </div>
                     </div>
-                    <button 
-                        id="addContactBtn" 
-                        type="button"
-                        class="btn-gradient flex items-center justify-center gap-2 px-5 py-3 text-white rounded-xl font-semibold min-h-[44px] shrink-0"
-                    >
-                        <i data-lucide="user-plus" class="w-5 h-5" aria-hidden="true"></i>
-                        <span class="hidden sm:inline">Yeni Kişi Ekle</span>
-                    </button>
+                    <!-- 2. satır: istatistikler -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 lg:gap-3">
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="users" class="w-5 h-5" aria-hidden="true"></i></span>
+                            <div class="min-w-0">
+                                <p class="stat-num" id="statTotalContacts">0</p>
+                                <p class="stat-label">Toplam Kişi</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="building-2" class="w-5 h-5" aria-hidden="true"></i></span>
+                            <div class="min-w-0">
+                                <p class="stat-num" id="statTotalKurum">0</p>
+                                <p class="stat-label">Kurum</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="briefcase" class="w-5 h-5" aria-hidden="true"></i></span>
+                            <div class="min-w-0">
+                                <p class="stat-num" id="statTotalDepts">0</p>
+                                <p class="stat-label">Departman</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon"><i data-lucide="filter" class="w-5 h-5" aria-hidden="true"></i></span>
+                            <div class="min-w-0">
+                                <p class="stat-num" id="statShown">0</p>
+                                <p class="stat-label">Gösterilen</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 3. satır: aktif filtre çipi -->
+                    <div id="activeFilters" class="flex flex-wrap items-center gap-2 hidden"></div>
                 </div>
             </header>
-            
+
             <div class="flex-1 overflow-y-auto p-4 lg:p-6">
                 <div class="max-w-6xl mx-auto">
-                    
+
+                    <!-- Skeleton loading -->
+                    <div id="skeletonState" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5" aria-hidden="true">
+                        <!-- 8 skeleton card -->
+                    </div>
+
                     <div id="loadingState" class="hidden flex items-center justify-center py-24" aria-live="polite">
                         <div class="spinner" aria-hidden="true"></div>
                     </div>
-                    
+
                     <section id="emptyState" class="hidden text-center py-16 lg:py-24" aria-label="Sonuç yok">
-                        <div class="glass rounded-2xl p-8 lg:p-12 max-w-md mx-auto">
-                            <i data-lucide="users" class="w-16 h-16 text-slate-300 mx-auto mb-4" aria-hidden="true"></i>
-                            <h2 class="text-xl font-bold text-slate-800 mb-2">Sonuç bulunamadı</h2>
-                            <p class="text-slate-600">Arama kriterlerinize uygun kişi bulunamadı.</p>
+                        <div class="panel rounded-2xl p-8 lg:p-12 max-w-md mx-auto">
+                            <div class="w-20 h-20 rounded-2xl avatar-grad flex items-center justify-center mx-auto mb-5 opacity-90">
+                                <i data-lucide="users-round" class="w-10 h-10 text-white" aria-hidden="true"></i>
+                            </div>
+                            <h2 class="text-xl h-display mb-2">Henüz kayıt yok</h2>
+                            <p class="text-[var(--text-muted)] mb-5">Aradığınız kriterlere uygun kişi bulunamadı veya henüz hiç kişi eklemediniz.</p>
+                            <button type="button" id="emptyAddBtn" class="btn-gradient inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold min-h-[44px]">
+                                <i data-lucide="user-plus" class="w-4 h-4" aria-hidden="true"></i>
+                                <span>İlk Kişiyi Ekle</span>
+                            </button>
                         </div>
                     </section>
-                    
+
                     <section id="contactsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5" role="list" aria-label="Kişi listesi">
                         <!-- Kişi kartları buraya yüklenecek -->
                     </section>
-                    
+
                 </div>
             </div>
             
@@ -566,47 +973,35 @@
             </p>
         </div>
     </div>
-    
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
     <script>
-        // ===== SUPABASE CONFIGURATION =====
-        // NOT: Production'da bu değerler environment variable'lardan alınmalıdır
-        const SUPABASE_URL = 'https://zqswcmeajmmrrcecuhwb.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxc3djbWVham1tcnJjZWN1aHdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTMyOTEsImV4cCI6MjA4NTE2OTI5MX0.F5csMnAZMhTo7j1QVNOlXAGQ6bsHb5oK62wnsLjSx9c';
-        
-        // Supabase client oluştur
-        // CDN'den yüklenen supabase-js kütüphanesi global olarak mevcut
+        // ===== EKIP HUB SUPABASE (Auth + contacts) =====
+        const SUPABASE_URL = 'https://mmahcxmfnuoovgqgvjag.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1tYWhjeG1mbnVvb3ZncWd2amFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzMDg2OTIsImV4cCI6MjA3ODg4NDY5Mn0.twxgZyCYvITgFkkpJQwpDX4TgC6NpA1-Rm57QdcZVh8';
+        const EKIP_AUTH_STORAGE_KEY = 'ekip-supabase-auth';
+
         let supabaseClient = null;
         try {
-            // Supabase kütüphanesinin yüklendiğini ve URL/KEY'lerin geçerli olduğunu kontrol et
-            if (typeof supabase !== 'undefined' && 
-                SUPABASE_URL && 
-                SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN' &&
-                SUPABASE_URL.startsWith('https://') &&
-                SUPABASE_ANON_KEY && 
-                SUPABASE_ANON_KEY !== 'BURAYA_SUPABASE_ANON_KEYINIZI_YAZIN' &&
-                SUPABASE_ANON_KEY.length > 50) {
-                
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('✅ Supabase client başarıyla oluşturuldu');
-                console.log('📍 URL:', SUPABASE_URL);
+            if (typeof supabase !== 'undefined' &&
+                SUPABASE_URL?.startsWith('https://') &&
+                SUPABASE_ANON_KEY?.length > 30) {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true,
+                        storageKey: EKIP_AUTH_STORAGE_KEY
+                    }
+                });
+                console.log('✅ Supabase client (Auth + veri) hazır');
             } else {
-                console.warn('⚠️ Supabase yapılandırılmamış - Demo modunda çalışılıyor');
-                if (!SUPABASE_URL || SUPABASE_URL === 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
-                    console.warn('⚠️ SUPABASE_URL yapılandırılmamış');
-                }
-                if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'BURAYA_SUPABASE_ANON_KEYINIZI_YAZIN') {
-                    console.warn('⚠️ SUPABASE_ANON_KEY yapılandırılmamış');
-                }
-                if (typeof supabase === 'undefined') {
-                    console.warn('⚠️ Supabase JS kütüphanesi yüklenmemiş');
-                }
+                console.warn('⚠️ Supabase yapılandırılmamış');
             }
         } catch (error) {
             console.error('❌ Supabase client oluşturulamadı:', error);
-            console.error('Hata detayları:', {
-                message: error.message,
-                stack: error.stack
-            });
         }
         
         // ===== VERİTABANI BAĞLANTI TESTİ =====
@@ -810,44 +1205,25 @@
         let selectedDepartment = 'all';
         let searchQuery = '';
         let currentUser = null;
-        let currentUserId = null; // Firebase kullanıcı ID'si
+        let currentUserId = null; // Supabase Auth user UUID
         let contactToDelete = null;
-        
-        // ===== KULLANICI ID ALMA FONKSİYONU =====
+
         async function getCurrentUserId() {
-            // Önce Firebase'den kullanıcı ID'sini al
-            try {
-                const firebaseModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
-                const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                
-                const firebaseConfig = {
-                    apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
-                    authDomain: "mulakat-takip-sistemi.firebaseapp.com",
-                    projectId: "mulakat-takip-sistemi",
-                    storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
-                    messagingSenderId: "1050671861081",
-                    appId: "1:1050671861081:web:1e41fc9305731961809048"
-                };
-                
-                const app = firebaseModule.initializeApp(firebaseConfig);
-                const auth = authModule.getAuth(app);
-                
-                return new Promise((resolve) => {
-                    authModule.onAuthStateChanged(auth, (user) => {
-                        if (user && user.uid) {
-                            currentUserId = user.uid;
-                            console.log('✅ Kullanıcı ID alındı:', user.uid);
-                            resolve(user.uid);
-                        } else {
-                            console.warn('⚠️ Kullanıcı ID alınamadı');
-                            resolve(null);
-                        }
-                    });
-                });
-            } catch (error) {
-                console.error('Firebase kullanıcı ID alma hatası:', error);
-                return null;
+            if (!supabaseClient) return null;
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session?.user?.id) {
+                currentUserId = session.user.id;
+                return currentUserId;
             }
+            return null;
+        }
+
+        function mapRlsError(error) {
+            const msg = error?.message || '';
+            if (error?.code === '42501' || msg.includes('row-level security')) {
+                return 'Kayıt reddedildi (RLS). Ana sayfadan çıkış yapıp tekrar giriş yapın. Ekip Supabase\'de 002_contacts_supabase_auth.sql çalıştırıldı mı?';
+            }
+            return msg || 'Kayıt sırasında bir hata oluştu.';
         }
         
         // ===== DOM ELEMENTS =====
@@ -906,96 +1282,43 @@
         // ===== INITIALIZE LUCIDE ICONS =====
         lucide.createIcons();
         
-        // ===== AUTHENTICATION CHECK =====
-        async function checkAuth() {
-            // Önce Firebase kontrolü yap (login.html'den gelen kullanıcılar için)
-            try {
-                // Firebase kontrolü
-                const firebaseModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
-                const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                
-                const firebaseConfig = {
-                    apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
-                    authDomain: "mulakat-takip-sistemi.firebaseapp.com",
-                    projectId: "mulakat-takip-sistemi",
-                    storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
-                    messagingSenderId: "1050671861081",
-                    appId: "1:1050671861081:web:1e41fc9305731961809048"
-                };
-                
-                const app = firebaseModule.initializeApp(firebaseConfig);
-                const auth = authModule.getAuth(app);
-                
-                // Firebase auth state kontrolü
-                return new Promise((resolve) => {
-                    authModule.onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            // Firebase kullanıcısı var
-                            currentUser = user;
-                            currentUserId = user.uid; // Kullanıcı ID'sini kaydet
-                            userEmail.textContent = user.email || 'Kullanıcı';
-                            console.log('✅ Kullanıcı ID kaydedildi:', user.uid);
-                            resolve(true);
-                        } else {
-                            // Firebase kullanıcısı yok, Supabase kontrolü yap
-                            checkSupabaseAuth().then(resolve);
-                        }
-                    });
-                });
-            } catch (error) {
-                console.warn('Firebase kontrolü başarısız, Supabase kontrolü yapılıyor:', error);
-                return checkSupabaseAuth();
-            }
+        // ===== SUPABASE AUTH =====
+        async function resolvePhoneSession() {
+            let { data: { session }, error } = await supabaseClient.auth.getSession();
+            if (error) throw error;
+            if (session) return session;
+            const refreshed = await supabaseClient.auth.refreshSession();
+            if (refreshed.error) throw refreshed.error;
+            return refreshed.data?.session ?? null;
         }
-        
-        // ===== SUPABASE AUTHENTICATION CHECK =====
-        async function checkSupabaseAuth() {
-            // Eğer Supabase yapılandırılmamışsa, demo modunda çalış
-            if (!supabaseClient || SUPABASE_URL === 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
-                console.warn('Supabase yapılandırılmamış. Demo modunda çalışılıyor.');
-                // LocalStorage'dan kullanıcı kontrolü
-                const savedUser = localStorage.getItem('phone_user');
-                if (savedUser) {
-                    currentUser = JSON.parse(savedUser);
-                    userEmail.textContent = currentUser.email || 'Kullanıcı';
-                    return true;
-                } else {
-                    // İlk kullanımda kayıt modalını göster
-                    setTimeout(() => {
-                        registerModal.classList.remove('hidden');
-                    }, 500);
-                    return false;
-                }
-            }
-            
-            // Firebase Authentication kullanıldığı için Supabase Auth kontrolü yapmıyoruz
-            // RLS politikaları public olarak ayarlanmalı (Firebase auth uygulama tarafında kontrol ediliyor)
-            // Bu durumda her zaman true döndürüyoruz çünkü Firebase auth zaten kontrol edildi
-            console.log('✅ Firebase Authentication aktif - Supabase RLS public modunda çalışıyor');
-            return true;
-            
-            /* 
-            // Eğer Supabase Authentication kullanmak isterseniz, yukarıdaki kodu silip bunu kullanın:
-            try {
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
-                if (error) throw error;
-                
-                if (session) {
-                    currentUser = session.user;
-                    userEmail.textContent = currentUser.email || 'Kullanıcı';
-                    return true;
-                } else {
-                    // Giriş yapılmamış, login.html'e yönlendir
-                    window.location.href = '../login.html?redirect=phone';
-                    return false;
-                }
-            } catch (error) {
-                console.error('Supabase auth kontrolü hatası:', error);
-                // Hata durumunda login.html'e yönlendir
-                window.location.href = '../login.html?redirect=phone';
+
+        function redirectToLogin() {
+            sessionStorage.setItem('post_login_redirect', 'phone/index.html');
+            window.location.replace('../login?redirect=phone');
+        }
+
+        async function checkAuth() {
+            if (!supabaseClient) {
+                console.warn('Supabase yapılandırılmamış.');
+                redirectToLogin();
                 return false;
             }
-            */
+            try {
+                const session = await resolvePhoneSession();
+                if (session?.user) {
+                    currentUser = session.user;
+                    currentUserId = session.user.id;
+                    userEmail.textContent = session.user.email || 'Kullanıcı';
+                    console.log('✅ Supabase oturumu:', session.user.id);
+                    return true;
+                }
+                redirectToLogin();
+                return false;
+            } catch (error) {
+                console.error('Supabase auth hatası:', error);
+                redirectToLogin();
+                return false;
+            }
         }
         
         // ===== REGISTRATION FUNCTION =====
@@ -1078,46 +1401,14 @@
         
         // ===== LOGOUT FUNCTION =====
         async function handleLogout() {
-            // Önce Firebase çıkışı dene
-            try {
-                const authModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js');
-                const appModule = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
-                
-                const firebaseConfig = {
-                    apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
-                    authDomain: "mulakat-takip-sistemi.firebaseapp.com",
-                    projectId: "mulakat-takip-sistemi",
-                    storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
-                    messagingSenderId: "1050671861081",
-                    appId: "1:1050671861081:web:1e41fc9305731961809048"
-                };
-                
-                const app = appModule.initializeApp(firebaseConfig);
-                const auth = authModule.getAuth(app);
-                
+            if (supabaseClient) {
                 try {
-                    await authModule.signOut(auth);
-                } catch (error) {
-                    console.warn('Firebase çıkış hatası:', error);
-                }
-            } catch (error) {
-                console.warn('Firebase modülü yüklenemedi:', error);
-            }
-            
-            // Supabase çıkışı
-            if (supabaseClient && SUPABASE_URL !== 'BURAYA_SUPABASE_URLINIZI_YAZIN') {
-                try {
-                    const { error } = await supabaseClient.auth.signOut();
-                    if (error) throw error;
+                    await supabaseClient.auth.signOut();
                 } catch (error) {
                     console.error('Supabase çıkış hatası:', error);
                 }
-            } else {
-                // Demo modunda localStorage'dan sil
-                localStorage.removeItem('phone_user');
             }
-            
-            window.location.href = '../login.html';
+            window.location.href = '../index.html?showLogin=1';
         }
         
         // ===== SABİT DEPARTMAN LİSTESİ =====
@@ -1240,9 +1531,17 @@
             return div.innerHTML;
         }
         
+        // ===== AVATAR – isim baş harfleri =====
+        function getInitials(name) {
+            if (!name) return '?';
+            const parts = String(name).trim().split(/\s+/).filter(Boolean);
+            if (parts.length === 0) return '?';
+            if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
         // ===== RENDER CONTACT CARD =====
-        function renderContactCard(contact) {
-            // Güvenlik: Tüm kullanıcı girdilerini escape et
+        function renderContactCard(contact, index = 0) {
             const safeName = escapeHtml(contact.name);
             const safeTitle = escapeHtml(contact.title);
             const safeDepartment = escapeHtml(contact.department);
@@ -1250,43 +1549,62 @@
             const safePhone = escapeHtml(contact.phone);
             const safeExtension = escapeHtml(contact.extension);
             const safeEmail = escapeHtml(contact.email);
-            const safeAvatar = escapeHtml(contact.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=94a3b8&color=fff&size=128`);
-            
+            const initials = escapeHtml(getInitials(contact.name));
+            // Animation stagger için inline delay
+            const delay = Math.min(index, 12) * 30;
+
             return `
-                <article class="contact-card rounded-xl p-5 relative group" role="listitem">
-                    <div class="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                        <button type="button" onclick="editContact(${contact.id})" class="phone-touch-target btn-gradient text-white rounded-lg" title="Düzenle" aria-label="Düzenle">
-                            <i data-lucide="edit-2" class="w-4 h-4" aria-hidden="true"></i>
+                <article class="contact-card p-5 group" role="listitem" style="animation-delay:${delay}ms">
+                    <div class="card-actions">
+                        <button type="button" onclick="editContact(${contact.id})" class="icon-btn btn-soft" title="Düzenle" aria-label="Düzenle">
+                            <i data-lucide="pencil" class="w-4 h-4" aria-hidden="true"></i>
                         </button>
-                        <button type="button" onclick="deleteContact(${contact.id})" class="phone-touch-target bg-red-600 hover:bg-red-700 text-white rounded-lg" title="Sil" aria-label="Sil">
+                        <button type="button" onclick="deleteContact(${contact.id})" class="icon-btn btn-danger-soft" title="Sil" aria-label="Sil">
                             <i data-lucide="trash-2" class="w-4 h-4" aria-hidden="true"></i>
                         </button>
                     </div>
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="relative shrink-0">
-                            <img src="${safeAvatar}" alt="${safeName}" class="avatar-glow w-16 h-16 rounded-xl object-cover border border-slate-200" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=1e40af&color=fff&size=128'" loading="lazy">
-                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white" aria-hidden="true"></span>
+                    <div class="flex items-start gap-3.5 mb-4">
+                        <div class="relative shrink-0 avatar-ring">
+                            <div class="avatar-grad w-14 h-14 rounded-2xl flex items-center justify-center text-base">${initials}</div>
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[var(--surface)]" aria-hidden="true"></span>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-lg font-bold text-slate-900 truncate mb-0.5">${safeName}</h3>
-                            <p class="text-sm text-slate-600 truncate mb-2">${safeTitle || '—'}</p>
-                            <span class="inline-block px-2.5 py-1 text-xs font-semibold text-white bg-blue-600 rounded-lg">${safeDepartment || '—'}</span>
-                            ${safeKurum ? `<p class="text-xs text-slate-500 mt-2 truncate" title="Kurum">${safeKurum}</p>` : ''}
+                        <div class="flex-1 min-w-0 pr-16">
+                            <h3 class="text-[15px] font-semibold text-[var(--text)] truncate leading-tight">${safeName}</h3>
+                            <p class="text-[13px] text-[var(--text-muted)] truncate mt-0.5">${safeTitle || '—'}</p>
+                            <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                ${safeDepartment ? `<span class="dept-badge"><i data-lucide="briefcase" class="w-3 h-3"></i>${safeDepartment}</span>` : ''}
+                                ${safeKurum ? `<span class="dept-badge" style="background:rgba(236,72,153,0.10); color:#db2777;"><i data-lucide="building-2" class="w-3 h-3"></i>${safeKurum}</span>` : ''}
+                            </div>
                         </div>
                     </div>
-                    <div class="space-y-2 pt-4 border-t border-slate-200">
-                        <a href="tel:${safePhone}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors min-h-[44px]">
-                            <span class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-blue-600 shrink-0"><i data-lucide="phone" class="w-4 h-4" aria-hidden="true"></i></span>
-                            <span class="text-sm font-medium text-slate-700 truncate">${safePhone || '—'}</span>
-                        </a>
-                        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50/80 min-h-[44px]">
-                            <span class="w-9 h-9 rounded-lg bg-slate-200 flex items-center justify-center text-slate-600 shrink-0"><i data-lucide="phone-call" class="w-4 h-4" aria-hidden="true"></i></span>
-                            <span class="text-sm font-medium text-slate-700">Dahili: <span class="text-blue-600">${safeExtension || '—'}</span></span>
-                        </div>
-                        <a href="mailto:${safeEmail}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors min-h-[44px] truncate">
-                            <span class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-blue-600 shrink-0"><i data-lucide="mail" class="w-4 h-4" aria-hidden="true"></i></span>
-                            <span class="text-sm font-medium text-slate-700 truncate">${safeEmail || '—'}</span>
-                        </a>
+
+                    <div class="space-y-1.5 pt-3 border-t border-[var(--border)]">
+                        ${safePhone ? `
+                            <div class="flex items-center gap-2 group/row">
+                                <a href="tel:${safePhone}" class="flex-1 flex items-center gap-3 p-2.5 rounded-lg hover:bg-[var(--surface-alt)] transition-colors min-h-[40px]" title="Ara">
+                                    <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:var(--brand-tint); color:var(--brand);"><i data-lucide="phone" class="w-3.5 h-3.5" aria-hidden="true"></i></span>
+                                    <span class="text-sm font-medium truncate">${safePhone}</span>
+                                </a>
+                                <button type="button" class="icon-btn btn-ghost shrink-0" onclick="copyToClipboard('${safePhone.replace(/'/g, "\\'")}', 'Telefon')" title="Kopyala" aria-label="Telefonu kopyala">
+                                    <i data-lucide="copy" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                                </button>
+                            </div>` : ''}
+                        ${safeExtension ? `
+                            <div class="flex items-center gap-3 p-2.5 rounded-lg min-h-[40px]" style="background:var(--surface-alt);">
+                                <span class="w-8 h-8 rounded-lg bg-[var(--border)] text-[var(--text-muted)] flex items-center justify-center shrink-0"><i data-lucide="phone-call" class="w-3.5 h-3.5" aria-hidden="true"></i></span>
+                                <span class="text-sm font-medium">Dahili: <span style="color:var(--brand);">${safeExtension}</span></span>
+                            </div>` : ''}
+                        ${safeEmail ? `
+                            <div class="flex items-center gap-2 group/row">
+                                <a href="mailto:${safeEmail}" class="flex-1 flex items-center gap-3 p-2.5 rounded-lg hover:bg-[var(--surface-alt)] transition-colors min-h-[40px] truncate" title="E-posta gönder">
+                                    <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style="background:var(--brand-tint); color:var(--brand);"><i data-lucide="mail" class="w-3.5 h-3.5" aria-hidden="true"></i></span>
+                                    <span class="text-sm font-medium truncate">${safeEmail}</span>
+                                </a>
+                                <button type="button" class="icon-btn btn-ghost shrink-0" onclick="copyToClipboard('${safeEmail.replace(/'/g, "\\'")}', 'E-posta')" title="Kopyala" aria-label="E-postayı kopyala">
+                                    <i data-lucide="copy" class="w-3.5 h-3.5" aria-hidden="true"></i>
+                                </button>
+                            </div>` : ''}
+                        ${(!safePhone && !safeExtension && !safeEmail) ? `<p class="text-xs text-[var(--text-muted)] py-2">İletişim bilgisi yok</p>` : ''}
                     </div>
                 </article>
             `;
@@ -1294,44 +1612,221 @@
         
         // ===== RENDER CONTACTS =====
         function renderContacts() {
+            hideSkeleton();
             if (filteredContacts.length === 0) {
                 contactsGrid.classList.add('hidden');
                 emptyState.classList.remove('hidden');
+                updateHeaderStats();
                 return;
             }
-            
             contactsGrid.classList.remove('hidden');
             emptyState.classList.add('hidden');
-            
-            contactsGrid.innerHTML = filteredContacts.map(contact => renderContactCard(contact)).join('');
+            contactsGrid.innerHTML = filteredContacts.map((contact, i) => renderContactCard(contact, i)).join('');
             lucide.createIcons();
+            updateHeaderStats();
+        }
+
+        // ===== HEADER STATS =====
+        function updateHeaderStats() {
+            const totalContactsEl = document.getElementById('statTotalContacts');
+            const totalKurumEl    = document.getElementById('statTotalKurum');
+            const totalDeptsEl    = document.getElementById('statTotalDepts');
+            const shownEl         = document.getElementById('statShown');
+            if (totalContactsEl) totalContactsEl.textContent = contacts.length;
+            if (totalKurumEl) {
+                const u = new Set(contacts.map(c => (c.kurum || '').trim()).filter(Boolean));
+                totalKurumEl.textContent = u.size;
+            }
+            if (totalDeptsEl) {
+                const u = new Set(contacts.map(c => (c.department || '').trim()).filter(Boolean));
+                totalDeptsEl.textContent = u.size;
+            }
+            if (shownEl) shownEl.textContent = filteredContacts.length;
+
+            // Aktif filtre çipi
+            const af = document.getElementById('activeFilters');
+            if (af) {
+                const chips = [];
+                if (selectedDepartment !== 'all') {
+                    chips.push(`<span class="dept-badge"><i data-lucide="filter" class="w-3 h-3"></i>${escapeHtml(selectedDepartment)}<button type="button" class="ml-1 -mr-1" onclick="clearDeptFilter()" aria-label="Filtreyi kaldır"><i data-lucide="x" class="w-3 h-3"></i></button></span>`);
+                }
+                const q = (searchInput && searchInput.value || '').trim();
+                if (q) {
+                    chips.push(`<span class="dept-badge" style="background:rgba(236,72,153,0.10); color:#db2777;"><i data-lucide="search" class="w-3 h-3"></i>"${escapeHtml(q)}"<button type="button" class="ml-1 -mr-1" onclick="clearSearch()" aria-label="Aramayı kaldır"><i data-lucide="x" class="w-3 h-3"></i></button></span>`);
+                }
+                af.classList.toggle('hidden', chips.length === 0);
+                af.innerHTML = chips.length ? `<span class="text-xs text-[var(--text-muted)] mr-1">Aktif:</span>${chips.join('')}` : '';
+                lucide.createIcons();
+            }
+        }
+
+        function clearDeptFilter() {
+            selectedDepartment = 'all';
+            renderDepartmentFilters();
+            filterContacts();
+        }
+        function clearSearch() {
+            if (searchInput) { searchInput.value = ''; filterContacts(); }
+        }
+
+        // ===== KOPYALA =====
+        async function copyToClipboard(text, label) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast({ type: 'success', title: (label || 'Bilgi') + ' kopyalandı', desc: text });
+            } catch (e) {
+                showToast({ type: 'error', title: 'Kopyalama başarısız', desc: e.message });
+            }
+        }
+
+        // ===== TOAST =====
+        function showToast({ type = 'info', title = '', desc = '', duration = 3500 } = {}) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const icons = { success: 'check-circle-2', error: 'x-circle', info: 'info', warning: 'alert-triangle' };
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.setAttribute('role', type === 'error' ? 'alert' : 'status');
+            t.innerHTML = `
+                <span class="toast-icon"><i data-lucide="${icons[type] || 'info'}" class="w-5 h-5"></i></span>
+                <div class="toast-body">
+                    <div class="toast-title">${escapeHtml(title)}</div>
+                    ${desc ? `<div class="toast-desc">${escapeHtml(desc)}</div>` : ''}
+                </div>
+                <button type="button" class="toast-close" aria-label="Kapat"><i data-lucide="x" class="w-4 h-4"></i></button>
+            `;
+            container.appendChild(t);
+            lucide.createIcons();
+            const close = () => {
+                t.classList.add('leaving');
+                setTimeout(() => t.remove(), 220);
+            };
+            t.querySelector('.toast-close').addEventListener('click', close);
+            if (duration > 0) setTimeout(close, duration);
+        }
+
+        // ===== SKELETON =====
+        function renderSkeleton(count = 8) {
+            const el = document.getElementById('skeletonState');
+            if (!el) return;
+            const item = `
+                <div class="contact-card p-5">
+                    <div class="flex items-start gap-3.5 mb-4">
+                        <div class="skeleton w-14 h-14 rounded-2xl"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="skeleton h-4 w-2/3 rounded"></div>
+                            <div class="skeleton h-3 w-1/2 rounded"></div>
+                            <div class="skeleton h-5 w-24 rounded-full"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 pt-3 border-t border-[var(--border)]">
+                        <div class="skeleton h-9 w-full rounded-lg"></div>
+                        <div class="skeleton h-9 w-full rounded-lg"></div>
+                        <div class="skeleton h-9 w-3/4 rounded-lg"></div>
+                    </div>
+                </div>`;
+            el.innerHTML = item.repeat(count);
+        }
+        function showSkeleton() {
+            renderSkeleton();
+            const el = document.getElementById('skeletonState');
+            const grid = document.getElementById('contactsGrid');
+            const empty = document.getElementById('emptyState');
+            if (el) el.classList.remove('hidden');
+            if (grid) grid.classList.add('hidden');
+            if (empty) empty.classList.add('hidden');
+        }
+        function hideSkeleton() {
+            const el = document.getElementById('skeletonState');
+            if (el) el.classList.add('hidden');
         }
         
+        // ===== SIRALAMA =====
+        let currentSort = 'name-asc';
+        function applySort(list) {
+            const arr = [...list];
+            const tr = (s) => (s || '').toString().trim().toLocaleLowerCase('tr');
+            switch (currentSort) {
+                case 'name-asc':  arr.sort((a, b) => tr(a.name).localeCompare(tr(b.name), 'tr')); break;
+                case 'name-desc': arr.sort((a, b) => tr(b.name).localeCompare(tr(a.name), 'tr')); break;
+                case 'dept-asc':  arr.sort((a, b) => tr(a.department).localeCompare(tr(b.department), 'tr') || tr(a.name).localeCompare(tr(b.name), 'tr')); break;
+                case 'kurum-asc': arr.sort((a, b) => tr(a.kurum).localeCompare(tr(b.kurum), 'tr') || tr(a.name).localeCompare(tr(b.name), 'tr')); break;
+                case 'newest':    arr.sort((a, b) => (b.id || 0) - (a.id || 0)); break;
+                case 'oldest':    arr.sort((a, b) => (a.id || 0) - (b.id || 0)); break;
+            }
+            return arr;
+        }
+
         // ===== FILTER CONTACTS =====
         function filterContacts() {
-            filteredContacts = contacts.filter(contact => {
-                // Departman filtresi
+            const q = (searchQuery || '').toLocaleLowerCase('tr');
+            const matches = contacts.filter(contact => {
                 const departmentMatch = selectedDepartment === 'all' || contact.department === selectedDepartment;
-                
-                // Arama filtresi (isim ve departman içinde)
-                const searchMatch = searchQuery === '' || 
-                    contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    contact.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    contact.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    (contact.kurum && contact.kurum.toLowerCase().includes(searchQuery.toLowerCase()));
-                
+                const searchMatch = q === '' ||
+                    (contact.name || '').toLocaleLowerCase('tr').includes(q) ||
+                    (contact.department || '').toLocaleLowerCase('tr').includes(q) ||
+                    (contact.title || '').toLocaleLowerCase('tr').includes(q) ||
+                    (contact.kurum || '').toLocaleLowerCase('tr').includes(q) ||
+                    (contact.phone || '').toLocaleLowerCase('tr').includes(q) ||
+                    (contact.extension || '').toLocaleLowerCase('tr').includes(q) ||
+                    (contact.email || '').toLocaleLowerCase('tr').includes(q);
                 return departmentMatch && searchMatch;
             });
-            
+            filteredContacts = applySort(matches);
+
             updateSidebarStats();
             renderContacts();
         }
-        
+
         // ===== SEARCH INPUT EVENT =====
         searchInput.addEventListener('input', (e) => {
             searchQuery = e.target.value;
             filterContacts();
         });
+
+        // ===== SORT EVENT =====
+        const sortSelectEl = document.getElementById('sortSelect');
+        if (sortSelectEl) {
+            sortSelectEl.addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                filterContacts();
+            });
+        }
+
+        // ===== GÖRÜNÜM (Kart / Liste) =====
+        const viewGridBtn = document.getElementById('viewGridBtn');
+        const viewListBtn = document.getElementById('viewListBtn');
+        function setView(mode) {
+            const grid = document.getElementById('contactsGrid');
+            if (!grid) return;
+            if (mode === 'list') {
+                grid.classList.remove('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                grid.classList.add('grid-cols-1', 'lg:grid-cols-2');
+                viewListBtn?.classList.add('btn-soft'); viewListBtn?.classList.remove('btn-ghost');
+                viewGridBtn?.classList.add('btn-ghost'); viewGridBtn?.classList.remove('btn-soft');
+                viewListBtn?.setAttribute('aria-pressed', 'true');
+                viewGridBtn?.setAttribute('aria-pressed', 'false');
+            } else {
+                grid.classList.remove('lg:grid-cols-2');
+                grid.classList.add('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+                viewGridBtn?.classList.add('btn-soft'); viewGridBtn?.classList.remove('btn-ghost');
+                viewListBtn?.classList.add('btn-ghost'); viewListBtn?.classList.remove('btn-soft');
+                viewGridBtn?.setAttribute('aria-pressed', 'true');
+                viewListBtn?.setAttribute('aria-pressed', 'false');
+            }
+            try { localStorage.setItem('phone_view_mode', mode); } catch {}
+        }
+        viewGridBtn?.addEventListener('click', () => setView('grid'));
+        viewListBtn?.addEventListener('click', () => setView('list'));
+        try { setView(localStorage.getItem('phone_view_mode') || 'grid'); } catch {}
+
+        // ===== Empty state CTA =====
+        const emptyAddBtnEl = document.getElementById('emptyAddBtn');
+        if (emptyAddBtnEl) {
+            emptyAddBtnEl.addEventListener('click', () => {
+                document.getElementById('addContactBtn')?.click();
+            });
+        }
         
         // ===== MOBILE MENU TOGGLE =====
         mobileMenuBtn.addEventListener('click', () => {
@@ -1796,13 +2291,13 @@
                                     phone
                                 })
                                 .eq('id', id)
-                                .eq('firebase_user_id', currentUserId); // Sadece kendi kaydını güncelleyebilsin
+                                .eq('user_id', currentUserId); // Sadece kendi kaydını güncelleyebilsin
                             
                             if (error) throw error;
                         } else {
                             // Demo modunda localStorage'a kaydet
-                            contacts[index].firebase_user_id = currentUserId;
-                            const userContacts = contacts.filter(c => c.firebase_user_id === currentUserId);
+                            contacts[index].user_id = currentUserId;
+                            const userContacts = contacts.filter(c => c.user_id === currentUserId);
                             localStorage.setItem(`phone_contacts_${currentUserId}`, JSON.stringify(userContacts));
                         }
                         
@@ -1813,6 +2308,9 @@
                     // Kullanıcı ID'sini al (eğer yoksa)
                     if (!currentUserId) {
                         await getCurrentUserId();
+                    }
+                    if (!currentUserId) {
+                        throw new Error('Oturum doğrulanamadı. Ana sayfadan çıkış yapıp tekrar giriş yapın.');
                     }
                     
                     const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=4f46e5&color=fff&size=128`;
@@ -1829,7 +2327,7 @@
                             email,
                             phone,
                             avatar,
-                            firebase_user_id: currentUserId // Firebase kullanıcı ID'si
+                            user_id: currentUserId
                         };
                         
                         const { data: insertedData, error } = await supabaseClient
@@ -1865,13 +2363,13 @@
                             email,
                             phone,
                             avatar,
-                            firebase_user_id: currentUserId
+                            user_id: currentUserId
                         };
                         
                         contacts.push(newContact);
                         
                         if (currentUserId) {
-                            const userContacts = contacts.filter(c => c.firebase_user_id === currentUserId);
+                            const userContacts = contacts.filter(c => c.user_id === currentUserId);
                             localStorage.setItem(`phone_contacts_${currentUserId}`, JSON.stringify(userContacts));
                         } else {
                             // Fallback: Eski yöntem (kullanıcı ID yoksa)
@@ -1894,7 +2392,7 @@
                 
             } catch (error) {
                 console.error('Kayıt hatası:', error);
-                contactError.textContent = error.message || 'Kayıt sırasında bir hata oluştu.';
+                contactError.textContent = mapRlsError(error);
                 contactError.classList.remove('hidden');
             } finally {
                 saveBtn.disabled = false;
@@ -1962,12 +2460,12 @@
                             .from('contacts')
                             .delete()
                             .eq('id', contactToDelete.id)
-                            .eq('firebase_user_id', currentUserId); // Sadece kendi kaydını silebilsin
+                            .eq('user_id', currentUserId); // Sadece kendi kaydını silebilsin
                         
                         if (error) throw error;
                     } else {
                         // Demo modunda localStorage'a kaydet
-                        const userContacts = contacts.filter(c => c.firebase_user_id === currentUserId);
+                        const userContacts = contacts.filter(c => c.user_id === currentUserId);
                         localStorage.setItem(`phone_contacts_${currentUserId}`, JSON.stringify(userContacts));
                     }
                     
@@ -1980,7 +2478,7 @@
                 }
             } catch (error) {
                 console.error('Silme hatası:', error);
-                alert('Kişi silinirken bir hata oluştu: ' + (error.message || 'Bilinmeyen hata'));
+                showToast({ type: 'error', title: 'Kişi silinemedi', desc: error.message || 'Bilinmeyen hata' });
             } finally {
                 confirmDeleteBtn.disabled = false;
                 confirmDeleteBtn.textContent = 'Sil';
@@ -2003,7 +2501,7 @@
                             const parsed = JSON.parse(savedContacts);
                             if (Array.isArray(parsed) && parsed.length > 0) {
                                 // Sadece bu kullanıcıya ait kayıtları yükle
-                                const userContacts = parsed.filter(c => c.firebase_user_id === currentUserId);
+                                const userContacts = parsed.filter(c => c.user_id === currentUserId);
                                 contacts.length = 0;
                                 contacts.push(...userContacts);
                                 console.log(`✅ ${userContacts.length} kayıt yüklendi (Kullanıcı: ${currentUserId})`);
@@ -2018,12 +2516,12 @@
         
         // ===== INITIALIZE APP =====
         async function init() {
-            loadingState.classList.remove('hidden');
-            
+            // Spinner yerine skeleton kart göster
+            showSkeleton();
+
             // Event listener'ları başlat
             initContactFormListeners();
             
-            // Auth kontrolü (kullanıcı ID'sini almak için)
             await checkAuth();
             
             // Kullanıcı ID'sini al
@@ -2061,7 +2559,7 @@
                     const { data, error } = await supabaseClient
                         .from('contacts')
                         .select('*')
-                        .eq('firebase_user_id', currentUserId) // Kullanıcıya özel filtreleme
+                        .eq('user_id', currentUserId) // Kullanıcıya özel filtreleme
                         .order('name');
                     
                     if (error) {
@@ -2079,7 +2577,7 @@
                         contacts.length = 0;
                         contacts.push(...data.map(item => ({
                             ...item,
-                            firebase_user_id: item.firebase_user_id || currentUserId, // Eski kayıtlar için varsayılan
+                            user_id: item.user_id || currentUserId, // Eski kayıtlar için varsayılan
                             avatar: item.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&background=4f46e5&color=fff&size=128`
                         })));
                     } else {
@@ -2094,28 +2592,107 @@
             
             // Departman filtrelerini oluştur
             renderDepartmentFilters();
-            
+
             // Kişileri render et
             filterContacts();
-            
+
+            // Skeleton zaten renderContacts içinde gizleniyor; spinner'ı da kapat
             loadingState.classList.add('hidden');
+            hideSkeleton();
         }
         
-        // Sayfa yüklendiğinde başlat
-        // DOMContentLoaded bekleyerek event listener'ları tekrar başlat
+        // ====================================================
+        // MODERN UI: Tema, Klavye Kısayolları, Mobil Ek Butonlar
+        // ====================================================
+
+        // ===== TEMA (LIGHT / DARK) =====
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            try { localStorage.setItem('phone_theme', theme); } catch {}
+        }
+        function getInitialTheme() {
+            try {
+                const saved = localStorage.getItem('phone_theme');
+                if (saved === 'light' || saved === 'dark') return saved;
+            } catch {}
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        applyTheme(getInitialTheme());
+        function toggleTheme() {
+            const cur = document.documentElement.getAttribute('data-theme') || 'light';
+            applyTheme(cur === 'dark' ? 'light' : 'dark');
+        }
+        document.getElementById('themeToggleSidebar')?.addEventListener('click', toggleTheme);
+        document.getElementById('themeToggleMobile')?.addEventListener('click', toggleTheme);
+
+        // ===== MOBİL EK BUTONLAR =====
+        document.getElementById('mobileAddContactBtn2')?.addEventListener('click', () => {
+            mobileMenu?.classList.remove('open');
+            mobileMenuOverlay?.classList.add('hidden');
+            document.body.style.overflow = '';
+            document.getElementById('addContactBtn')?.click();
+        });
+        document.getElementById('mobileLogoutBtn')?.addEventListener('click', () => {
+            document.getElementById('logoutBtn')?.click();
+        });
+
+        // ===== KLAVYE KISAYOLLARI =====
+        document.addEventListener('keydown', (e) => {
+            const target = e.target;
+            const isInput = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable);
+            // "/" -> arama
+            if (e.key === '/' && !isInput && !e.metaKey && !e.ctrlKey && !e.altKey) {
+                e.preventDefault();
+                searchInput?.focus();
+                searchInput?.select();
+                return;
+            }
+            // Cmd/Ctrl+K -> yeni kişi
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                document.getElementById('addContactBtn')?.click();
+                return;
+            }
+            // Esc -> açık modal kapat
+            if (e.key === 'Escape') {
+                ['contactModal','kurumModal','deleteModal','registerModal'].forEach(id => {
+                    const m = document.getElementById(id);
+                    if (m && !m.classList.contains('hidden')) m.classList.add('hidden');
+                });
+                if (mobileMenu?.classList.contains('open')) {
+                    mobileMenu.classList.remove('open');
+                    mobileMenuOverlay?.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+
+        // ===== TOAST: Form başarı/hata mesajlarını otomatik bildiril =====
+        // contactSuccess/contactError ve kurumSuccess/kurumError div'lerinin
+        // 'hidden' sınıfı kaldırıldığında MutationObserver ile yakala.
+        function bindAlertObserver(elId, type, fallbackTitle) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            new MutationObserver(() => {
+                if (!el.classList.contains('hidden') && el.textContent.trim()) {
+                    showToast({ type, title: fallbackTitle, desc: el.textContent.trim() });
+                }
+            }).observe(el, { attributes: true, attributeFilter: ['class'], childList: true, subtree: true });
+        }
+        bindAlertObserver('contactSuccess', 'success', 'Kişi kaydedildi');
+        bindAlertObserver('contactError',   'error',   'İşlem başarısız');
+        bindAlertObserver('kurumSuccess',   'success', 'Kurum kaydedildi');
+        bindAlertObserver('kurumError',     'error',   'İşlem başarısız');
+
+        // ===== Sayfa yüklendiğinde başlat =====
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                init();
-            });
+            document.addEventListener('DOMContentLoaded', () => { init(); });
         } else {
-            // DOM zaten yüklenmiş
             init();
         }
-        
+
         // Icons'ları yeniden oluştur (dinamik içerik için)
-        setInterval(() => {
-            lucide.createIcons();
-        }, 1000);
+        setInterval(() => { lucide.createIcons(); }, 1000);
     </script>
 </body>
 </html>

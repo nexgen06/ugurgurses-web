@@ -89,18 +89,22 @@ export const FirebaseAuthAdapter = {
 
   onAuthStateChange(callback: (event: string, session: any) => void) {
     try {
-      const unsubscribe = onAuthStateChanged(auth(), async (user) => {
+      const unsubscribe = onAuthStateChanged(auth(), (user) => {
         if (!user) {
           callback('SIGNED_OUT', null);
           return;
         }
-        try {
-          const sessionUser = await getSessionUserWithProfile(user);
-          callback('SIGNED_IN', { user: sessionUser });
-        } catch (e) {
-          console.error('onAuthStateChange profile:', e);
-          callback('SIGNED_IN', { user: firebaseUserToSessionUser(user, { role: 'viewer', birimler: [] }) });
-        }
+        void (async () => {
+          try {
+            const sessionUser = await getSessionUserWithProfile(user);
+            callback('SIGNED_IN', { user: sessionUser });
+          } catch (e) {
+            console.error('onAuthStateChange profile:', e);
+            callback('SIGNED_IN', {
+              user: firebaseUserToSessionUser(user, { role: 'viewer', birimler: [] })
+            });
+          }
+        })();
       });
       return { data: { subscription: { unsubscribe } } };
     } catch (e) {

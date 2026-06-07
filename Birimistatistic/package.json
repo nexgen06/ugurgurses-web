@@ -7,11 +7,19 @@
     "dev": "vite",
     "build": "node scripts/write-build-version.mjs && vite build",
     "preview": "vite preview",
-    "start": "npm run build && vite preview",
+    "start": "node scripts/serve.mjs",
     "seed": "node scripts/seed-firestore.mjs",
-    "purge:demo": "node scripts/purge-demo-and-old-data.mjs"
+    "purge:demo": "node scripts/purge-demo-and-old-data.mjs",
+    "auth:migrate": "node ../scripts/migrate-firebase-auth-to-supabase.mjs",
+    "data:migrate": "node ../scripts/migrate-firestore-to-supabase.mjs",
+    "data:verify": "node ../scripts/verify-firestore-supabase.mjs --sample 20",
+    "auth:set-default-passwords": "node ../scripts/set-default-passwords.mjs --password 1234567 --exclude ugurgrses@gmail.com",
+    "functions:login": "npx firebase-tools@13 login",
+    "functions:secret": "npx firebase-tools@13 functions:secrets:set SUPABASE_JWT_SECRET",
+    "functions:deploy": "npx firebase-tools@13 deploy --only functions:issueFirebaseTokenFromSupabase --project mulakat-takip-sistemi"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.8",
     "firebase": "^12.9.0",
     "jspdf": "^4.1.0",
     "jspdf-autotable": "^5.0.7",
@@ -19,6 +27,7 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "recharts": "^3.7.0",
+    "serve-handler": "^6.1.7",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

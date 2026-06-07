@@ -102,7 +102,7 @@ const Auth: React.FC = () => {
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                  Kurumsal e-posta
+                  E-posta
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
@@ -110,7 +110,7 @@ const Auth: React.FC = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ad.soyad@kurum.gov.tr"
+                    placeholder="ad.soyad@abc.com"
                     autoComplete="username"
                     className="w-full bg-[#001E2B]/50 border-2 border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-700 outline-none focus:ring-4 focus:ring-[#00ED64]/10 focus:border-[#00ED64] transition-all font-bold"
                     required
@@ -192,7 +192,7 @@ const Auth: React.FC = () => {
                     type="email"
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
-                    placeholder="ad.soyad@kurum.gov.tr"
+                    placeholder="ad.soyad@abc.com"
                     className="w-full bg-[#001E2B]/50 border-2 border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-700 outline-none focus:ring-4 focus:ring-[#00ED64]/10 focus:border-[#00ED64] transition-all font-bold"
                     required
                   />

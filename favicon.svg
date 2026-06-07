@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="UG">
+  <rect width="32" height="32" rx="8" fill="#0f172a"/>
+  <defs>
+    <linearGradient id="ug" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="26" height="26" rx="6" fill="none" stroke="url(#ug)" stroke-width="2"/>
+  <text x="16" y="21.5" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="800" text-anchor="middle" fill="url(#ug)" letter-spacing="1.2">UG</text>
+</svg>

@@ -1,21 +1,14 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/+esm';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, isSupabaseReady } from './auth-config.js';
+import { ensureFirebaseBridge, signOutFirebase } from './firebase-auth-bridge.js';
+import { signInEkip, signOutEkip } from './ekip-auth.js';
 
-// Firebase Configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDkEVYHW6isG3Ga_ZixMNW8KUQfLefSeyM",
-  authDomain: "mulakat-takip-sistemi.firebaseapp.com",
-  projectId: "mulakat-takip-sistemi",
-  storageBucket: "mulakat-takip-sistemi.firebasestorage.app",
-  messagingSenderId: "1050671861081",
-  appId: "1:1050671861081:web:1e41fc9305731961809048"
-};
+const supabaseClient = isSupabaseReady()
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    })
+  : null;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// DOM Elements
 const authLinks = document.querySelectorAll('.auth-link');
 const loginModal = document.getElementById('loginModal');
 const quickLoginPanel = document.getElementById('quickLoginPanel');
@@ -27,10 +20,92 @@ const authError = document.getElementById('authError');
 const loginButton = document.querySelector('.btn-quick-login');
 const projectCards = document.querySelectorAll('.project-card-h');
 
-// State
 let currentUser = null;
 
-// Hızlı giriş paneli
+function normalizeUser(user) {
+  if (!user) return null;
+  return { email: user.email || '', id: user.id, source: 'supabase' };
+}
+
+async function syncFirebaseBridge(session) {
+  if (!session?.access_token) return;
+  const bridge = await ensureFirebaseBridge(session.access_token);
+  if (!bridge.ok) {
+    console.warn('Firebase köprü uyarısı:', bridge.error);
+  }
+}
+
+function isLoginPage() {
+  const path = window.location.pathname;
+  return /\/login\/?$/i.test(path) || path.includes('login.html');
+}
+
+function resolvePostLoginRedirect() {
+  const returnUrl = localStorage.getItem('auth_return_url');
+  if (returnUrl) {
+    localStorage.removeItem('auth_return_url');
+    return returnUrl;
+  }
+  const redirect = new URLSearchParams(window.location.search).get('redirect');
+  if (redirect === 'phone') return 'phone/index.html';
+  if (redirect === 'ekip') return 'ekip/index.html';
+  const stored = sessionStorage.getItem('post_login_redirect');
+  if (stored) {
+    sessionStorage.removeItem('post_login_redirect');
+    return stored;
+  }
+  return null;
+}
+
+function wantsPhoneAccess() {
+  if (new URLSearchParams(window.location.search).get('redirect') === 'phone') return true;
+  return sessionStorage.getItem('post_login_redirect')?.includes('phone') ?? false;
+}
+
+async function performSignIn(email, password, options = {}) {
+  const requireEkip = options.requireEkip ?? wantsPhoneAccess();
+  if (!supabaseClient) throw new Error('supabase_not_configured');
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) throw new Error(error.message);
+  const ekip = await signInEkip(email, password);
+  if (!ekip.ok) {
+    const ekipMsg =
+      'Telefon Rehberi oturumu açılamadı. Ekip Supabase (mmahcxmfnuoovgqgvjag) → Authentication → Users bölümünde aynı e-posta ile hesap olmalı.';
+    if (requireEkip) throw new Error(ekipMsg);
+    console.warn(ekipMsg, ekip.error);
+  }
+  await syncFirebaseBridge(data.session);
+  return normalizeUser(data.user);
+}
+
+async function performSignOut() {
+  await signOutEkip();
+  await signOutFirebase();
+  if (supabaseClient) await supabaseClient.auth.signOut();
+}
+
+async function sendPasswordReset(email) {
+  if (!supabaseClient) throw new Error('Şifre sıfırlama yapılandırılmamış.');
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/index.html`
+  });
+  if (error) throw error;
+}
+
+function mapLoginError(error) {
+  const code = typeof error === 'string' ? error : error?.message || '';
+  if (String(code).toLowerCase().includes('invalid login credentials')) {
+    return 'E-posta veya şifre hatalı.';
+  }
+  if (String(code).toLowerCase().includes('too many')) {
+    return 'Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin.';
+  }
+  if (code === 'supabase_not_configured') {
+    return 'Giriş sistemi yapılandırılmamış.';
+  }
+  return 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
+}
+
 const showQuickPanel = () => {
   if (!quickLoginPanel) return;
   quickLoginPanel.classList.add('open');
@@ -50,7 +125,6 @@ const hideQuickPanel = () => {
   loginForm?.reset();
 };
 
-// Ortada giriş modalı (çıkış sonrası anasayfada)
 const showCenteredLoginModal = () => {
   if (!loginModal) return;
   loginModal.style.display = 'flex';
@@ -65,11 +139,13 @@ const hideCenteredLoginModal = () => {
   loginModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
   const errCenter = document.getElementById('authErrorCenter');
-  if (errCenter) { errCenter.textContent = ''; errCenter.classList.remove('visible'); }
+  if (errCenter) {
+    errCenter.textContent = '';
+    errCenter.classList.remove('visible');
+  }
   document.getElementById('loginFormCenter')?.reset();
 };
 
-// UI Helper Functions – asıl giriş hızlı panelde
 const showModal = () => {
   showQuickPanel();
   if (loginModal) loginModal.style.display = 'none';
@@ -132,30 +208,30 @@ const updateUI = (user) => {
   });
 };
 
-// Event Listeners
+function setCurrentUser(user) {
+  currentUser = user;
+  updateUI(user);
+}
 
-// 1. Auth Link (Login/Logout) – tıklanınca panel aç/kapa
-authLinks.forEach(authLink => {
+authLinks.forEach((authLink) => {
   authLink.addEventListener('click', async (e) => {
     e.preventDefault();
     if (currentUser) {
       try {
-        await signOut(auth);
-        console.log("Çıkış yapıldı");
+        await performSignOut();
+        setCurrentUser(null);
       } catch (error) {
-        console.error("Çıkış hatası:", error);
+        console.error('Çıkış hatası:', error);
       }
+    } else if (quickLoginPanel?.classList.contains('open')) {
+      hideQuickPanel();
     } else {
-      if (quickLoginPanel?.classList.contains('open')) hideQuickPanel();
-      else showModal();
+      showModal();
     }
   });
 });
 
-// 2. Modal / panel kapatma
-if (closeModal) {
-  closeModal.addEventListener('click', hideModal);
-}
+if (closeModal) closeModal.addEventListener('click', hideModal);
 
 window.addEventListener('click', (e) => {
   if (e.target === loginModal) hideModal();
@@ -166,70 +242,61 @@ document.querySelector('.btn-open-quick-login')?.addEventListener('click', () =>
   showQuickPanel();
 });
 
-// 3. Login Form Submission
+async function handleLoginSubmit(email, password, errorEl, btn, btnIdleHtml) {
+  if (errorEl) {
+    errorEl.classList.remove('visible');
+    errorEl.textContent = '';
+  }
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Giriş yapılıyor...</span>';
+  }
+
+  try {
+    const user = await performSignIn(email, password, { requireEkip: wantsPhoneAccess() });
+    setCurrentUser(user);
+    hideModal();
+    hideCenteredLoginModal();
+    showLoginSuccessToast();
+
+    const postLogin = resolvePostLoginRedirect();
+    if (isLoginPage()) {
+      window.location.replace(postLogin || 'index.html');
+      return;
+    }
+    if (postLogin) {
+      window.location.assign(postLogin);
+    }
+  } catch (error) {
+    console.error('Giriş hatası:', error);
+    if (errorEl) {
+      errorEl.textContent = mapLoginError(error);
+      errorEl.classList.add('visible');
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = btnIdleHtml;
+    }
+  }
+}
+
 if (loginForm) {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const email = emailInput?.value;
     const password = passwordInput?.value;
     const btn = loginForm.querySelector('button[type="submit"]') || loginButton;
-
-    if (authError) {
-      authError.classList.remove('visible');
-      authError.textContent = '';
-    }
-    if (btn) {
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Giriş yapılıyor...</span>';
-    }
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Giriş başarılı:", userCredential.user);
-      hideModal();
-      hideCenteredLoginModal();
-      showLoginSuccessToast();
-
-      // login.html sayfasındaysak yönlendirme yap
-      if (window.location.pathname.includes('login.html')) {
-        const returnUrl = localStorage.getItem('auth_return_url');
-        if (returnUrl) {
-          localStorage.removeItem('auth_return_url');
-          window.location.replace(returnUrl);
-          return;
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get('redirect');
-        if (redirect === 'phone') {
-          window.location.replace('phone/index.html');
-        } else {
-          window.location.replace('ekip/index.html');
-        }
-      }
-    } catch (error) {
-      console.error("Giriş hatası:", error);
-
-      let message = "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.";
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        message = "E-posta veya şifre hatalı.";
-      } else if (error.code === 'auth/too-many-requests') {
-        message = "Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin.";
-      }
-      if (authError) {
-        authError.textContent = message;
-        authError.classList.add('visible');
-      }
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i><span>Giriş Yap</span>';
-      }
-    }
+    await handleLoginSubmit(
+      email,
+      password,
+      authError,
+      btn,
+      '<i class="fa-solid fa-arrow-right-to-bracket"></i><span>Giriş Yap</span>'
+    );
   });
 }
 
-// 4. Proje kartı koruması: giriş yoksa giriş paneli aç
 projectCards.forEach((card) => {
   card.addEventListener('click', (e) => {
     if (!currentUser) {
@@ -239,7 +306,6 @@ projectCards.forEach((card) => {
   });
 });
 
-// Ortadaki giriş formu (çıkış sonrası anasayfa)
 const loginFormCenter = document.getElementById('loginFormCenter');
 const emailCenter = document.getElementById('emailCenter');
 const passwordCenter = document.getElementById('passwordCenter');
@@ -251,24 +317,11 @@ if (loginFormCenter) {
     const email = emailCenter?.value;
     const password = passwordCenter?.value;
     if (!email || !password) return;
-    if (authErrorCenter) { authErrorCenter.textContent = ''; authErrorCenter.classList.remove('visible'); }
     const btn = loginFormCenter.querySelector('.btn-login');
-    if (btn) { btn.disabled = true; btn.textContent = 'Giriş yapılıyor...'; }
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      hideCenteredLoginModal();
-      showLoginSuccessToast();
-    } catch (error) {
-      let message = "E-posta veya şifre hatalı.";
-      if (error.code === 'auth/too-many-requests') message = "Çok fazla deneme. Daha sonra tekrar deneyin.";
-      if (authErrorCenter) { authErrorCenter.textContent = message; authErrorCenter.classList.add('visible'); }
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Giriş Yap'; }
-    }
+    await handleLoginSubmit(email, password, authErrorCenter, btn, 'Giriş Yap');
   });
 }
 
-// Çıkış sonrası anasayfada ?showLogin=1 ile gelindiyse ortada giriş aç
 if (typeof window !== 'undefined' && window.location.search.includes('showLogin=1')) {
   history.replaceState({}, '', window.location.pathname);
   if (document.readyState === 'loading') {
@@ -278,14 +331,34 @@ if (typeof window !== 'undefined' && window.location.search.includes('showLogin=
   }
 }
 
-// Auth State Observer
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-  console.log("Auth State Changed:", user ? user.email : "Logged Out");
-  updateUI(user);
-});
+async function refreshAuthState() {
+  if (!supabaseClient) {
+    setCurrentUser(null);
+    return;
+  }
+  const { data } = await supabaseClient.auth.getSession();
+  if (data.session?.user) {
+    await syncFirebaseBridge(data.session);
+    setCurrentUser(normalizeUser(data.session.user));
+    return;
+  }
+  setCurrentUser(null);
+}
 
-// ---------- Şifre sıfırlama (login.html sayfasında) ----------
+if (supabaseClient) {
+  supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+    if (session?.user) {
+      await syncFirebaseBridge(session);
+      setCurrentUser(normalizeUser(session.user));
+    } else {
+      await signOutFirebase();
+      setCurrentUser(null);
+    }
+  });
+}
+
+refreshAuthState();
+
 const forgotPasswordLink = document.getElementById('forgotPasswordLink');
 const resetPasswordModal = document.getElementById('resetPasswordModal');
 const resetPasswordForm = document.getElementById('resetPasswordForm');
@@ -326,9 +399,7 @@ if (forgotPasswordLink) {
   });
 }
 
-if (resetModalClose) {
-  resetModalClose.addEventListener('click', hideResetModal);
-}
+if (resetModalClose) resetModalClose.addEventListener('click', hideResetModal);
 
 if (resetPasswordModal) {
   resetPasswordModal.addEventListener('click', (e) => {
@@ -355,20 +426,15 @@ if (resetPasswordForm) {
     }
 
     try {
-      await sendPasswordResetEmail(auth, email);
-      setResetMessage('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. Lütfen gelen kutunuzu (ve gerekiyorsa spam klasörünü) kontrol edin.', true);
+      await sendPasswordReset(email);
+      setResetMessage(
+        'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. Lütfen gelen kutunuzu (ve gerekiyorsa spam klasörünü) kontrol edin.',
+        true
+      );
       resetPasswordForm.reset();
     } catch (error) {
       let message = 'Şifre sıfırlama isteği gönderilemedi. Lütfen e-posta adresinizi kontrol edip tekrar deneyin.';
-      if (error.code === 'auth/user-not-found') {
-        message = 'Bu e-posta adresi sistemde kayıtlı değil.';
-      } else if (error.code === 'auth/invalid-email') {
-        message = 'Geçerli bir e-posta adresi girin.';
-      } else if (error.code === 'auth/too-many-requests') {
-        message = 'Çok fazla istek. Lütfen daha sonra tekrar deneyin.';
-      } else if (error.message) {
-        message = error.message;
-      }
+      if (error?.message) message = error.message;
       setResetMessage(message, false);
     } finally {
       if (btn) {

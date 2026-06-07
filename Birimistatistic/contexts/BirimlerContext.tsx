@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getBirimler } from '../services/birimler-service';
 import { BIRIMLER as DEFAULT_BIRIMLER } from '../constants';
+import { FIREBASE_AUTH_READY_EVENT } from '../lib/firebase-auth-bridge';
 
 interface BirimlerCtx {
   birimler: string[];
@@ -27,6 +28,11 @@ export function BirimlerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     reload();
+    const onReady = () => {
+      reload();
+    };
+    window.addEventListener(FIREBASE_AUTH_READY_EVENT, onReady);
+    return () => window.removeEventListener(FIREBASE_AUTH_READY_EVENT, onReady);
   }, [reload]);
 
   return <Ctx.Provider value={{ birimler, loading, reload }}>{children}</Ctx.Provider>;

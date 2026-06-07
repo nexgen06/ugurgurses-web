@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './db';
-import { isFirestoreConfigured, getFirestoreDebugInfo } from './firestore-db';
+import { getFirestoreDebugInfo } from './firestore-db';
+import { isDataLayerConfigured, getDataProviderMode } from './lib/data-provider';
 import { autoFinalizePastDays } from './services/auto-finalize';
 import { autoClosePreviousMonthIfNeeded } from './services/ay-kapanis-service';
 import { UserProvider } from './contexts/UserContext';
@@ -13,6 +14,10 @@ import DataEntry from './components/DataEntry';
 import Reports from './components/Reports';
 import Management from './components/Management';
 import ProfileSetupModal from './components/ProfileSetupModal';
+import ChangePasswordModal from './components/ChangePasswordModal';
+import { ensureFirebaseAuthForFirestore, FIREBASE_AUTH_READY_EVENT } from './lib/firebase-auth-bridge';
+import { getSupabaseClient, isSupabaseConfigured } from './lib/supabase';
+import { getAuthProviderMode, isFirebaseEnabled } from './lib/vite-env';
 import { needsProfileSetup } from './lib/user-display';
 import { shouldOpenEntryOnLogin } from './lib/user-prefs';
 import { canEnterData } from './contexts/UserContext';
@@ -38,41 +43,113 @@ const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'entry' | 'reports' | 'management'>('dashboard');
   const [sessionError, setSessionError] = useState<string | null>(null);
+  const [bridgeError, setBridgeError] = useState<string | null>(null);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
 
   useEffect(() => {
-    if (!isFirestoreConfigured()) {
-      setInitialCheckDone(true);
-      return;
-    }
-    setSessionError(null);
-    db.auth.getSession().then((res: any) => {
-      const session = res?.data?.session ?? null;
-      const err = res?.error ?? null;
-      setSession(session);
-      if (err) setSessionError(typeof err === 'string' ? err : 'Oturum yüklenemedi');
-      setInitialCheckDone(true);
-    }).catch((err: unknown) => {
-      console.error('getSession error:', err);
-      setSessionError(err instanceof Error ? err.message : 'Oturum yüklenemedi');
-      setSession(null);
-      setInitialCheckDone(true);
-    });
-
+    let cancelled = false;
     let sub: { unsubscribe: () => void } | undefined;
-    try {
-      const result = db.auth.onAuthStateChange((_event: string, newSession: any) => {
-        setSessionError(null);
-        setSession(newSession);
-      });
-      sub = result?.data?.subscription;
-    } catch (err) {
-      console.error('onAuthStateChange error:', err);
-      setSessionError(err instanceof Error ? err.message : 'Auth dinleyici başlatılamadı');
+    const SESSION_TIMEOUT_MS = 8_000;
+
+    const finishInitialCheck = (nextSession: any, err: string | null) => {
+      if (cancelled) return;
+      setSession(nextSession);
+      if (err) setSessionError(err);
       setInitialCheckDone(true);
-    }
-    return () => sub?.unsubscribe?.();
+    };
+
+    const initAuth = async () => {
+      if (!isDataLayerConfigured()) {
+        finishInitialCheck(null, null);
+        return;
+      }
+      setSessionError(null);
+
+      try {
+        const sessionResult = await Promise.race([
+          db.auth.getSession(),
+          new Promise<null>((resolve) => {
+            setTimeout(() => resolve(null), SESSION_TIMEOUT_MS);
+          })
+        ]);
+
+        if (cancelled) return;
+
+        if (!sessionResult) {
+          finishInitialCheck(
+            null,
+            'Oturum kontrolü zaman aşımına uğradı. Giriş ekranından tekrar deneyin.'
+          );
+        } else {
+          const res = sessionResult as { data?: { session?: unknown }; error?: unknown };
+          const nextSession = res?.data?.session ?? null;
+          const err = res?.error ?? null;
+          finishInitialCheck(
+            nextSession,
+            err ? (typeof err === 'string' ? err : 'Oturum yüklenemedi') : null
+          );
+        }
+      } catch (err: unknown) {
+        console.error('getSession error:', err);
+        finishInitialCheck(
+          null,
+          err instanceof Error ? err.message : 'Oturum yüklenemedi'
+        );
+      }
+
+      if (cancelled) return;
+      try {
+        const result = db.auth.onAuthStateChange((_event: string, newSession: any) => {
+          setSessionError(null);
+          setSession(newSession);
+        });
+        sub = result?.data?.subscription;
+      } catch (err) {
+        console.error('onAuthStateChange error:', err);
+        setSessionError(err instanceof Error ? err.message : 'Auth dinleyici başlatılamadı');
+      }
+    };
+
+    void initAuth();
+    return () => {
+      cancelled = true;
+      sub?.unsubscribe?.();
+    };
   }, []);
+
+  // Supabase oturumunda Firestore köprüsünü doğrula; veri katmanı yeniden yüklenir
+  useEffect(() => {
+    const u = session?.user as SessionUser | undefined;
+    if (!u?.id) return;
+    const mode = getAuthProviderMode();
+    if (!isFirebaseEnabled() || getDataProviderMode() === 'supabase') return;
+    if (mode === 'firebase' || !isSupabaseConfigured()) return;
+
+    let cancelled = false;
+    (async () => {
+      const { data } = await getSupabaseClient().auth.getSession();
+      const accessToken = data.session?.access_token;
+      const legacyUid =
+        (u.user_metadata?.legacy_firebase_uid as string | undefined) || null;
+      const result = await ensureFirebaseAuthForFirestore({
+        email: u.email || '',
+        legacyFirebaseUid: legacyUid,
+        supabaseAccessToken: accessToken
+      });
+      if (!cancelled && result.ok) {
+        setBridgeError(null);
+        window.dispatchEvent(new Event(FIREBASE_AUTH_READY_EVENT));
+      } else if (!cancelled && !result.ok) {
+        const msg = result.error || 'Firestore köprüsü kurulamadı';
+        setBridgeError(msg);
+        console.warn('Firestore köprüsü:', msg);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id]);
 
   // Oturum açılınca, yetkili kullanıcı için geçmiş açık günleri otomatik kilitle
   useEffect(() => {
@@ -100,7 +177,7 @@ const App: React.FC = () => {
       </div>
     );
   }
-  if (!isFirestoreConfigured()) {
+  if (!isDataLayerConfigured()) {
     return <FirebaseConfigRequired />;
   }
   if (!session) {
@@ -121,10 +198,23 @@ const App: React.FC = () => {
   const debugInfo = showDebug ? getFirestoreDebugInfo() : null;
 
   const showProfileSetup = needsProfileSetup(session.user as SessionUser);
+  const showChangePassword =
+    (session.user as SessionUser)?.user_metadata?.default_password === true;
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      {showProfileSetup && (
+      {bridgeError && (
+        <div className="bg-amber-600 text-white px-4 py-2 text-center text-sm shrink-0 z-50">
+          {bridgeError} — Kayıtlar görünmeyebilir. Sayfayı yenileyin veya çıkış yapıp tekrar giriş yapın.
+        </div>
+      )}
+      {showChangePassword && (
+        <ChangePasswordModal
+          user={session.user as SessionUser}
+          onComplete={(updated) => setSession({ user: updated })}
+        />
+      )}
+      {showProfileSetup && !showChangePassword && (
         <ProfileSetupModal
           user={session.user as SessionUser}
           onComplete={(updated) => setSession({ user: updated })}

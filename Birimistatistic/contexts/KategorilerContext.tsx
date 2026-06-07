@@ -6,6 +6,7 @@ import {
   getBirimOzelKategoriler
 } from '../services/kategoriler-service';
 import { ISLEM_TURLERI as DEFAULT_ORTAK } from '../constants';
+import { FIREBASE_AUTH_READY_EVENT } from '../lib/firebase-auth-bridge';
 
 interface KategorilerCtx {
   ortak: string[];
@@ -44,6 +45,11 @@ export function KategorilerProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     reload();
+    const onReady = () => {
+      reload();
+    };
+    window.addEventListener(FIREBASE_AUTH_READY_EVENT, onReady);
+    return () => window.removeEventListener(FIREBASE_AUTH_READY_EVENT, onReady);
   }, [reload]);
 
   const getPartsForBirim = useCallback(

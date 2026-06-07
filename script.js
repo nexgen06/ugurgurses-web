@@ -224,49 +224,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Mobile Menu Toggle ---
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const navLinksList = document.querySelector('.nav-links');
+    const navLinksList = document.getElementById('navLinks');
+    const navOverlay = document.getElementById('navOverlay');
+    const MOBILE_NAV_MQ = window.matchMedia('(max-width: 900px)');
 
     if (mobileMenuToggle && navLinksList) {
-        mobileMenuToggle.addEventListener('click', (e) => {
-            e.stopPropagation(); // Click event'inin document'a ulaşmasını engelle
-            navLinksList.classList.toggle('active');
+        const menuIcon = mobileMenuToggle.querySelector('i');
 
-            // İkon değişimi
-            const icon = mobileMenuToggle.querySelector('i');
+        function setMobileMenuOpen(isOpen) {
+            navLinksList.classList.toggle('active', isOpen);
+            navOverlay?.classList.toggle('active', isOpen);
+            document.body.classList.toggle('nav-open', isOpen);
+
+            if (navOverlay) {
+                navOverlay.hidden = !isOpen;
+                navOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            }
+
+            menuIcon?.classList.toggle('fa-bars', !isOpen);
+            menuIcon?.classList.toggle('fa-times', isOpen);
+            mobileMenuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            mobileMenuToggle.setAttribute('aria-label', isOpen ? 'Menüyü kapat' : 'Menüyü aç');
+        }
+
+        function closeMobileMenu() {
             if (navLinksList.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-                mobileMenuToggle.setAttribute('aria-expanded', 'true');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                setMobileMenuOpen(false);
             }
+        }
+
+        mobileMenuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setMobileMenuOpen(!navLinksList.classList.contains('active'));
         });
 
-        // Menü dışına tıklanınca kapat
+        navOverlay?.addEventListener('click', closeMobileMenu);
+
         document.addEventListener('click', (e) => {
-            if (navLinksList.classList.contains('active') &&
-                !navLinksList.contains(e.target) &&
-                !mobileMenuToggle.contains(e.target)) {
-
-                navLinksList.classList.remove('active');
-                const icon = mobileMenuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-                mobileMenuToggle.setAttribute('aria-expanded', 'false');
-            }
+            if (!navLinksList.classList.contains('active')) return;
+            if (navLinksList.contains(e.target) || mobileMenuToggle.contains(e.target)) return;
+            closeMobileMenu();
         });
 
-        // Linklere tıklanınca menüyü kapat
-        navLinksList.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinksList.classList.remove('active');
-                const icon = mobileMenuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-                mobileMenuToggle.setAttribute('aria-expanded', 'false');
-            });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
+        });
+
+        navLinksList.querySelectorAll('a[href^="#"]').forEach(link => {
+            if (link.classList.contains('auth-link')) return;
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        MOBILE_NAV_MQ.addEventListener('change', (e) => {
+            if (!e.matches) closeMobileMenu();
         });
     }
 });

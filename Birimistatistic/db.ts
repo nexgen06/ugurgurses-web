@@ -2,19 +2,25 @@
  * Veritabanı katmanı — Firestore + Firebase Authentication.
  */
 
-import { firestoreDb, isFirestoreConfigured } from './firestore-db';
-import { FirebaseAuthAdapter } from './firebase-auth';
+import { getAuthAdapter } from './lib/auth-provider';
+import { getDataDb, isDataLayerConfigured, getDataProviderMode } from './lib/data-provider';
+import { DATA_CHANGE_EVENT } from './lib/data-events';
 
-export const DATA_CHANGE_EVENT = 'firestore_data_change';
+export { DATA_CHANGE_EVENT };
 
 class DBClient {
-  auth = FirebaseAuthAdapter;
+  auth = getAuthAdapter();
 
   collection(name: string) {
-    if (!isFirestoreConfigured()) {
-      throw new Error('Firestore yapılandırılmamış. .env içinde VITE_USE_FIRESTORE=true ve VITE_FIREBASE_* ayarlayın.');
+    if (!isDataLayerConfigured()) {
+      const mode = getDataProviderMode();
+      throw new Error(
+        mode === 'supabase'
+          ? 'Supabase veri katmanı yapılandırılmamış. VITE_DATA_PROVIDER=supabase ve VITE_SUPABASE_* ayarlayın.'
+          : 'Firestore yapılandırılmamış. .env içinde VITE_USE_FIRESTORE=true ve VITE_FIREBASE_* ayarlayın.'
+      );
     }
-    return firestoreDb.collection(name);
+    return getDataDb().collection(name);
   }
 
   subscribe(callback: () => void) {

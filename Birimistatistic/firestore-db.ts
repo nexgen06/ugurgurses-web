@@ -3,6 +3,8 @@
  */
 
 import { getFirebaseFirestore } from './firebase';
+import { viteEnv } from './lib/vite-env';
+import { waitForFirestoreAuth } from './lib/firestore-auth-gate';
 import { collection, addDoc, getDocs, getDoc, setDoc, query, where, orderBy, limit, deleteDoc, doc } from 'firebase/firestore';
 
 function getDb() {
@@ -22,6 +24,10 @@ class FirestoreCollectionAdapter {
 
   async find(queryFilter: any = {}): Promise<{ data: any[]; error: string | null }> {
     try {
+      const authed = await waitForFirestoreAuth();
+      if (!authed) {
+        return { data: [], error: 'Firestore oturumu hazır değil' };
+      }
       const db = getDb();
       const colRef = collection(db, this.collectionName);
 
@@ -72,6 +78,10 @@ class FirestoreCollectionAdapter {
 
   async insertOne(document: any): Promise<{ data: any; error: string | null }> {
     try {
+      const authed = await waitForFirestoreAuth();
+      if (!authed) {
+        return { data: null, error: 'Firestore oturumu hazır değil' };
+      }
       if (this.collectionName === 'islem_kayitlari' && document?.kayit_tarihi != null && String(document.kayit_tarihi) < '2026-01-01') {
         return { data: null, error: 'Kayıt tarihi 1 Ocak 2026 veya sonrası olmalıdır.' };
       }
@@ -139,6 +149,35 @@ class FirestoreCollectionAdapter {
     } catch (e: any) {
       console.error('Firestore deleteMany error:', e);
       return { deletedCount: 0, error: e?.message || 'Firestore silme hatası' };
+    }
+  }
+
+  /** Deterministik id ile tek doküman oku. */
+  async getById(id: string): Promise<{ data: Record<string, unknown> | null; error: string | null }> {
+    try {
+      const authed = await waitForFirestoreAuth();
+      if (!authed) return { data: null, error: 'Firestore oturumu hazır değil' };
+      const snap = await getDoc(doc(getDb(), this.collectionName, String(id)));
+      if (!snap.exists()) return { data: null, error: null };
+      const o = snap.data();
+      return { data: { ...o, id: snap.id, _id: snap.id }, error: null };
+    } catch (e: any) {
+      return { data: null, error: e?.message || 'Firestore okuma hatası' };
+    }
+  }
+
+  /** Kısmi alan güncelle (merge). */
+  async mergeSetById(id: string, partial: Record<string, unknown>): Promise<{ data: any; error: string | null }> {
+    try {
+      const authed = await waitForFirestoreAuth();
+      if (!authed) return { data: null, error: 'Firestore oturumu hazır değil' };
+      await setDoc(doc(getDb(), this.collectionName, String(id)), partial, { merge: true });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('firestore_data_change'));
+      }
+      return { data: { id, ...partial }, error: null };
+    } catch (e: any) {
+      return { data: null, error: e?.message || 'Firestore yazma hatası' };
     }
   }
 
@@ -225,10 +264,7 @@ class FirestoreClient {
 
 export const firestoreDb = new FirestoreClient();
 export function isFirestoreConfigured(): boolean {
-  const env = (typeof import.meta !== 'undefined' && (import.meta as any)?.env) ? (import.meta as any).env : {};
-  const use = env.VITE_USE_FIRESTORE === 'true';
-  const hasConfig = !!(env.VITE_FIREBASE_API_KEY && env.VITE_FIREBASE_PROJECT_ID);
-  return !!(use && hasConfig);
+  return !!(viteEnv.useFirestore && viteEnv.firebaseApiKey && viteEnv.firebaseProjectId);
 }
 
 /** Hata ayıklama: Firestore neden aktif değil / hangi proje kullanılıyor */
@@ -240,11 +276,10 @@ export function getFirestoreDebugInfo(): {
   hasProjectId: boolean;
   useFlag: boolean;
 } {
-  const env = (typeof import.meta !== 'undefined' && (import.meta as any)?.env) ? (import.meta as any).env : {};
-  const useFlag = env.VITE_USE_FIRESTORE === 'true';
-  const hasApiKey = !!(env.VITE_FIREBASE_API_KEY && String(env.VITE_FIREBASE_API_KEY).length > 5);
-  const hasProjectId = !!(env.VITE_FIREBASE_PROJECT_ID && String(env.VITE_FIREBASE_PROJECT_ID).length > 0);
-  const projectId = env.VITE_FIREBASE_PROJECT_ID as string | undefined;
+  const useFlag = viteEnv.useFirestore;
+  const hasApiKey = !!(viteEnv.firebaseApiKey && viteEnv.firebaseApiKey.length > 5);
+  const hasProjectId = !!(viteEnv.firebaseProjectId && viteEnv.firebaseProjectId.length > 0);
+  const projectId = viteEnv.firebaseProjectId || undefined;
 
   if (!useFlag) {
     return { active: false, reason: 'VITE_USE_FIRESTORE=true yok veya farklı değer', hasApiKey, hasProjectId, useFlag };

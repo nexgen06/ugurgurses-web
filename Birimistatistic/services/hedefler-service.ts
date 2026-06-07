@@ -4,9 +4,9 @@
  */
 
 import { getFirebaseFirestore } from '../firebase';
+import { getSupabaseClient } from '../lib/supabase';
+import { getDataProviderMode } from '../lib/data-provider';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-
-const PATH = 'config/hedefler';
 
 export interface BirimHedef {
   toplam?: number;
@@ -45,6 +45,15 @@ function parseStore(data: Record<string, unknown> | undefined): HedeflerStore {
 
 export async function getHedefler(): Promise<HedeflerStore> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient()
+        .from('bi_config_hedefler')
+        .select('data')
+        .eq('id', 'hedefler')
+        .maybeSingle();
+      if (error) throw error;
+      return parseStore((data?.data as Record<string, unknown>) || undefined);
+    }
     const db = getFirebaseFirestore();
     const snap = await getDoc(doc(db, 'config', 'hedefler'));
     return parseStore(snap.data() as Record<string, unknown> | undefined);
@@ -60,13 +69,20 @@ export async function getHedefForAyBirim(ay: string, birim: string): Promise<Bir
 
 export async function saveAyHedefleri(ay: string, birimHedefleri: AyHedefMap): Promise<{ error: string | null }> {
   try {
-    const db = getFirebaseFirestore();
     const existing = await getHedefler();
-    await setDoc(
-      doc(db, 'config', 'hedefler'),
-      { ...existing, [ay]: birimHedefleri, updated_at: new Date().toISOString() },
-      { merge: true }
-    );
+    const merged = { ...existing, [ay]: birimHedefleri, updated_at: new Date().toISOString() };
+    if (getDataProviderMode() === 'supabase') {
+      const { error } = await getSupabaseClient()
+        .from('bi_config_hedefler')
+        .upsert({
+          id: 'hedefler',
+          data: merged,
+          updated_at: new Date().toISOString()
+        });
+      return { error: error?.message || null };
+    }
+    const db = getFirebaseFirestore();
+    await setDoc(doc(db, 'config', 'hedefler'), merged, { merge: true });
     return { error: null };
   } catch (e: unknown) {
     return { error: e instanceof Error ? e.message : 'Hedefler kaydedilemedi' };

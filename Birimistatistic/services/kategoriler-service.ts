@@ -5,6 +5,9 @@
  */
 
 import { getFirebaseFirestore } from '../firebase';
+import { getSupabaseClient } from '../lib/supabase';
+import { getDataProviderMode } from '../lib/data-provider';
+import { waitForFirestoreAuth } from '../lib/firestore-auth-gate';
 import { doc, getDoc, setDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
 import { ISLEM_TURLERI as DEFAULT_ORTAK } from '../constants';
 import { normalizeKategoriList } from '../lib/kategori-aliases';
@@ -29,6 +32,18 @@ export function birimDocId(birim: string): string {
 
 export async function getOrtakKategoriler(): Promise<string[]> {
   try {
+    const authed = await waitForFirestoreAuth();
+    if (!authed) return [...DEFAULT_ORTAK];
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient()
+        .from('bi_config_kategoriler_ortak')
+        .select('kategoriler')
+        .eq('id', 'ortak')
+        .maybeSingle();
+      if (error) throw error;
+      const list = cleanList(data?.kategoriler);
+      return list.length > 0 ? list : [...DEFAULT_ORTAK];
+    }
     const db = getFirebaseFirestore();
     const snap = await getDoc(doc(db, ...ORTAK_DOC));
     const list = cleanList(snap.data()?.kategoriler);
@@ -40,6 +55,16 @@ export async function getOrtakKategoriler(): Promise<string[]> {
 
 export async function setOrtakKategoriler(list: string[]): Promise<{ error: string | null }> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { error } = await getSupabaseClient()
+        .from('bi_config_kategoriler_ortak')
+        .upsert({
+          id: 'ortak',
+          kategoriler: cleanList(list),
+          updated_at: new Date().toISOString()
+        });
+      return { error: error?.message || null };
+    }
     const db = getFirebaseFirestore();
     await setDoc(
       doc(db, ...ORTAK_DOC),
@@ -55,6 +80,15 @@ export async function setOrtakKategoriler(list: string[]): Promise<{ error: stri
 export async function getBirimOzelKategoriler(birim: string): Promise<string[]> {
   if (!birim?.trim()) return [];
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient()
+        .from('bi_config_kategoriler_birim')
+        .select('kategoriler')
+        .eq('birim_doc_id', birimDocId(birim))
+        .maybeSingle();
+      if (error) throw error;
+      return cleanList(data?.kategoriler);
+    }
     const db = getFirebaseFirestore();
     const parent = doc(db, ...BIRIM_PARENT);
     const snap = await getDoc(doc(parent, BIRIM_SUB, birimDocId(birim)));
@@ -70,6 +104,17 @@ export async function setBirimOzelKategoriler(
 ): Promise<{ error: string | null }> {
   if (!birim?.trim()) return { error: 'Birim adı gerekli' };
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { error } = await getSupabaseClient()
+        .from('bi_config_kategoriler_birim')
+        .upsert({
+          birim_doc_id: birimDocId(birim),
+          birim: birim.trim(),
+          kategoriler: cleanList(list),
+          updated_at: new Date().toISOString()
+        });
+      return { error: error?.message || null };
+    }
     const db = getFirebaseFirestore();
     const parent = doc(db, ...BIRIM_PARENT);
     await setDoc(parent, { init: true }, { merge: true });
@@ -88,6 +133,14 @@ export async function setBirimOzelKategoriler(
 export async function getAllBirimOzelMap(): Promise<Record<string, string[]>> {
   const map: Record<string, string[]> = {};
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient().from('bi_config_kategoriler_birim').select('*');
+      if (error) throw error;
+      (data || []).forEach((row) => {
+        map[row.birim || row.birim_doc_id] = cleanList(row.kategoriler);
+      });
+      return map;
+    }
     const db = getFirebaseFirestore();
     const parent = doc(db, ...BIRIM_PARENT);
     const snap = await getDocs(collection(parent, BIRIM_SUB));
@@ -104,6 +157,13 @@ export async function getAllBirimOzelMap(): Promise<Record<string, string[]>> {
 
 export async function deleteBirimOzelKategoriler(birim: string): Promise<void> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      await getSupabaseClient()
+        .from('bi_config_kategoriler_birim')
+        .delete()
+        .eq('birim_doc_id', birimDocId(birim));
+      return;
+    }
     const db = getFirebaseFirestore();
     const parent = doc(db, ...BIRIM_PARENT);
     await deleteDoc(doc(parent, BIRIM_SUB, birimDocId(birim)));

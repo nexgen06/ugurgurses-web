@@ -28,6 +28,7 @@ import BirimSecici, { resolveInitialBirim } from './BirimSecici';
 import { useTheme } from '../contexts/ThemeContext';
 import { getChartTheme, chartTooltipStyle } from '../utils/chart-theme';
 import { trackRecentBirim } from '../lib/birim-prefs';
+import { FIREBASE_AUTH_READY_EVENT } from '../lib/firebase-auth-bridge';
 import { getUserEmailMap } from '../services/users-service';
 import {
   Calendar, Filter, TrendingUp, Users, Activity, BarChart3, PieChart as PieIcon,
@@ -142,7 +143,12 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     fetchData();
     const unsubscribe = db.subscribe(() => fetchData());
-    return () => unsubscribe();
+    const onReady = () => fetchData();
+    window.addEventListener(FIREBASE_AUTH_READY_EVENT, onReady);
+    return () => {
+      unsubscribe();
+      window.removeEventListener(FIREBASE_AUTH_READY_EVENT, onReady);
+    };
   }, [dateRange, selectedBirim, birimler]);
 
   // Kilit (kesinleşen gün) durumu — yalnızca kesinleştirme yetkisi olanlar için

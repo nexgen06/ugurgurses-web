@@ -3,8 +3,6 @@
  * Kapalı ayda veri girişi engellenir; tüm günler toplu kilitlenir. Yalnızca admin açar.
  */
 
-import { getFirebaseFirestore } from '../firebase';
-import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../db';
 import { lockDocId } from '../firestore-db';
 import { writeAuditLog } from './audit-service';
@@ -28,9 +26,8 @@ export function monthKeyFromDate(isoDate: string): string {
 
 export async function isAyKapali(yyyyMm: string): Promise<boolean> {
   try {
-    const dbf = getFirebaseFirestore();
-    const snap = await getDoc(doc(dbf, COLLECTION, yyyyMm));
-    return snap.exists();
+    const { data } = await db.collection(COLLECTION).getById(yyyyMm);
+    return Boolean(data);
   } catch {
     return false;
   }
@@ -38,15 +35,13 @@ export async function isAyKapali(yyyyMm: string): Promise<boolean> {
 
 export async function getAyKapanis(yyyyMm: string): Promise<AyKapanis | null> {
   try {
-    const dbf = getFirebaseFirestore();
-    const snap = await getDoc(doc(dbf, COLLECTION, yyyyMm));
-    if (!snap.exists()) return null;
-    const d = snap.data();
+    const { data, error } = await db.collection(COLLECTION).getById(yyyyMm);
+    if (error || !data) return null;
     return {
       ay: yyyyMm,
-      kapandi_at: (d.kapandi_at as string) || '',
-      kapandi_by: d.kapandi_by as string | undefined,
-      otomatik: d.otomatik === true
+      kapandi_at: (data.kapandi_at as string) || '',
+      kapandi_by: data.kapandi_by as string | undefined,
+      otomatik: data.otomatik === true
     };
   } catch {
     return null;
@@ -60,19 +55,17 @@ async function lockAllDaysInMonth(yyyyMm: string, actorUid: string, actorEmail?:
   const start = `${yyyyMm}-01`;
   const end = `${yyyyMm}-${String(lastDay).padStart(2, '0')}`;
   const birimler = await getBirimler();
-  const col = db.collection('islem_kayitlari') as { find: (q: object) => Promise<{ data: { kayit_tarihi?: string; birim?: string }[] }> };
-  const kesinCol = db.collection('kesinlesen_gunler') as {
-    existsById: (id: string) => Promise<boolean>;
-    setById: (id: string, doc: object) => Promise<{ error: string | null }>;
-  };
+  const col = db.collection('islem_kayitlari');
+  const kesinCol = db.collection('kesinlesen_gunler');
 
   const { data: records } = await col.find({ kayit_tarihi: { $gte: start, $lte: end } });
   const pairs = new Map<string, { tarih: string; birim: string }>();
   (records || []).forEach((r) => {
-    if (!r.kayit_tarihi || !r.birim) return;
-    if (!birimler.includes(r.birim)) return;
-    const id = lockDocId(r.kayit_tarihi, r.birim);
-    pairs.set(id, { tarih: r.kayit_tarihi, birim: r.birim });
+    const row = r as { kayit_tarihi?: string; birim?: string };
+    if (!row.kayit_tarihi || !row.birim) return;
+    if (!birimler.includes(row.birim)) return;
+    const id = lockDocId(row.kayit_tarihi, row.birim);
+    pairs.set(id, { tarih: row.kayit_tarihi, birim: row.birim });
   });
 
   let n = 0;
@@ -112,13 +105,13 @@ export async function closeAy(
     if (yyyyMm < TAVIM_BASLANGIC_TARIH.slice(0, 7)) {
       return { error: 'Geçersiz ay', lockedDays: 0 };
     }
-    const dbf = getFirebaseFirestore();
-    await setDoc(doc(dbf, COLLECTION, yyyyMm), {
+    const { error: closeErr } = await db.collection(COLLECTION).setById(yyyyMm, {
       ay: yyyyMm,
       kapandi_at: new Date().toISOString(),
       kapandi_by: actorUid,
       otomatik
     });
+    if (closeErr) return { error: closeErr, lockedDays: 0 };
     const lockedDays = await lockAllDaysInMonth(yyyyMm, actorUid, actorEmail);
     await writeAuditLog({
       action: 'ay_kapandi',
@@ -128,7 +121,6 @@ export async function closeAy(
       kayit_tarihi: `${yyyyMm}-01`,
       details: { ay: yyyyMm, otomatik, lockedDays }
     });
-    if (typeof window !== 'undefined') window.dispatchEvent(new Event('firestore_data_change'));
     return { error: null, lockedDays };
   } catch (e: unknown) {
     return { error: e instanceof Error ? e.message : 'Ay kapatılamadı', lockedDays: 0 };
@@ -137,8 +129,8 @@ export async function closeAy(
 
 export async function openAy(yyyyMm: string, actorUid: string, actorEmail?: string): Promise<{ error: string | null }> {
   try {
-    const dbf = getFirebaseFirestore();
-    await deleteDoc(doc(dbf, COLLECTION, yyyyMm));
+    const { success, error } = await db.collection(COLLECTION).deleteById(yyyyMm);
+    if (!success) return { error: error || 'Ay açılamadı' };
     await writeAuditLog({
       action: 'ay_acildi',
       actorUid,
@@ -147,7 +139,6 @@ export async function openAy(yyyyMm: string, actorUid: string, actorEmail?: stri
       kayit_tarihi: `${yyyyMm}-01`,
       details: { ay: yyyyMm }
     });
-    if (typeof window !== 'undefined') window.dispatchEvent(new Event('firestore_data_change'));
     return { error: null };
   } catch (e: unknown) {
     return { error: e instanceof Error ? e.message : 'Ay açılamadı' };
@@ -162,7 +153,6 @@ export async function autoClosePreviousMonthIfNeeded(user: SessionUser | null): 
   const yyyyMm = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, '0')}`;
   if (yyyyMm < TAVIM_BASLANGIC_TARIH.slice(0, 7)) return null;
   if (await isAyKapali(yyyyMm)) return null;
-  // Ayın en az 1. günündeyiz → önceki ay kapanabilir
   const { error } = await closeAy(yyyyMm, user.id, user.email, true);
   return error ? null : yyyyMm;
 }

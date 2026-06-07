@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hizmet Süresi Hesaplama</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -61,6 +62,10 @@
             border: 2px dashed #cbd5e1;
             margin-bottom: 1rem;
             transition: all 0.2s;
+        }
+
+        .quick-entry-row.has-unvan {
+            grid-template-columns: 2fr 1.4fr 1.4fr 1.6fr auto;
         }
 
         .quick-entry-row:focus-within {
@@ -304,7 +309,7 @@
                     <!-- Quick Entry Bar -->
                     <div class="quick-entry-row">
                         <div class="relative">
-                            <select id="quickServiceType"
+                            <select id="quickServiceType" onchange="onQuickServiceTypeChange()"
                                 class="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-lg appearance-none focus:ring-2 focus:ring-indigo-500 outline-none">
                                 <option value="current">Mevcut Kurum</option>
                                 <option value="public">Diğer Kamu</option>
@@ -327,12 +332,31 @@
                                 class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-600 px-2 py-1 rounded"
                                 title="Bugün">Bugün</button>
                         </div>
+                        <div id="quickServiceUnvanCell" class="relative hidden">
+                            <select id="quickServiceUnvanKapsamda" title="Ünvan Kapsamında"
+                                class="w-full pl-9 pr-3 py-2 bg-white border border-emerald-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="0">Ünvan Kapsamında: Seçilmedi (4/4 emeklilik)</option>
+                                <option value="1">Ünvan Kapsamında (3/4 memuriyet & yıllık izin)</option>
+                            </select>
+                            <div class="absolute left-3 top-2.5 text-emerald-600 pointer-events-none">
+                                <i class="fa-solid fa-industry"></i>
+                            </div>
+                        </div>
                         <button onclick="addServiceFromQuickEntry()"
                             class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2">
                             <i class="fa-solid fa-plus"></i>
                             <span class="hidden sm:inline">Ekle</span>
                             <span class="kbd-shortcut bg-indigo-500 border-indigo-400 text-white">Enter</span>
                         </button>
+                    </div>
+
+                    <!-- Hızlı giriş aralık önizleme: iki tarih girilince canlı toplam günü gösterir -->
+                    <div id="quickServiceRangePreview" class="hidden -mt-2 mb-4 flex items-center gap-2 text-sm bg-indigo-50 border border-indigo-200 rounded-lg px-3 py-2">
+                        <i class="fa-solid fa-calendar-day text-indigo-600"></i>
+                        <span class="text-slate-600">Bu aralık:</span>
+                        <span id="quickServiceRangeDays" class="font-bold text-indigo-700">—</span>
+                        <span class="text-slate-400">·</span>
+                        <span id="quickServiceRangeYMD" class="text-slate-700">—</span>
                     </div>
 
                     <div class="space-y-4 mb-6">
@@ -476,19 +500,6 @@
                             </div>
                         </div>
 
-                        <!-- Emekliliğe Esas -->
-                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-user-check text-green-600"></i>
-                                    <span class="font-semibold text-slate-700">Emekliliğe Esas</span>
-                                </div>
-                            </div>
-                            <div class="text-2xl font-bold text-slate-800" id="emeklilikEsas">
-                                0 Yıl, 0 Ay, 0 Gün
-                            </div>
-                        </div>
-
                         <!-- Yıllık İzne Esas -->
                         <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
                             <div class="flex items-center justify-between mb-2">
@@ -498,6 +509,19 @@
                                 </div>
                             </div>
                             <div class="text-2xl font-bold text-slate-800" id="yillikIzinEsas">
+                                0 Yıl, 0 Ay, 0 Gün
+                            </div>
+                        </div>
+
+                        <!-- Emekliliğe Esas -->
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-user-check text-green-600"></i>
+                                    <span class="font-semibold text-slate-700">Emekliliğe Esas</span>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-slate-800" id="emeklilikEsas">
                                 0 Yıl, 0 Ay, 0 Gün
                             </div>
                         </div>
@@ -522,6 +546,14 @@
                                 <span class="font-bold text-indigo-600 text-lg" id="netServiceDuration">0 Yıl, 0 Ay, 0
                                     Gün</span>
                             </div>
+                        </div>
+                        <div class="border-t border-slate-200 pt-3 mt-3">
+                            <button onclick="openPngReportPreview()"
+                                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2.5 rounded-lg font-semibold transition flex items-center justify-center gap-2 shadow-md">
+                                <i class="fa-solid fa-image"></i>
+                                <span>PNG Olarak Görüntüle / İndir</span>
+                            </button>
+                            <p class="text-[11px] text-slate-500 mt-1.5 text-center">Ayrıntılı rapor görüntüsü oluşturur</p>
                         </div>
                     </div>
                 </div>
@@ -689,7 +721,8 @@
                 color: serviceTypes[type].color,
                 startDate: today,
                 endDate: today,
-                isActive: type === 'current'
+                isActive: type === 'current',
+                unvanKapsamda: false
             };
 
             services.push(service);
@@ -705,7 +738,9 @@
                 yillikIzin: false
             },
             'military': {
-                memuriyet: true,
+                // Askerlik süresi memuriyete ve yıllık izne TAM yansır (oradan düşülmez),
+                // sadece emekliliğe esas süreden düşülür (emekliliğe yansımaz).
+                memuriyet: false,
                 emeklilik: true,
                 yillikIzin: false
             },
@@ -810,19 +845,38 @@
                             </div>
                         ` : ''}
                         ${service.type === 'private' ? `
+                            <div class="mt-3">
+                                <label class="text-xs font-bold text-slate-500 mb-1 block">Ünvan Kapsamında</label>
+                                <select onchange="updateService(${service.id}, 'unvanKapsamda', this.value === '1')"
+                                    class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+                                    <option value="0" ${!service.unvanKapsamda ? 'selected' : ''}>Seçilmedi (sadece emekliliğe esas - 4/4)</option>
+                                    <option value="1" ${service.unvanKapsamda ? 'selected' : ''}>Ünvan Kapsamında (3/4)</option>
+                                </select>
+                            </div>
                             <div class="mt-4 space-y-3">
                                 <div class="grid grid-cols-1 gap-2 text-sm">
                                     <div class="flex justify-between items-center text-slate-600">
                                         <span>Fiili çalışma</span>
                                         <span id="service-${service.id}-fiili" class="font-medium text-slate-800">—</span>
                                     </div>
-                                    <div class="rounded-lg border-2 border-emerald-400 bg-emerald-50 p-3">
-                                        <div class="text-xs font-bold text-emerald-800 mb-0.5">Kazanılan (3/4) — Memuriyete esas</div>
-                                        <div id="service-${service.id}-kazanilan" class="text-lg font-bold text-emerald-700">—</div>
-                                    </div>
-                                    <div class="flex justify-between items-center text-slate-500 text-xs">
-                                        <span>Sayılmayan (1/4)</span>
-                                        <span id="service-${service.id}-sayilmayan" class="font-medium">—</span>
+                                    ${service.unvanKapsamda ? `
+                                        <div class="rounded-lg border-2 border-emerald-400 bg-emerald-50 p-3">
+                                            <div class="text-xs font-bold text-emerald-800 mb-0.5">Kazanılan (3/4) — Memuriyet & Yıllık İzne esas</div>
+                                            <div id="service-${service.id}-kazanilan" class="text-lg font-bold text-emerald-700">—</div>
+                                        </div>
+                                        <div class="flex justify-between items-center text-slate-500 text-xs">
+                                            <span>Sayılmayan (1/4) — Memuriyet & Yıllık İzin</span>
+                                            <span id="service-${service.id}-sayilmayan" class="font-medium">—</span>
+                                        </div>
+                                    ` : `
+                                        <div class="rounded-lg border-2 border-slate-300 bg-slate-50 p-3">
+                                            <div class="text-xs font-bold text-slate-700 mb-0.5">Memuriyet & Yıllık İzne yansımıyor</div>
+                                            <div class="text-xs text-slate-500">"Ünvan Kapsamında (3/4)" seçilirse 3/4 yansıtılır</div>
+                                        </div>
+                                    `}
+                                    <div class="rounded-lg border-2 border-blue-400 bg-blue-50 p-3">
+                                        <div class="text-xs font-bold text-blue-800 mb-0.5">Emekliliğe esas (4/4) — Tamamı</div>
+                                        <div id="service-${service.id}-emeklilik" class="text-lg font-bold text-blue-700">—</div>
                                     </div>
                                 </div>
                             </div>
@@ -884,6 +938,12 @@
                                     class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-${deduction.color}-500 outline-none">
                             </div>
                         </div>
+                        ${deduction.type === 'military' ? `
+                            <div class="mb-3 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs text-amber-800">
+                                <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
+                                <span><strong>Askerlik kuralı:</strong> Memuriyete ve yıllık izne esas süreye <strong>tam yansır</strong> (oradan düşülmez), <strong>sadece</strong> emekliliğe esas süreden düşülür.</span>
+                            </div>
+                        ` : ''}
                         <!-- Kesinti Ayarları -->
                         <div class="bg-white rounded-lg p-3 border border-slate-200">
                             <div class="flex items-center gap-2 mb-2">
@@ -921,6 +981,9 @@
             const service = services.find(s => s.id === id);
             if (service) {
                 service[field] = value;
+                if (field === 'unvanKapsamda') {
+                    renderServices();
+                }
                 calculate();
             }
         }
@@ -998,86 +1061,83 @@
 
         // Ana hesaplama fonksiyonu (parametrelere göre: yıl bazı, bitiş dahil, yuvarlama)
         function calculate() {
-            let totalService = { years: 0, months: 0, days: 0 };
-            let totalDeduction = { years: 0, months: 0, days: 0 };
+            // Üç farklı taban: özel sektör katkısı kategoriye göre değişir
+            //  - Memuriyete esas:  Özel sektör SADECE "Ünvan Kapsamında" seçiliyse 3/4 katkıda bulunur, aksi halde 0.
+            //  - Yıllık izne esas: Memuriyet ile aynı kural.
+            //  - Emekliliğe esas:  Özel sektör HER ZAMAN sürenin tamamı (4/4) ile katkıda bulunur.
+            let memuriyetBase = { years: 0, months: 0, days: 0 };
+            let yillikIzinBase = { years: 0, months: 0, days: 0 };
+            let emeklilikBase = { years: 0, months: 0, days: 0 };
 
-            // Hizmet sürelerini topla
             services.forEach(service => {
                 const endDate = service.isActive ? new Date().toISOString().split('T')[0] : service.endDate;
                 const periodDays = getPeriodDays(service.startDate, endDate);
-                let diff;
 
                 if (service.type === 'private') {
-                    // Özel sektör: sadece 3/4'ü memuriyete esas sayılır
+                    const fullDays = periodDays;
                     const kazanilanDays = applyRounding(periodDays * 3 / 4);
                     const sayilmayanDays = periodDays - kazanilanDays;
-                    const fiiliYMD = daysToYMD(periodDays);
+                    const fiiliYMD = daysToYMD(fullDays);
                     const kazanilanYMD = daysToYMD(kazanilanDays);
                     const sayilmayanYMD = daysToYMD(sayilmayanDays);
+                    const emeklilikYMD = daysToYMD(fullDays);
+
                     const fmt = (o) => `${o.years} Yıl, ${o.months} Ay, ${o.days} Gün`;
                     const fiiliEl = document.getElementById(`service-${service.id}-fiili`);
                     const kazanilanEl = document.getElementById(`service-${service.id}-kazanilan`);
                     const sayilmayanEl = document.getElementById(`service-${service.id}-sayilmayan`);
+                    const emeklilikEl = document.getElementById(`service-${service.id}-emeklilik`);
                     if (fiiliEl) fiiliEl.textContent = fmt(fiiliYMD);
                     if (kazanilanEl) kazanilanEl.textContent = fmt(kazanilanYMD);
                     if (sayilmayanEl) sayilmayanEl.textContent = fmt(sayilmayanYMD);
-                    diff = kazanilanYMD;
+                    if (emeklilikEl) emeklilikEl.textContent = fmt(emeklilikYMD);
+
+                    // Emeklilik her zaman tamamını alır
+                    emeklilikBase = addDurations(emeklilikBase, emeklilikYMD);
+                    // Memuriyet ve yıllık izin sadece "Ünvan Kapsamında" seçiliyse 3/4 alır
+                    if (service.unvanKapsamda) {
+                        memuriyetBase = addDurations(memuriyetBase, kazanilanYMD);
+                        yillikIzinBase = addDurations(yillikIzinBase, kazanilanYMD);
+                    }
                 } else {
-                    diff = daysToYMD(periodDays);
+                    const diff = daysToYMD(periodDays);
+                    memuriyetBase = addDurations(memuriyetBase, diff);
+                    yillikIzinBase = addDurations(yillikIzinBase, diff);
+                    emeklilikBase = addDurations(emeklilikBase, diff);
                 }
-
-                totalService = addDurations(totalService, diff);
             });
 
-            // Kesintileri topla
+            // Kategori bazlı kesintileri hesapla
+            let memuriyetDeduction = { years: 0, months: 0, days: 0 };
+            let emeklilikDeduction = { years: 0, months: 0, days: 0 };
+            let izinDeduction = { years: 0, months: 0, days: 0 };
+            let totalDeduction = { years: 0, months: 0, days: 0 };
+
             deductions.forEach(deduction => {
-                const periodDays = getPeriodDays(deduction.startDate, deduction.endDate);
-                const diff = daysToYMD(periodDays);
+                const settings = deduction.settings || { memuriyet: true, emeklilik: true, yillikIzin: false };
+                const diff = daysToYMD(getPeriodDays(deduction.startDate, deduction.endDate));
                 totalDeduction = addDurations(totalDeduction, diff);
+                if (settings.memuriyet) memuriyetDeduction = addDurations(memuriyetDeduction, diff);
+                if (settings.emeklilik) emeklilikDeduction = addDurations(emeklilikDeduction, diff);
+                if (settings.yillikIzin) izinDeduction = addDurations(izinDeduction, diff);
             });
 
-            // Net hizmet süresi
-            const netService = subtractDurations(totalService, totalDeduction);
-
-            // UI güncelle
+            // Net hizmet süresi: emeklilik tabanı (en kapsamlı) - tüm kesintiler
+            // Bu gösterge "fiili toplam hizmet süresi" anlamı taşır.
+            const netService = subtractDurations(emeklilikBase, totalDeduction);
             document.getElementById('totalYears').textContent = netService.years;
             document.getElementById('totalMonths').textContent = netService.months;
             document.getElementById('totalDays').textContent = netService.days;
 
-            // Kıdem esas detayları - Ayarlara göre hesapla
-            let memuriyetDeduction = { years: 0, months: 0, days: 0 };
-            deductions.forEach(deduction => {
-                const settings = deduction.settings || { memuriyet: true, emeklilik: true, yillikIzin: false };
-                if (settings.memuriyet) {
-                    const diff = daysToYMD(getPeriodDays(deduction.startDate, deduction.endDate));
-                    memuriyetDeduction = addDurations(memuriyetDeduction, diff);
-                }
-            });
-            const memuriyetEsas = subtractDurations(totalService, memuriyetDeduction);
+            const memuriyetEsas = subtractDurations(memuriyetBase, memuriyetDeduction);
             document.getElementById('memuriyetEsas').textContent =
                 `${memuriyetEsas.years} Yıl, ${memuriyetEsas.months} Ay, ${memuriyetEsas.days} Gün`;
 
-            let emeklilikDeduction = { years: 0, months: 0, days: 0 };
-            deductions.forEach(deduction => {
-                const settings = deduction.settings || { memuriyet: true, emeklilik: true, yillikIzin: false };
-                if (settings.emeklilik) {
-                    const diff = daysToYMD(getPeriodDays(deduction.startDate, deduction.endDate));
-                    emeklilikDeduction = addDurations(emeklilikDeduction, diff);
-                }
-            });
-            const emeklilikEsas = subtractDurations(totalService, emeklilikDeduction);
+            const emeklilikEsas = subtractDurations(emeklilikBase, emeklilikDeduction);
             document.getElementById('emeklilikEsas').textContent =
                 `${emeklilikEsas.years} Yıl, ${emeklilikEsas.months} Ay, ${emeklilikEsas.days} Gün`;
 
-            let izinDeduction = { years: 0, months: 0, days: 0 };
-            deductions.forEach(deduction => {
-                const settings = deduction.settings || { memuriyet: true, emeklilik: true, yillikIzin: false };
-                if (settings.yillikIzin) {
-                    const diff = daysToYMD(getPeriodDays(deduction.startDate, deduction.endDate));
-                    izinDeduction = addDurations(izinDeduction, diff);
-                }
-            });
-            const yillikIzinEsas = subtractDurations(totalService, izinDeduction);
+            const yillikIzinEsas = subtractDurations(yillikIzinBase, izinDeduction);
             document.getElementById('yillikIzinEsas').textContent =
                 `${yillikIzinEsas.years} Yıl, ${yillikIzinEsas.months} Ay, ${yillikIzinEsas.days} Gün`;
 
@@ -1200,6 +1260,7 @@
             if (type === 'service') {
                 if (preset === 'today') {
                     document.getElementById('quickServiceEnd').value = date;
+                    updateQuickServiceRangePreview();
                 }
             }
         }
@@ -1223,6 +1284,7 @@
             endDate.setDate(endDate.getDate() - 1);
 
             document.getElementById(endInputId).value = endDate.toISOString().split('T')[0];
+            if (type === 'service') updateQuickServiceRangePreview();
         }
 
         function handleQuickEntryKey(event, type) {
@@ -1303,6 +1365,11 @@
                 'public': { label: 'Diğer Kamu', icon: 'landmark', color: 'purple' }
             };
 
+            const unvanKapsamdaSelect = document.getElementById('quickServiceUnvanKapsamda');
+            const unvanKapsamda = (type === 'private' && unvanKapsamdaSelect)
+                ? unvanKapsamdaSelect.value === '1'
+                : false;
+
             const service = {
                 id: serviceIdCounter++,
                 type: type,
@@ -1311,7 +1378,8 @@
                 color: serviceTypes[type].color,
                 startDate: startStr,
                 endDate: endStr,
-                isActive: false // Quick entry additions are usually past records
+                isActive: false, // Quick entry additions are usually past records
+                unvanKapsamda: unvanKapsamda
             };
 
             services.push(service);
@@ -1321,6 +1389,8 @@
             // Reset inputs and focus back to start date
             document.getElementById('quickServiceStart').value = '';
             document.getElementById('quickServiceEnd').value = '';
+            if (unvanKapsamdaSelect) unvanKapsamdaSelect.value = '0';
+            updateQuickServiceRangePreview();
             document.getElementById('quickServiceStart').focus();
 
             // Visual feedback
@@ -1332,6 +1402,316 @@
                 setTimeout(() => {
                     lastItem.style.backgroundColor = originalBg;
                 }, 500);
+            }
+        }
+
+        // ============================================
+        // PNG RAPOR ÜRETİMİ
+        // ============================================
+
+        // Tarihi okunabilir formata çevir (gg.aa.yyyy)
+        function formatDateTR(isoStr) {
+            if (!isoStr) return '—';
+            const parts = isoStr.split('-');
+            if (parts.length !== 3) return isoStr;
+            return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+
+        // Y/A/G formatlama
+        function fmtYMD(o) {
+            return `${o.years} Yıl, ${o.months} Ay, ${o.days} Gün`;
+        }
+
+        // Rapor şablonunu güncel verilerle oluştur
+        function buildPngReportHtml() {
+            const now = new Date();
+            const reportDate = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            const yearBaseLabel = calcParams.yearBase === 360 ? '360 gün (klasik: ay 30 gün)' : '365 gün (gerçek takvim)';
+            const endInclusiveLabel = calcParams.endDateInclusive ? 'Evet (bitiş tarihi süreye dahil)' : 'Hayır';
+            const roundingLabels = { floor: 'Aşağı yuvarla', ceil: 'Yukarı yuvarla', round: 'En yakına yuvarla' };
+            const roundingLabel = roundingLabels[calcParams.roundingMethod] || calcParams.roundingMethod;
+
+            // Hizmetler tablosu
+            let servicesRows = '';
+            if (services.length === 0) {
+                servicesRows = `<tr><td colspan="6" style="padding:16px; text-align:center; color:#94a3b8; font-style:italic;">Henüz hizmet kaydı yok</td></tr>`;
+            } else {
+                services.forEach((service, idx) => {
+                    const endDate = service.isActive ? new Date().toISOString().split('T')[0] : service.endDate;
+                    const periodDays = getPeriodDays(service.startDate, endDate);
+                    let durationCell = '';
+                    let noteCell = '';
+
+                    if (service.type === 'private') {
+                        const fiili = daysToYMD(periodDays);
+                        const kazanilan = daysToYMD(applyRounding(periodDays * 3 / 4));
+                        const emek = daysToYMD(periodDays);
+                        durationCell = `${periodDays} gün<br><span style="font-size:11px; color:#64748b;">Fiili: ${fmtYMD(fiili)}</span>`;
+                        noteCell = service.unvanKapsamda
+                            ? `<div style="color:#047857;"><strong>Ünvan Kapsamında (3/4)</strong></div>
+                               <div style="font-size:11px; color:#64748b;">Mem./Yıl.İzin: ${fmtYMD(kazanilan)}</div>
+                               <div style="font-size:11px; color:#64748b;">Emeklilik (4/4): ${fmtYMD(emek)}</div>`
+                            : `<div style="color:#475569;">Sadece Emekliliğe esas</div>
+                               <div style="font-size:11px; color:#64748b;">Emeklilik (4/4): ${fmtYMD(emek)}</div>`;
+                    } else {
+                        const ymd = daysToYMD(periodDays);
+                        durationCell = `${periodDays} gün<br><span style="font-size:11px; color:#64748b;">${fmtYMD(ymd)}</span>`;
+                        if (service.type === 'current' && service.isActive) {
+                            noteCell = '<span style="color:#2563eb;">Devam ediyor</span>';
+                        } else {
+                            noteCell = '—';
+                        }
+                    }
+
+                    servicesRows += `
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:8px 10px; font-size:12px; color:#64748b;">${idx + 1}</td>
+                            <td style="padding:8px 10px; font-size:13px; font-weight:600;">${service.label}</td>
+                            <td style="padding:8px 10px; font-size:12px;">${formatDateTR(service.startDate)}</td>
+                            <td style="padding:8px 10px; font-size:12px;">${service.isActive ? formatDateTR(new Date().toISOString().split('T')[0]) + ' (bugün)' : formatDateTR(service.endDate)}</td>
+                            <td style="padding:8px 10px; font-size:12px;">${durationCell}</td>
+                            <td style="padding:8px 10px; font-size:12px;">${noteCell}</td>
+                        </tr>`;
+                });
+            }
+
+            // Kesintiler tablosu
+            let deductionsRows = '';
+            if (deductions.length === 0) {
+                deductionsRows = `<tr><td colspan="6" style="padding:16px; text-align:center; color:#94a3b8; font-style:italic;">Kesinti kaydı yok</td></tr>`;
+            } else {
+                deductions.forEach((deduction, idx) => {
+                    const periodDays = getPeriodDays(deduction.startDate, deduction.endDate);
+                    const ymd = daysToYMD(periodDays);
+                    const settings = deduction.settings || { memuriyet: true, emeklilik: true, yillikIzin: false };
+                    const dusulen = [
+                        settings.memuriyet ? 'Memuriyet' : null,
+                        settings.emeklilik ? 'Emeklilik' : null,
+                        settings.yillikIzin ? 'Yıllık İzin' : null
+                    ].filter(Boolean);
+                    const dusulenText = dusulen.length ? dusulen.join(', ') : '—';
+
+                    deductionsRows += `
+                        <tr style="border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:8px 10px; font-size:12px; color:#64748b;">${idx + 1}</td>
+                            <td style="padding:8px 10px; font-size:13px; font-weight:600;">${deduction.label}</td>
+                            <td style="padding:8px 10px; font-size:12px;">${formatDateTR(deduction.startDate)}</td>
+                            <td style="padding:8px 10px; font-size:12px;">${formatDateTR(deduction.endDate)}</td>
+                            <td style="padding:8px 10px; font-size:12px;">${periodDays} gün<br><span style="font-size:11px; color:#64748b;">${fmtYMD(ymd)}</span></td>
+                            <td style="padding:8px 10px; font-size:12px; color:#b91c1c;">${dusulenText}</td>
+                        </tr>`;
+                });
+            }
+
+            // Hesaplama sonuçları (mevcut DOM'dan oku)
+            const memEsas = document.getElementById('memuriyetEsas').textContent.trim();
+            const emkEsas = document.getElementById('emeklilikEsas').textContent.trim();
+            const yilEsas = document.getElementById('yillikIzinEsas').textContent.trim();
+            const netDur = document.getElementById('netServiceDuration').textContent.trim();
+
+            return `
+                <div style="background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%); color:white; padding:20px 24px; border-radius:12px; margin-bottom:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                        <div>
+                            <div style="font-size:11px; letter-spacing:1px; opacity:0.85; text-transform:uppercase;">Hizmet Süresi Hesaplama</div>
+                            <div style="font-size:24px; font-weight:700; margin-top:4px;">Ayrıntılı Rapor</div>
+                        </div>
+                        <div style="font-size:12px; opacity:0.9; text-align:right;">
+                            <div>Oluşturulma:</div>
+                            <div style="font-weight:600;">${reportDate}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px;">
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+                        <div style="font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Yıl Bazı</div>
+                        <div style="font-size:13px; font-weight:600; margin-top:2px; color:#0f172a;">${yearBaseLabel}</div>
+                    </div>
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+                        <div style="font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Bitiş Tarihi Dahil</div>
+                        <div style="font-size:13px; font-weight:600; margin-top:2px; color:#0f172a;">${endInclusiveLabel}</div>
+                    </div>
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px 12px;">
+                        <div style="font-size:10px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Yuvarlama</div>
+                        <div style="font-size:13px; font-weight:600; margin-top:2px; color:#0f172a;">${roundingLabel}</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <div style="width:4px; height:18px; background:#4f46e5; border-radius:2px;"></div>
+                        <h2 style="font-size:15px; font-weight:700; color:#0f172a; margin:0;">HİZMET KAYITLARI <span style="color:#64748b; font-weight:500;">(${services.length} adet)</span></h2>
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                        <thead>
+                            <tr style="background:#f1f5f9;">
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">#</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Tür</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Başlangıç</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Bitiş</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Süre</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Not / Yansıma</th>
+                            </tr>
+                        </thead>
+                        <tbody>${servicesRows}</tbody>
+                    </table>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <div style="width:4px; height:18px; background:#dc2626; border-radius:2px;"></div>
+                        <h2 style="font-size:15px; font-weight:700; color:#0f172a; margin:0;">KESİNTİLER <span style="color:#64748b; font-weight:500;">(${deductions.length} adet)</span></h2>
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;">
+                        <thead>
+                            <tr style="background:#f1f5f9;">
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">#</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Tür</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Başlangıç</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Bitiş</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Süre</th>
+                                <th style="padding:8px 10px; text-align:left; font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Düşülen Kategori</th>
+                            </tr>
+                        </thead>
+                        <tbody>${deductionsRows}</tbody>
+                    </table>
+                </div>
+
+                <div style="margin-bottom:8px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                        <div style="width:4px; height:18px; background:#059669; border-radius:2px;"></div>
+                        <h2 style="font-size:15px; font-weight:700; color:#0f172a; margin:0;">HESAPLAMA SONUÇLARI</h2>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px;">
+                        <div style="background:#eff6ff; border:1.5px solid #bfdbfe; border-radius:10px; padding:14px;">
+                            <div style="font-size:11px; color:#1e40af; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Memuriyete Esas</div>
+                            <div style="font-size:18px; font-weight:700; color:#1e3a8a;">${memEsas}</div>
+                        </div>
+                        <div style="background:#fff7ed; border:1.5px solid #fed7aa; border-radius:10px; padding:14px;">
+                            <div style="font-size:11px; color:#9a3412; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Yıllık İzne Esas</div>
+                            <div style="font-size:18px; font-weight:700; color:#7c2d12;">${yilEsas}</div>
+                        </div>
+                        <div style="background:#ecfdf5; border:1.5px solid #a7f3d0; border-radius:10px; padding:14px;">
+                            <div style="font-size:11px; color:#065f46; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Emekliliğe Esas</div>
+                            <div style="font-size:18px; font-weight:700; color:#064e3b;">${emkEsas}</div>
+                        </div>
+                    </div>
+                    <div style="background:linear-gradient(135deg,#eef2ff 0%,#faf5ff 100%); border:2px solid #c7d2fe; border-radius:10px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between;">
+                        <div style="font-size:13px; color:#3730a3; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Net Hizmet Süresi</div>
+                        <div style="font-size:20px; font-weight:800; color:#312e81;">${netDur}</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:16px; padding-top:12px; border-top:1px dashed #cbd5e1; font-size:10px; color:#94a3b8; text-align:center;">
+                    Bu rapor "Hizmet Süresi Hesaplama" uygulaması tarafından otomatik üretilmiştir. Sonuçlar bilgi amaçlıdır.
+                </div>
+            `;
+        }
+
+        // Önizleme modalını aç ve PNG üret
+        let lastGeneratedPngDataUrl = null;
+        async function openPngReportPreview() {
+            const modal = document.getElementById('pngPreviewModal');
+            const loading = document.getElementById('pngPreviewLoading');
+            const container = document.getElementById('pngPreviewContainer');
+            const img = document.getElementById('pngPreviewImage');
+            const downloadBtn = document.getElementById('pngDownloadBtn');
+            const reportEl = document.getElementById('pngReport');
+            if (!modal || !reportEl) return;
+
+            // Reset
+            loading.classList.remove('hidden');
+            container.classList.add('hidden');
+            downloadBtn.disabled = true;
+            modal.classList.remove('hidden');
+
+            // Şablonu doldur
+            reportEl.innerHTML = buildPngReportHtml();
+
+            try {
+                if (typeof html2canvas !== 'function') {
+                    throw new Error('html2canvas kütüphanesi yüklenemedi.');
+                }
+                // html2canvas için kısa gecikme (font yükleme için)
+                await new Promise(r => setTimeout(r, 50));
+                const canvas = await html2canvas(reportEl, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
+                lastGeneratedPngDataUrl = canvas.toDataURL('image/png');
+                img.src = lastGeneratedPngDataUrl;
+                loading.classList.add('hidden');
+                container.classList.remove('hidden');
+                downloadBtn.disabled = false;
+            } catch (err) {
+                console.error('PNG oluşturma hatası:', err);
+                loading.innerHTML = `
+                    <div style="color:#b91c1c; text-align:center;">
+                        <i class="fa-solid fa-circle-exclamation text-4xl mb-3"></i>
+                        <p>Rapor oluşturulamadı.</p>
+                        <p style="font-size:12px; margin-top:6px; color:#64748b;">${err.message || ''}</p>
+                    </div>`;
+            }
+        }
+
+        function closePngPreview() {
+            const modal = document.getElementById('pngPreviewModal');
+            if (modal) modal.classList.add('hidden');
+            const reportEl = document.getElementById('pngReport');
+            if (reportEl) reportEl.innerHTML = '';
+        }
+
+        function downloadPngFromPreview() {
+            if (!lastGeneratedPngDataUrl) return;
+            const now = new Date();
+            const ts = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+            const link = document.createElement('a');
+            link.href = lastGeneratedPngDataUrl;
+            link.download = `hizmet-suresi-raporu-${ts}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Hızlı giriş tarih aralığı önizlemesini güncelle (iki tarih de geçerliyse görünür)
+        function updateQuickServiceRangePreview() {
+            const startEl = document.getElementById('quickServiceStart');
+            const endEl = document.getElementById('quickServiceEnd');
+            const previewEl = document.getElementById('quickServiceRangePreview');
+            const daysEl = document.getElementById('quickServiceRangeDays');
+            const ymdEl = document.getElementById('quickServiceRangeYMD');
+            if (!startEl || !endEl || !previewEl) return;
+            const start = startEl.value;
+            const end = endEl.value;
+            if (!start || !end || new Date(end) < new Date(start)) {
+                previewEl.classList.add('hidden');
+                return;
+            }
+            const days = getPeriodDays(start, end);
+            const ymd = daysToYMD(days);
+            if (daysEl) daysEl.textContent = `${days} gün`;
+            if (ymdEl) ymdEl.textContent = `${ymd.years} Yıl, ${ymd.months} Ay, ${ymd.days} Gün`;
+            previewEl.classList.remove('hidden');
+        }
+
+        // Hızlı giriş tipi değiştiğinde "Ünvan Kapsamında" hücresinin görünürlüğünü ayarla
+        function onQuickServiceTypeChange() {
+            const typeSelect = document.getElementById('quickServiceType');
+            const unvanCell = document.getElementById('quickServiceUnvanCell');
+            const unvanSelect = document.getElementById('quickServiceUnvanKapsamda');
+            if (!typeSelect || !unvanCell) return;
+            const row = typeSelect.closest('.quick-entry-row');
+            if (typeSelect.value === 'private') {
+                unvanCell.classList.remove('hidden');
+                if (row) row.classList.add('has-unvan');
+            } else {
+                unvanCell.classList.add('hidden');
+                if (row) row.classList.remove('has-unvan');
+                if (unvanSelect) unvanSelect.value = '0';
             }
         }
 
@@ -1383,11 +1763,61 @@
 
             calculate();
             renderDayConverter();
+            onQuickServiceTypeChange();
+            // Hızlı giriş tarih aralığı önizleme dinleyicileri
+            const qsStart = document.getElementById('quickServiceStart');
+            const qsEnd = document.getElementById('quickServiceEnd');
+            if (qsStart) qsStart.addEventListener('change', updateQuickServiceRangePreview);
+            if (qsEnd) qsEnd.addEventListener('change', updateQuickServiceRangePreview);
             // Focus on quick entry start date
             const startInput = document.getElementById('quickServiceStart');
             if (startInput) startInput.focus();
         });
     </script>
+
+    <!-- ============================================ -->
+    <!-- PNG RAPOR ŞABLONU (ekran dışında, html2canvas için)  -->
+    <!-- ============================================ -->
+    <div id="pngReport" style="position: fixed; left: -99999px; top: 0; width: 900px; background: #ffffff; padding: 32px; font-family: 'Inter', sans-serif; color: #0f172a;"></div>
+
+    <!-- ============================================ -->
+    <!-- PNG ÖNİZLEME MODALI -->
+    <!-- ============================================ -->
+    <div id="pngPreviewModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm overflow-y-auto" onclick="closePngPreview()">
+        <div class="min-h-full flex items-start justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8" onclick="event.stopPropagation()">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-2xl">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-indigo-100 p-2 rounded-lg text-indigo-600">
+                            <i class="fa-solid fa-image text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">Hizmet Süresi Raporu - PNG Önizleme</h3>
+                    </div>
+                    <button onclick="closePngPreview()" class="text-slate-400 hover:text-slate-700 text-2xl leading-none px-2">&times;</button>
+                </div>
+                <div class="px-6 py-4">
+                    <div id="pngPreviewLoading" class="flex flex-col items-center justify-center py-16 text-slate-500">
+                        <i class="fa-solid fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+                        <p>Rapor görüntüsü oluşturuluyor...</p>
+                    </div>
+                    <div id="pngPreviewContainer" class="hidden border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
+                        <img id="pngPreviewImage" class="w-full h-auto block" alt="Hizmet Süresi Raporu Önizleme">
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 rounded-b-2xl flex flex-wrap items-center justify-end gap-2">
+                    <button onclick="closePngPreview()"
+                        class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold transition">
+                        Kapat
+                    </button>
+                    <button id="pngDownloadBtn" onclick="downloadPngFromPreview()" disabled
+                        class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>PNG İndir</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

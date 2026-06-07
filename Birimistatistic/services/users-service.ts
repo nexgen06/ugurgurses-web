@@ -4,6 +4,8 @@
  */
 
 import { getFirebaseFirestore } from '../firebase';
+import { getSupabaseClient } from '../lib/supabase';
+import { getDataProviderMode } from '../lib/data-provider';
 import { doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, collection } from 'firebase/firestore';
 import type { UserRole } from '../types';
 
@@ -39,6 +41,17 @@ export interface UserProfileRoleFields {
 /** config/admins dokümanından admin UID listesini al (alan: uids, array) */
 export async function getAdminUids(): Promise<string[]> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient()
+        .from('bi_config_admins')
+        .select('uids')
+        .eq('id', 'admins')
+        .maybeSingle();
+      if (error) throw error;
+      const uids = data?.uids;
+      if (!Array.isArray(uids)) return [];
+      return uids.filter((u: unknown) => typeof u === 'string');
+    }
     const db = getFirebaseFirestore();
     const ref = doc(db, CONFIG_ADMINS_PATH);
     const snap = await getDoc(ref);
@@ -69,6 +82,15 @@ function parseProfileData(data: Record<string, unknown> | undefined): UserProfil
 /** users/{uid} dokümanını oku; yoksa varsayılan döndür */
 export async function fetchUserProfile(uid: string): Promise<UserProfileRoleFields> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient()
+        .from('bi_users')
+        .select('role, birimler, ad, soyad, profil_tamamlandi')
+        .eq('firebase_uid', uid)
+        .maybeSingle();
+      if (error) throw error;
+      return parseProfileData(data as Record<string, unknown> | undefined);
+    }
     const db = getFirebaseFirestore();
     const ref = doc(db, USERS_COLLECTION, uid);
     const snap = await getDoc(ref);
@@ -80,20 +102,54 @@ export async function fetchUserProfile(uid: string): Promise<UserProfileRoleFiel
 
 /** İlk girişte kullanıcı dokümanı yoksa oluştur (kendi dokümanına yazma yetkisi gerekir) */
 export async function ensureUserDoc(uid: string, email: string): Promise<void> {
-  const db = getFirebaseFirestore();
-  const ref = doc(db, USERS_COLLECTION, uid);
-  const snap = await getDoc(ref);
-  if (snap.exists()) return;
-  await setDoc(ref, {
-    email: email || '',
-    role: DEFAULT_ROLE,
-    birimler: []
-  });
+  try {
+    if (getDataProviderMode() === 'supabase') {
+      const sb = getSupabaseClient();
+      const { data } = await sb.from('bi_users').select('firebase_uid').eq('firebase_uid', uid).maybeSingle();
+      if (data) return;
+      const { error } = await sb.from('bi_users').insert({
+        firebase_uid: uid,
+        email: email || '',
+        role: DEFAULT_ROLE,
+        birimler: []
+      });
+      if (error) console.warn('ensureUserDoc:', error.message);
+      return;
+    }
+    const db = getFirebaseFirestore();
+    const ref = doc(db, USERS_COLLECTION, uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) return;
+    await setDoc(ref, {
+      email: email || '',
+      role: DEFAULT_ROLE,
+      birimler: []
+    });
+  } catch (e) {
+    console.warn('ensureUserDoc:', e);
+  }
 }
 
 /** Kullanıcı profillerini listele (admin: tümü; diğerleri: ortak birimdeki kayıtlar — Firestore kuralları) */
 export async function listUserProfiles(): Promise<{ data: UserProfile[]; error: string | null }> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient().from('bi_users').select('*');
+      if (error) throw error;
+      const rows: UserProfile[] = (data || []).map((row) => {
+        const parsed = parseProfileData(row as Record<string, unknown>);
+        return {
+          uid: row.firebase_uid,
+          email: row.email || '',
+          role: parsed.role,
+          birimler: parsed.birimler,
+          ad: parsed.ad,
+          soyad: parsed.soyad,
+          profil_tamamlandi: parsed.profil_tamamlandi
+        };
+      });
+      return { data: rows, error: null };
+    }
     const db = getFirebaseFirestore();
     const colRef = collection(db, USERS_COLLECTION);
     const snapshot = await getDocs(colRef);
@@ -119,6 +175,17 @@ export async function listUserProfiles(): Promise<{ data: UserProfile[]; error: 
 /** user_id -> e-posta eşlemesi (raporlarda kişi adı göstermek için). */
 export async function getUserEmailMap(): Promise<Record<string, string>> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { data, error } = await getSupabaseClient()
+        .from('bi_users')
+        .select('firebase_uid, email');
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      (data || []).forEach((row) => {
+        map[row.firebase_uid] = row.email || row.firebase_uid;
+      });
+      return map;
+    }
     const db = getFirebaseFirestore();
     const colRef = collection(db, USERS_COLLECTION);
     const snapshot = await getDocs(colRef);
@@ -147,6 +214,24 @@ export async function completeUserProfile(
   }
   try {
     await ensureUserDoc(uid, email);
+    if (getDataProviderMode() === 'supabase') {
+      const sb = getSupabaseClient();
+      const now = new Date().toISOString();
+      const patch = {
+        ad: trimmedAd,
+        soyad: trimmedSoyad,
+        profil_tamamlandi: true,
+        updated_at: now
+      };
+      const { error: userErr } = await sb.from('bi_users').update(patch).eq('firebase_uid', uid);
+      if (userErr) return { error: userErr.message };
+      const { data: session } = await sb.auth.getSession();
+      const authId = session.session?.user?.id;
+      if (authId) {
+        await sb.from('bi_profiles').update(patch).eq('id', authId);
+      }
+      return { error: null };
+    }
     const db = getFirebaseFirestore();
     const ref = doc(db, USERS_COLLECTION, uid);
     const snap = await getDoc(ref);
@@ -167,7 +252,7 @@ export async function completeUserProfile(
     if (code === 'permission-denied') {
       return {
         error:
-          'Kayıt izni reddedildi. Firebase Console → Firestore → Rules bölümüne projedeki firestore.rules dosyasını yapıştırıp Yayınla dediğinizden emin olun.'
+          'Firestore oturumu kurulamadı. Çıkış yapıp tekrar giriş yapın; sorun devam ederse sayfayı yenileyin.'
       };
     }
     return { error: e?.message || 'Profil kaydedilemedi' };
@@ -177,6 +262,10 @@ export async function completeUserProfile(
 /** Firestore users/{uid} profilini kaldır (yalnızca admin). Auth hesabı ayrıca Console’dan silinmelidir. */
 export async function deleteUserProfile(uid: string): Promise<{ error: string | null }> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { error } = await getSupabaseClient().from('bi_users').delete().eq('firebase_uid', uid);
+      return { error: error?.message || null };
+    }
     const db = getFirebaseFirestore();
     const ref = doc(db, USERS_COLLECTION, uid);
     await deleteDoc(ref);
@@ -193,6 +282,17 @@ export async function deleteUserProfile(uid: string): Promise<{ error: string | 
 /** Kullanıcı rol ve birimlerini güncelle (sadece admin yetkisi ile) */
 export async function updateUserProfile(uid: string, profile: { role: UserRole; birimler: string[] }): Promise<{ error: string | null }> {
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const { error } = await getSupabaseClient()
+        .from('bi_users')
+        .update({
+          role: profile.role,
+          birimler: profile.birimler,
+          updated_at: new Date().toISOString()
+        })
+        .eq('firebase_uid', uid);
+      return { error: error?.message || null };
+    }
     const db = getFirebaseFirestore();
     const ref = doc(db, USERS_COLLECTION, uid);
     await setDoc(ref, { role: profile.role, birimler: profile.birimler }, { merge: true });

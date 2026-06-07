@@ -159,6 +159,25 @@ a {
         display: block;
     }
 
+    .nav-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 1001;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+    }
+
+    .nav-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    body.nav-open {
+        overflow: hidden;
+    }
+
     .nav-links {
         position: fixed;
         top: 0;
@@ -176,26 +195,11 @@ a {
         transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: -10px 0 40px rgba(0,0,0,0.5);
         gap: 32px;
+        z-index: 1002;
     }
 
     .nav-links.active {
         right: 0;
-    }
-
-    .nav-links::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0,0,0,0.5);
-        z-index: -1;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.4s ease;
-        transform: translateX(-100%); /* links'in parenti değil, o yüzden bu trick çalışmaz, JS ile overlay eklemek daha iyi yada links içinde pseudo element */
-        /* Basitlik için sadece menü arkaplanı kalsın */
     }
 
     .nav-item {
@@ -556,41 +560,8 @@ a {
     z-index: 4;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 24px;
+    justify-content: center;
     padding: 20px 0 28px;
-    flex-wrap: wrap;
-}
-
-.hero-quick-links {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.hero-quick-links a {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.hero-quick-links a:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(14, 165, 233, 0.4);
-    color: white;
-}
-
-.hero-quick-links a i {
-    font-size: 0.85rem;
-    opacity: 0.9;
 }
 
 .hero-scroll-hint {
@@ -848,71 +819,6 @@ a {
     text-transform: uppercase;
     color: var(--primary);
     margin-bottom: 16px;
-}
-
-/* Değer – split layout */
-.section-value-bento .bento-value {
-    display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 64px;
-    align-items: center;
-}
-
-.bento-value-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 20px;
-    color: var(--blue-deep);
-    letter-spacing: -0.02em;
-}
-
-.value-highlight {
-    color: var(--primary);
-}
-
-.bento-value-desc {
-    font-size: 1.1rem;
-    color: var(--dark-light);
-    line-height: 1.7;
-    margin-bottom: 28px;
-    max-width: 520px;
-}
-
-.btn-value {
-    display: inline-block;
-    padding: 14px 28px;
-    background: var(--gradient-primary);
-    color: white;
-    font-weight: 600;
-    font-size: 0.95rem;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-}
-
-.btn-value:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
-}
-
-.bento-value-card {
-    aspect-ratio: 1;
-    max-height: 280px;
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 24px 56px rgba(12, 74, 110, 0.12), 0 0 0 1px rgba(14, 165, 233, 0.08);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    font-weight: 600;
-    color: var(--blue-deep);
-}
-
-.bento-value-card i {
-    font-size: 3rem;
-    color: var(--primary);
 }
 
 /* Projeler – sayfa ortasında animasyonlu yatay kartlar (tümü görünsün) */
@@ -1422,7 +1328,7 @@ body.user-logged-in .project-card-h:hover {
     box-shadow: 0 10px 30px rgba(14, 165, 233, 0.45);
 }
 
-/* Footer – referans: alt hızlı linkler */
+/* Footer */
 footer.footer {
     padding: 32px 10% 24px;
     text-align: center;
@@ -1430,21 +1336,17 @@ footer.footer {
     border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.footer-nav {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 24px;
-    margin-bottom: 20px;
+.footer-contact {
+    margin-bottom: 12px;
 }
 
-.footer-nav a {
+.footer-contact a {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.8);
     transition: color 0.2s ease;
 }
 
-.footer-nav a:hover {
+.footer-contact a:hover {
     color: var(--primary-light);
 }
 
@@ -1780,11 +1682,6 @@ footer.footer {
         padding: 14px 16px;
     }
 
-    .nav-links {
-        gap: 10px;
-        font-size: 0.8rem;
-    }
-
     .quick-login-panel {
         right: -10px;
         left: auto;
@@ -1825,41 +1722,7 @@ footer.footer {
     }
 
     .hero-utility {
-        flex-direction: column;
         padding: 16px 0 24px;
-        gap: 16px;
-    }
-
-    .hero-quick-links {
-        justify-content: center;
-    }
-
-    .hero-quick-links a {
-        padding: 10px 14px;
-        font-size: 0.85rem;
-    }
-
-    .middle-section {
-        padding: 48px 20px 56px;
-    }
-
-    .section-value-bento .bento-value {
-        grid-template-columns: 1fr;
-        gap: 40px;
-        text-align: center;
-    }
-
-    .bento-value-desc {
-        max-width: none;
-    }
-
-    .bento-value-card {
-        max-height: 220px;
-        margin: 0 auto;
-    }
-
-    .bento-value-title {
-        font-size: 1.9rem;
     }
 
     .projects-section-horizontal {
@@ -1918,10 +1781,6 @@ footer.footer {
 
     .cta-band-title {
         font-size: 2rem;
-    }
-
-    .footer-nav {
-        gap: 16px;
     }
 
     .modal-content {

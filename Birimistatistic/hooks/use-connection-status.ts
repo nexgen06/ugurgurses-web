@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { doc, getDocFromServer, onSnapshot } from 'firebase/firestore';
-import { getFirebaseFirestore } from '../firebase';
-import { isFirestoreConfigured } from '../firestore-db';
+import { onAuthStateChanged } from 'firebase/auth';
+import { getFirebaseFirestore, getFirebaseAuth } from '../firebase';
+import { getSupabaseClient } from '../lib/supabase';
+import { isDataLayerConfigured, getDataProviderMode } from '../lib/data-provider';
+import { FIREBASE_AUTH_READY_EVENT } from '../lib/firebase-auth-bridge';
 
 export type ConnectionStatus = 'checking' | 'stable' | 'offline' | 'limited';
 
@@ -68,7 +71,8 @@ function toView(
 
 /** Tarayıcı ağı + Firestore sunucu erişimini izler. */
 export function useConnectionStatus(active: boolean): ConnectionStatusView {
-  const configured = isFirestoreConfigured();
+  const configured = isDataLayerConfigured();
+  const supabaseData = getDataProviderMode() === 'supabase';
   const [browserOnline, setBrowserOnline] = useState(
     () => (typeof navigator !== 'undefined' ? navigator.onLine : true)
   );
@@ -93,56 +97,113 @@ export function useConnectionStatus(active: boolean): ConnectionStatusView {
     let unsub: (() => void) | undefined;
     let pingTimer: ReturnType<typeof setInterval> | undefined;
     let checkTimer: ReturnType<typeof setTimeout> | undefined;
+    let authUnsub: (() => void) | undefined;
+    let started = false;
 
     const markServerOk = () => setFirestoreServer(true);
     const markServerDown = () => setFirestoreServer(false);
 
-    const pingServer = async () => {
-      if (!navigator.onLine) return;
-      try {
-        const db = getFirebaseFirestore();
-        await getDocFromServer(doc(db, 'config', 'akis'));
-        markServerOk();
-      } catch {
-        markServerDown();
-      }
+    const stopMonitors = () => {
+      unsub?.();
+      unsub = undefined;
+      if (pingTimer) clearInterval(pingTimer);
+      pingTimer = undefined;
+      if (checkTimer) clearTimeout(checkTimer);
+      checkTimer = undefined;
     };
 
-    try {
-      const db = getFirebaseFirestore();
-      unsub = onSnapshot(
-        doc(db, 'config', 'akis'),
-        { includeMetadataChanges: true },
-        (snap) => {
-          if (!navigator.onLine) {
-            setFirestoreServer(false);
-            return;
+    const startMonitors = () => {
+      if (started) return;
+      started = true;
+
+      const pingServer = async () => {
+        if (!navigator.onLine) return;
+        try {
+          if (supabaseData) {
+            const { data: session } = await getSupabaseClient().auth.getSession();
+            if (!session.session) return;
+            const { error } = await getSupabaseClient()
+              .from('bi_config_akis')
+              .select('id')
+              .eq('id', 'akis')
+              .maybeSingle();
+            if (error) throw error;
+          } else {
+            if (!getFirebaseAuth().currentUser) return;
+            const db = getFirebaseFirestore();
+            await getDocFromServer(doc(db, 'config', 'akis'));
           }
-          if (!snap.metadata.fromCache) {
-            markServerOk();
-          }
-        },
-        () => markServerDown()
-      );
-    } catch {
-      setFirestoreServer(false);
+          markServerOk();
+        } catch {
+          markServerDown();
+        }
+      };
+
+      if (!supabaseData) {
+        try {
+          const db = getFirebaseFirestore();
+          unsub = onSnapshot(
+            doc(db, 'config', 'akis'),
+            { includeMetadataChanges: true },
+            (snap) => {
+              if (!navigator.onLine) {
+                setFirestoreServer(false);
+                return;
+              }
+              if (!getFirebaseAuth().currentUser) return;
+              if (!snap.metadata.fromCache) {
+                markServerOk();
+              }
+            },
+            () => markServerDown()
+          );
+        } catch {
+          setFirestoreServer(false);
+        }
+      }
+
+      void pingServer();
+      pingTimer = setInterval(() => void pingServer(), PING_MS);
+
+      checkTimer = setTimeout(() => {
+        setFirestoreServer((prev) => (prev === null ? false : prev));
+      }, CHECK_TIMEOUT_MS);
+    };
+
+    const onBridgeReady = () => {
+      if (getFirebaseAuth().currentUser) startMonitors();
+    };
+
+    if (supabaseData) {
+      void getSupabaseClient().auth.getSession().then(({ data }) => {
+        if (data.session) startMonitors();
+      });
+      const { data: authSub } = getSupabaseClient().auth.onAuthStateChange((_e, session) => {
+        if (session) startMonitors();
+      });
+      authUnsub = () => authSub.subscription.unsubscribe();
+    } else {
+      const auth = getFirebaseAuth();
+      if (auth.currentUser) {
+        startMonitors();
+      } else {
+        authUnsub = onAuthStateChanged(auth, (user) => {
+          if (user) startMonitors();
+        });
+      }
+      window.addEventListener(FIREBASE_AUTH_READY_EVENT, onBridgeReady);
     }
-
-    void pingServer();
-    pingTimer = setInterval(() => void pingServer(), PING_MS);
-
-    checkTimer = setTimeout(() => {
-      setFirestoreServer((prev) => (prev === null ? false : prev));
-    }, CHECK_TIMEOUT_MS);
 
     return () => {
       window.removeEventListener('online', onBrowserOnline);
       window.removeEventListener('offline', onBrowserOffline);
-      unsub?.();
-      if (pingTimer) clearInterval(pingTimer);
-      if (checkTimer) clearTimeout(checkTimer);
+      if (!supabaseData) {
+        window.removeEventListener(FIREBASE_AUTH_READY_EVENT, onBridgeReady);
+      }
+      authUnsub?.();
+      stopMonitors();
     };
-  }, [active, configured]);
+  }, [active, configured, supabaseData]);
 
   return toView(browserOnline, firestoreServer, configured);
 }

@@ -3,8 +3,11 @@
  */
 
 import { getFirebaseFirestore } from '../firebase';
+import { getSupabaseClient } from '../lib/supabase';
+import { getDataProviderMode } from '../lib/data-provider';
 import { collection, query, where, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { writeAuditLog } from './audit-service';
+import { DATA_CHANGE_EVENT } from '../lib/data-events';
 
 const COLLECTION = 'islem_kayitlari';
 const BATCH_SIZE = 400;
@@ -19,6 +22,32 @@ export async function transferUserRecords(
     return { count: 0, error: 'Geçersiz kullanıcı seçimi' };
   }
   try {
+    if (getDataProviderMode() === 'supabase') {
+      const sb = getSupabaseClient();
+      const { data: rows, error: readErr } = await sb
+        .from('bi_islem_kayitlari')
+        .select('id')
+        .eq('user_id', fromUid);
+      if (readErr) throw readErr;
+      if (!rows?.length) return { count: 0, error: null };
+      const now = new Date().toISOString();
+      const { error: updErr } = await sb
+        .from('bi_islem_kayitlari')
+        .update({ user_id: toUid, updated_at: now })
+        .eq('user_id', fromUid);
+      if (updErr) throw updErr;
+      const updated = rows.length;
+      await writeAuditLog({
+        action: 'veri_devir',
+        actorUid,
+        actorEmail,
+        birim: '*',
+        kayit_tarihi: now.split('T')[0],
+        details: { from_uid: fromUid, to_uid: toUid, count: updated }
+      });
+      if (typeof window !== 'undefined') window.dispatchEvent(new Event(DATA_CHANGE_EVENT));
+      return { count: updated, error: null };
+    }
     const db = getFirebaseFirestore();
     const q = query(collection(db, COLLECTION), where('user_id', '==', fromUid));
     const snap = await getDocs(q);

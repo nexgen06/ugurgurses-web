@@ -3,8 +3,7 @@
  * Firestore: audit_log/{autoId}
  */
 
-import { getFirebaseFirestore } from '../firebase';
-import { collection, addDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { db } from '../db';
 
 export type AuditAction =
   | 'lock_open'
@@ -46,8 +45,7 @@ export async function writeAuditLog(params: {
   details?: Record<string, unknown>;
 }): Promise<void> {
   try {
-    const db = getFirebaseFirestore();
-    await addDoc(collection(db, COLLECTION), {
+    await db.collection(COLLECTION).insertOne({
       action: params.action,
       actor_uid: params.actorUid,
       actor_email: params.actorEmail || '',
@@ -63,13 +61,12 @@ export async function writeAuditLog(params: {
 
 export async function listAuditLogs(max = 40): Promise<{ rows: AuditLogEntry[]; error: string | null }> {
   try {
-    const db = getFirebaseFirestore();
-    const q = query(collection(db, COLLECTION), orderBy('at', 'desc'), limit(max));
-    const snap = await getDocs(q);
-    const rows = snap.docs.map((d) => {
-      const o = d.data();
+    const { data, error } = await db.collection(COLLECTION).find({});
+    if (error) throw new Error(error);
+    const rows = (data || []).slice(0, max).map((row) => {
+      const o = row as Record<string, unknown>;
       return {
-        id: d.id,
+        id: String(o.id || ''),
         action: o.action as AuditAction,
         actor_uid: (o.actor_uid as string) || '',
         actor_email: (o.actor_email as string) || '',

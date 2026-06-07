@@ -7,6 +7,23 @@
     <base href="" id="base-url">
     <script>document.getElementById('base-url').href = (function () { var p = location.pathname; return p.endsWith('/') ? location.origin + p : location.origin + p.replace(/\/[^/]+$/, '/'); })();</script>
     <title>Uğur Gürses | Portfolyo</title>
+    <meta name="description"
+        content="Uğur Gürses — Yazılım geliştirici portfolyosu. Hizmet puanı, hizmet süresi, Birim İstatistik ve Supabase tabanlı web uygulamaları.">
+    <link rel="canonical" href="https://www.ugurgurses.com.tr/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="og:url" content="https://www.ugurgurses.com.tr/">
+    <meta property="og:title" content="Uğur Gürses | Portfolyo">
+    <meta property="og:description"
+        content="Uğur Gürses — Yazılım geliştirici portfolyosu. Hizmet puanı, hizmet süresi, Birim İstatistik ve Supabase tabanlı web uygulamaları.">
+    <meta property="og:image" content="https://www.ugurgurses.com.tr/assets/step.png">
+    <meta property="og:image:alt" content="Uğur Gürses portfolyo ana sayfa görseli">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Uğur Gürses | Portfolyo">
+    <meta name="twitter:description"
+        content="Uğur Gürses — Yazılım geliştirici portfolyosu. Hizmet puanı, hizmet süresi, Birim İstatistik ve Supabase tabanlı web uygulamaları.">
+    <meta name="twitter:image" content="https://www.ugurgurses.com.tr/assets/step.png">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +40,11 @@
     <!-- Navigation – animasyonlu navbar + hızlı giriş paneli -->
     <nav class="navbar" id="navbar" aria-label="Ana menü">
         <a href="#hero" class="logo">UG</a>
-        <ul class="nav-links">
+        <button type="button" class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menüyü aç"
+            aria-expanded="false" aria-controls="navLinks">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
+        <ul class="nav-links" id="navLinks">
             <li class="nav-item"><a href="#hero" class="active">Ana Sayfa</a></li>
             <li class="nav-item"><a href="#projects">Projeler</a></li>
             <li class="nav-item"><a href="#approach">Yaklaşım</a></li>
@@ -57,6 +78,7 @@
             </li>
         </ul>
     </nav>
+    <div class="nav-overlay" id="navOverlay" aria-hidden="true" hidden></div>
 
     <!-- Hero – resim alanı daha kullanışlı (hızlı linkler + kaydırma) -->
     <section id="hero" class="hero-single">
@@ -73,12 +95,7 @@
             </div>
         </div>
         <div class="hero-utility">
-            <nav class="hero-quick-links">
-                <a href="#projects"><i class="fa-solid fa-folder-open"></i> Projeler</a>
-                <a href="#approach"><i class="fa-solid fa-lightbulb"></i> Yaklaşım</a>
-                <a href="#contact"><i class="fa-solid fa-envelope"></i> İletişim</a>
-            </nav>
-            <a href="#value" class="hero-scroll-hint" aria-label="Aşağı kaydır">
+            <a href="#projects" class="hero-scroll-hint" aria-label="Aşağı kaydır">
                 <span>Aşağı kaydır</span>
                 <i class="fa-solid fa-chevron-down"></i>
             </a>
@@ -87,31 +104,11 @@
 
     <!-- Orta alan – bento / asimetrik tasarım -->
     <div class="middle-zone">
-        <!-- Değer: split layout -->
-        <section id="value" class="middle-section section-value-bento">
-            <div class="bento-value">
-                <div class="bento-value-text">
-                    <span class="bento-tag">01 — Değer</span>
-                    <h2 class="bento-value-title">Karmaşık problemlere <span class="value-highlight">net çözümler</span>
-                    </h2>
-                    <p class="bento-value-desc">Özel bilgi gerektirmez; kullanımı kolay, herkesin işini büyütmek
-                        isteyenlere hitap eden araçlar geliştiriyorum.</p>
-                    <a href="#projects" class="btn-value">Projelere Göz At</a>
-                </div>
-                <div class="bento-value-visual">
-                    <div class="bento-value-card">
-                        <i class="fa-solid fa-layer-group"></i>
-                        <span>Projeler</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Projeler: sayfa ortasında animasyonlu yatay kartlar (tümü görünsün) -->
         <section id="projects" class="projects-section-horizontal">
             <div class="projects-horizontal-inner">
                 <div class="projects-horizontal-header">
-                    <span class="bento-tag">02 — Çalışmalar</span>
+                    <span class="bento-tag">01 — Çalışmalar</span>
                     <h2 class="bento-projects-title">Projelerim</h2>
                 </div>
                 <div class="projects-cards-wrap">
@@ -158,7 +155,7 @@
                             </div>
                         </a>
 
-                        <a href="phone/index.html" target="_blank" class="project-card-h" data-project-link>
+                        <a href="phone/index.html" class="project-card-h" data-project-link>
                             <div class="card-image">
                                 <i class="fa-solid fa-address-book"></i>
                             </div>
@@ -170,14 +167,14 @@
                             </div>
                         </a>
 
-                        <a href="Birimistatistic/dist/index.html" target="_blank" rel="noopener"
+                        <a href="https://bi.ugurgurses.com.tr" target="_blank" rel="noopener"
                             class="project-card-h" data-project-link data-app="birimistatistik-v2">
                             <div class="card-image">
                                 <i class="fa-solid fa-chart-pie"></i>
                             </div>
                             <div class="card-content">
                                 <h3>Birim İstatistik</h3>
-                                <p>Firebase Auth + Firestore, günlük evrak girişi, dashboard ve kesinleştirme.</p>
+                                <p>Supabase auth + veri, günlük evrak girişi, dashboard ve kesinleştirme.</p>
                                 <span class="btn-project"><span>İncele</span> <i
                                         class="fa-solid fa-arrow-right"></i></span>
                             </div>
@@ -192,7 +189,7 @@
         <section id="approach" class="middle-section section-approach-bento">
             <div class="bento-approach-grid">
                 <div class="bento-approach-cell bento-approach-quote">
-                    <span class="bento-tag">03 — Yaklaşım</span>
+                    <span class="bento-tag">02 — Yaklaşım</span>
                     <p class="bento-quote-text">Doğru yaklaşım, <strong>kalıcı sonuçlar</strong> getirir.</p>
                 </div>
                 <div class="bento-approach-cell bento-approach-dark">
@@ -217,21 +214,18 @@
     <section id="contact" class="cta-band">
         <div class="cta-band-overlay"></div>
         <div class="cta-band-content">
-            <h2 class="cta-band-title">Sınırları birlikte keşfedelim</h2>
-            <p class="cta-band-desc">Zihnin, fizik kurallarının işlemediği, yerçekimsiz tek oyun alanındır...</p>
-            <a href="#contact" class="btn-cta-band"></a>
+            <h2 class="cta-band-title">İletişim</h2>
+            <p class="cta-band-desc">Proje fikirleri, iş birliği veya geri bildirim için doğrudan yazabilirsiniz.</p>
+            <a href="mailto:ugurgrses@gmail.com" class="btn-cta-band">E-posta Gönder</a>
         </div>
     </section>
 
     <!-- Footer (referans: alt hızlı linkler) -->
     <footer class="footer">
-        <nav class="footer-nav">
-            <a href="#hero">Ana Sayfa</a>
-            <a href="#projects">Projeler</a>
-            <a href="#approach">Yaklaşım</a>
-            <a href="#contact">İletişim</a>
-        </nav>
-        <p class="footer-copy">&copy; 2024 Uğur Gürses. Tüm hakları saklıdır.</p>
+        <p class="footer-contact">
+            <a href="mailto:ugurgrses@gmail.com">ugurgrses@gmail.com</a>
+        </p>
+        <p class="footer-copy">&copy; 2026 Uğur Gürses. Tüm hakları saklıdır.</p>
     </footer>
 
     <!-- Giriş modalı: çıkış sonrası anasayfada ortada açılır -->
