@@ -69,7 +69,13 @@ import {
   type EntryViewMode
 } from '../lib/user-prefs';
 import { clampKayitTarihi, minKayitTarihi } from '../lib/entry-date-utils';
-import { normalizeKategoriAdi, isKaldirilanKategori } from '../lib/kategori-aliases';
+import {
+  normalizeKategoriAdi,
+  isKaldirilanKategori,
+  isDysBirimeGelenKategori,
+  DYS_KATEGORI_ADI,
+  DYS_BIRIME_GELEN_ETIKET
+} from '../lib/kategori-aliases';
 import {
   VERI_BASLANGIC_TARIH,
   ADMIN_PROXY_BITIS_TARIH,
@@ -111,7 +117,7 @@ const DataEntry: React.FC<DataEntryProps> = ({ onComplete }) => {
   const [prefsReady, setPrefsReady] = useState(false);
   const [kayit_tarihi, setKayitTarihi] = useState(() => clampKayitTarihi(defaultKayitTarihi(), isAdminUser));
   const katParts = getPartsForBirim(birim);
-  const formKategoriler = katParts.birlesik;
+  const formKategoriler = katParts.birlesik.filter((k) => !isDysBirimeGelenKategori(k));
 
   useEffect(() => {
     if (!user?.id || allowedBirimler.length === 0) return;
@@ -248,7 +254,7 @@ const DataEntry: React.FC<DataEntryProps> = ({ onComplete }) => {
     const parts = getPartsForBirim(birim);
     const aggregated: Record<string, number> = parts.birlesik.reduce(
       (acc, t) => ({ ...acc, [t]: 0 }),
-      {} as Record<string, number>
+      { [DYS_KATEGORI_ADI]: 0 } as Record<string, number>
     );
     if (records && records.length > 0) {
       records
@@ -700,8 +706,8 @@ const DataEntry: React.FC<DataEntryProps> = ({ onComplete }) => {
         <div className="col-span-full py-8 text-center text-slate-400 text-sm">Kategoriler yükleniyor…</div>
       )}
       {!katLoading && formKategoriler.length === 0 && (
-        <div className="col-span-full py-6 text-center text-amber-600 text-sm">
-          Bu birim için tanımlı kategori yok. Yönetimden ortak veya birim kategorisi ekleyin.
+        <div className="col-span-full py-6 text-center text-slate-500 text-sm">
+          Personel kategorisi yok. Birime gelen DYS evrakı yukarıdaki alandan girilir.
         </div>
       )}
       {viewMode === 'form' && formKategoriler.length > 0 && <KategoriGirisBaslik />}
@@ -959,6 +965,37 @@ const DataEntry: React.FC<DataEntryProps> = ({ onComplete }) => {
           </div>
 
           <div
+            className={`rounded-xl border-2 border-emerald-300 dark:border-emerald-700 bg-emerald-50/70 dark:bg-emerald-950/25 overflow-hidden ${
+              haftasonu ? 'opacity-50 pointer-events-none' : ''
+            }`}
+          >
+            <div className="px-3 pt-2 pb-1">
+              <p className="text-[9px] font-black uppercase tracking-widest text-emerald-800 dark:text-emerald-300">
+                Birime gelen DYS
+              </p>
+              <p className="text-[10px] text-emerald-900/70 dark:text-emerald-200/70 font-medium">
+                Birime gelen DYS evrak adedi — kategorilerden ayrı girilir
+              </p>
+            </div>
+            <KategoriGirisSatiri
+              turu={DYS_KATEGORI_ADI}
+              etiket={DYS_BIRIME_GELEN_ETIKET}
+              highlighted
+              birimOzel={false}
+              toplam={kategoriDegerleri[DYS_KATEGORI_ADI] || 0}
+              canEdit={canEditForm}
+              busy={ekleBusy === DYS_KATEGORI_ADI}
+              loading={loading}
+              flashed={flashKat === DYS_KATEGORI_ADI}
+              ekleMiktar={ekleMiktar[DYS_KATEGORI_ADI] ?? ''}
+              onEkleMiktarChange={(v) => setEkleMiktar((p) => ({ ...p, [DYS_KATEGORI_ADI]: v }))}
+              onToplamChange={(n) => updateKategori(DYS_KATEGORI_ADI, n)}
+              onEkle={(d) => ekleKategori(DYS_KATEGORI_ADI, d)}
+              variant={viewMode === 'bugun_tablo' ? 'kart' : 'liste'}
+            />
+          </div>
+
+          <div
             ref={entryAreaRef}
             className="scroll-mt-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/30 overflow-hidden relative"
           >
@@ -994,7 +1031,12 @@ const DataEntry: React.FC<DataEntryProps> = ({ onComplete }) => {
             >
               {kategoriGrid}
               {Object.keys(kategoriDegerleri)
-                .filter((k) => !formKategoriler.includes(k) && (kategoriDegerleri[k] || 0) > 0)
+                .filter(
+                  (k) =>
+                    !formKategoriler.includes(k) &&
+                    !isDysBirimeGelenKategori(k) &&
+                    (kategoriDegerleri[k] || 0) > 0
+                )
                 .map((turu) => (
                   <div
                     key={`legacy-${turu}`}
