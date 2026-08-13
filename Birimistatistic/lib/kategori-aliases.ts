@@ -4,6 +4,9 @@
  */
 
 export const SICIL_OZETI_ADI = 'SİCİL ÖZETİ';
+/** Kayıt anahtarı (islem_turu). Formda ayrı, kategorilerin üstündeki alandır. */
+export const DYS_KATEGORI_ADI = 'DYS';
+export const DYS_BIRIME_GELEN_ETIKET = 'DYS BİRİME GELEN EVRAK';
 
 const TC_ILE_GELEN_VARYANTLARI = new Set(
   ['TC İLE GELEN', 'T.C İLE GELEN', 'T.C. İLE GELEN', 'TC ILE GELEN'].map((s) =>
@@ -17,17 +20,38 @@ const SICIL_OZETI_VARYANTLARI = new Set(
   )
 );
 
+const DYS_BIRIME_GELEN_VARYANTLARI = new Set(
+  [
+    'DYS',
+    'DYS BİRİME GELEN EVRAK',
+    'DYS BIRIME GELEN EVRAK',
+    'BİRİME GELEN DYS',
+    'BIRIME GELEN DYS',
+    'BİRİME GELEN DYS EVRAK',
+    'BİRİME GELEN DYS EVRAKLARI',
+    'DYS BİRİME GELEN',
+    'DYS (BİRİME GELEN)'
+  ].map((s) => s.toLocaleUpperCase('tr-TR'))
+);
+
 const KALDIRILAN_UPPER = new Set(
   ['ÖZEL İŞLEM (YSP)', 'YSP ÖZEL İŞLEM', 'ÖZEL İŞLEM YSP', 'YSP OZEL ISLEM'].map((s) =>
     s.toLocaleUpperCase('tr-TR')
   )
 );
 
+export function isDysBirimeGelenKategori(ad: string): boolean {
+  const t = (ad || '').trim();
+  if (!t) return false;
+  return DYS_BIRIME_GELEN_VARYANTLARI.has(t.toLocaleUpperCase('tr-TR'));
+}
+
 /** Kayıt / liste adını güncel görünen ada çevirir */
 export function normalizeKategoriAdi(ad: string): string {
   const t = (ad || '').trim();
   if (!t) return t;
   const upper = t.toLocaleUpperCase('tr-TR');
+  if (isDysBirimeGelenKategori(t)) return DYS_KATEGORI_ADI;
   if (TC_ILE_GELEN_VARYANTLARI.has(upper) || SICIL_OZETI_VARYANTLARI.has(upper)) return SICIL_OZETI_ADI;
   return t;
 }
@@ -57,5 +81,7 @@ export function normalizeKategoriList(list: string[]): string[] {
 
 /** Rapor ve grafiklerde etiket */
 export function displayKategoriAdi(ad: string): string {
-  return normalizeKategoriAdi(ad);
+  const n = normalizeKategoriAdi(ad);
+  if (n === DYS_KATEGORI_ADI) return DYS_BIRIME_GELEN_ETIKET;
+  return n;
 }
