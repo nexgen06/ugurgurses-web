@@ -15,6 +15,10 @@ type Props = {
   onToplamChange: (value: number) => void;
   onEkle: (delta: number) => void;
   variant: 'kart' | 'liste';
+  /** Görünen ad (kayıt anahtarından farklı olabilir) */
+  etiket?: string;
+  /** Kategoriler listesinin üstündeki vurgulu alan */
+  highlighted?: boolean;
 };
 
 const TOOLBAR_DESKTOP_LISTE =
@@ -132,13 +136,18 @@ export function KategoriGirisSatiri({
   onEkleMiktarChange,
   onToplamChange,
   onEkle,
-  variant
+  variant,
+  etiket,
+  highlighted
 }: Props) {
+  const baslik = etiket || turu;
   const delta = Math.max(0, parseInt(ekleMiktar, 10) || 0);
   const isKart = variant === 'kart';
   const flashCls = flashed
     ? 'bg-emerald-50 dark:bg-emerald-900/25 border-emerald-400 dark:border-emerald-500 ring-2 ring-emerald-400/25'
-    : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800';
+    : highlighted
+      ? 'border-emerald-400 dark:border-emerald-600 bg-emerald-50/90 dark:bg-emerald-950/30'
+      : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800';
 
   const toolbarProps = {
     turu,
@@ -188,7 +197,7 @@ export function KategoriGirisSatiri({
   const kategoriBaslik = (
     <>
       <h3 className="text-sm sm:text-xs font-bold text-slate-800 dark:text-slate-200 leading-snug">
-        {turu}
+        {baslik}
         {birimOzel && (
           <span className="text-[9px] font-black uppercase text-sky-600 dark:text-sky-400 ml-1.5">(birim)</span>
         )}
@@ -198,7 +207,7 @@ export function KategoriGirisSatiri({
 
   /* ——— Mobil: tek kart, büyük dokunma alanları ——— */
   const mobileCard = (
-    <article className={`sm:hidden rounded-2xl border-2 p-4 flex flex-col gap-3 transition-colors ${flashCls}`}>
+    <article className={`sm:hidden rounded-2xl ${highlighted ? 'border-0 px-3 pb-3' : `border-2 p-4`} flex flex-col gap-3 transition-colors ${highlighted ? '' : flashCls}`}>
       {kategoriBaslik}
       <div>
         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">
@@ -221,10 +230,10 @@ export function KategoriGirisSatiri({
       <>
         {mobileCard}
         <article
-          className={`hidden sm:flex sm:flex-col rounded-2xl border-2 p-3 gap-2.5 transition-colors ${flashCls}`}
+          className={`hidden sm:flex sm:flex-col rounded-2xl ${highlighted ? 'border-0 px-3 pb-3' : 'border-2 p-3'} gap-2.5 transition-colors ${highlighted ? '' : flashCls}`}
         >
           <h3 className="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-snug line-clamp-2 min-h-[2rem]">
-            {turu}
+            {baslik}
             {birimOzel && (
               <span className="text-[8px] font-black uppercase text-sky-600 dark:text-sky-400 block">birim</span>
             )}
@@ -244,12 +253,16 @@ export function KategoriGirisSatiri({
     <>
       {mobileCard}
       <article
-        className={`hidden sm:grid sm:grid-cols-[minmax(0,1fr)_5.5rem_18rem] sm:gap-3 sm:items-center px-3 py-2.5 border-b border-slate-100 dark:border-slate-700 ${
-          flashed ? 'bg-emerald-50/90 dark:bg-emerald-900/20' : 'hover:bg-slate-50/70 dark:hover:bg-slate-700/20'
+        className={`hidden sm:grid sm:grid-cols-[minmax(0,1fr)_5.5rem_18rem] sm:gap-3 sm:items-center px-3 py-2.5 ${
+          highlighted
+            ? 'border-0 pb-3'
+            : flashed
+              ? 'border-b border-slate-100 dark:border-slate-700 bg-emerald-50/90 dark:bg-emerald-900/20'
+              : 'border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50/70 dark:hover:bg-slate-700/20'
         }`}
       >
         <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-snug py-0.5">
-          {turu}
+          {baslik}
           {birimOzel && (
             <span className="text-[8px] font-black uppercase text-sky-600 dark:text-sky-400 ml-1">(birim)</span>
           )}
