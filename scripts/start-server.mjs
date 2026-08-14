@@ -1,14 +1,28 @@
-import { spawn } from 'node:child_process';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import http from 'node:http';
 
-const port = process.env.PORT || '3000';
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const serveBin = path.join(root, 'node_modules', 'serve', 'build', 'main.js');
+const port = Number(process.env.PORT) || 3000;
 
-const child = spawn(process.execPath, [serveBin, root, '-l', port], {
-  stdio: 'inherit',
-  cwd: root,
+const HTML_404 = `<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Not Found</title>
+</head>
+<body>
+  <h1>404 Not Found</h1>
+</body>
+</html>
+`;
+
+const server = http.createServer((req, res) => {
+  res.writeHead(404, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-store, no-cache, must-revalidate',
+  });
+  res.end(HTML_404);
 });
 
-child.on('exit', (code) => process.exit(code ?? 0));
+server.listen(port, '0.0.0.0', () => {
+  console.log(`Service stopped; listening on ${port} and returning 404 for all routes including login`);
+});
