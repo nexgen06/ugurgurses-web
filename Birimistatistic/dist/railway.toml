@@ -1,0 +1,6 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "echo skipped-app-stopped"
+
+[deploy]
+startCommand = "node server.mjs"

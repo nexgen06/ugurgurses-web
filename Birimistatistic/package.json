@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/write-build-version.mjs && vite build",
-    "preview": "vite preview",
-    "start": "npm run build && vite preview",
+    "build": "echo skipped-app-stopped",
+    "build:app": "node scripts/write-build-version.mjs && vite build",
+    "preview": "node scripts/start-server.mjs",
+    "start": "node scripts/start-server.mjs",
     "seed": "node scripts/seed-firestore.mjs",
     "purge:demo": "node scripts/purge-demo-and-old-data.mjs"
   },
